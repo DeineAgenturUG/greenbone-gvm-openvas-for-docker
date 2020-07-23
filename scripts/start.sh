@@ -81,10 +81,10 @@ fi
 
 echo "Updating NVTs..."
 su -c "rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/nvt-feed /usr/local/var/lib/openvas/plugins" openvas-sync
-echo "++++++++++++++++++++++++++"
-echo "+ Automating NVT updates +"
-echo "++++++++++++++++++++++++++"
-/bin/bash /update-nvts.sh
+echo "+++++++++++++++++++++++++++++++++++"
+echo "+ Enabling Automating NVT updates +"
+echo "+++++++++++++++++++++++++++++++++++"
+/update-nvts.sh & disown
 sleep 5
 
 if [ -f /var/run/ospd.pid ]; then
