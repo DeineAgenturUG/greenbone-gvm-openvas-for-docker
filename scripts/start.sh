@@ -79,7 +79,12 @@ if [ ! -h /usr/local/var/lib/openvas/plugins ]; then
 	chown openvas-sync:openvas-sync -R /usr/local/var/lib/openvas/plugins
 fi
 
-/update-nvts.sh
+echo "Updating NVTs..."
+su -c "rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/nvt-feed /usr/local/var/lib/openvas/plugins" openvas-sync
+echo "++++++++++++++++++++++++++"
+echo "+ Automating NVT updates +"
+echo "++++++++++++++++++++++++++"
+/bin/bash /update-nvts.sh
 sleep 5
 
 if [ -f /var/run/ospd.pid ]; then
