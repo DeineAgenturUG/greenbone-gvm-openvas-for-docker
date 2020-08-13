@@ -14,7 +14,7 @@
   * [Monitoring scan progress](greenbone-vulnerability-stack-docker-image/monitoring-scan-progress.md)
   * [Updating the NVTs](greenbone-vulnerability-stack-docker-image/updating-the-nvts.md)
   * [Setup Remote Scanner](greenbone-vulnerability-stack-docker-image/setup-remote-scanner.md)
-* [Openvas Greenbone Deployment Full Guide]openvas-greenbone-deployment-full-guide/README.md)
+* [Openvas Greenbone Deployment Full Guide](openvas-greenbone-deployment-full-guide/README.md)
   * [Deploying Greenbone GVM GSA with OpenVAS](openvas-greenbone-deployment-full-guide/deploying-greenbone-gvm-gsa-with-openvas.md)
 * [Openvas Greenbone Deployment Shortened](openvas-greenbone-deployment-shortened/README.md)
 * [Greenbone Vulnerability Postgresql Docker Image](gvm-postgresql/README.md)
