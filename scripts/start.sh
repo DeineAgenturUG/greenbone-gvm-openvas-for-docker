@@ -36,7 +36,8 @@ fi
 
 if  [ ! -f /data/ssh/known_hosts ]; then
 	echo "Getting Master SSH key..."
-	ssh-keyscan -t ed25519 -p $MASTER_PORT $MASTER_ADDRESS > /data/ssh/known_hosts
+	ssh-keyscan -t ed25519 -p $MASTER_PORT $MASTER_ADDRESS > /data/ssh/known_hosts.temp
+	mv /data/ssh/known_hosts.temp /data/ssh/known_hosts
 fi
 
 if  [ ! -f /data/ssh/key ]; then
