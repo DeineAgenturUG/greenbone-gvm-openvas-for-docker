@@ -4,7 +4,7 @@ select r.host                                                         as "ip",
        split_part(r.port, '/', 2)                                     as "port_protocol",
        r.severity                                                     as "cvss",
        (case
-            when r.severity = 0 then 'Log'
+            when r.severity <= 0 then 'Log'
             when r.severity >= 0.1 and r.severity <= 3.9
                 then 'Low'
             when severity >= 4.0 and severity <= 6.9
@@ -36,9 +36,7 @@ from results r
          left join vt_refs vr on n.oid = vr.vt_oid
          left join tasks t on r.task = t.id
          left join reports re on r.report = re.id
-where r.type = 'Alarm'
-  and r.qod >= 70
-  and r.id > :sql_last_value
+where r.id > :sql_last_value
 group by r.host, r.hostname, r.port, r.severity, n.solution_type, n.name, r.description, r.nvt, n.cve, t.uuid, t.name,
          r.date, r.uuid, r.id, n.impact, n.solution, n.affected, n.insight, n.detection, n.category, n.family, re.date
 order by r.id
