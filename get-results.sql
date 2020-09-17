@@ -1,6 +1,4 @@
-select distinct on (
-    r.report, r.host, r.hostname, r.port, r.severity, r.description, r.nvt
-    ) r.host                                                         as "ip",
+select r.host                                                         as "ip",
       r.hostname                                                     as "hostname",
       split_part(r.port, '/', 1)                                     as "port",
       split_part(r.port, '/', 2)                                     as "port_protocol",
@@ -38,6 +36,7 @@ from results r
          left join tasks t on r.task = t.id
 where r.type = 'Alarm'
   and r.qod >= 70
+  and r.id > ?
   and r.report = any (select max(re.id)
                       from reports re
                       where re.slave_progress = 100
@@ -45,3 +44,4 @@ where r.type = 'Alarm'
 )
 group by r.host, r.hostname, r.port, r.severity, n.solution_type, n.name, r.description, r.nvt, n.cve, t.uuid, t.name,
          r.date, r.uuid, r.id, n.impact, n.solution, n.affected, n.insight, n.detection, n.category, n.family
+order by r.id
