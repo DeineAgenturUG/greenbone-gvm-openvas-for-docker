@@ -40,5 +40,5 @@ where r.type = 'Alarm'
   and r.qod >= 70
   and r.id > :sql_last_value
 group by r.host, r.hostname, r.port, r.severity, n.solution_type, n.name, r.description, r.nvt, n.cve, t.uuid, t.name,
-         r.date, r.uuid, r.id, n.impact, n.solution, n.affected, n.insight, n.detection, n.category, n.family
+         r.date, r.uuid, r.id, n.impact, n.solution, n.affected, n.insight, n.detection, n.category, n.family, re.date
 order by r.id
