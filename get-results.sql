@@ -37,11 +37,6 @@ from results r
 where r.type = 'Alarm'
   and r.qod >= 70
   and r.id > :sql_last_value
-  and r.report = any (select max(re.id)
-                      from reports re
-                      where re.slave_progress = 100
-                      group by re.task
-)
 group by r.host, r.hostname, r.port, r.severity, n.solution_type, n.name, r.description, r.nvt, n.cve, t.uuid, t.name,
          r.date, r.uuid, r.id, n.impact, n.solution, n.affected, n.insight, n.detection, n.category, n.family
 order by r.id
