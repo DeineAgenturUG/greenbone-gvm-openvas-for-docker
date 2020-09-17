@@ -36,7 +36,7 @@ from results r
          left join tasks t on r.task = t.id
 where r.type = 'Alarm'
   and r.qod >= 70
-  and r.id > ?
+  and r.id > :sql_last_value
   and r.report = any (select max(re.id)
                       from reports re
                       where re.slave_progress = 100
