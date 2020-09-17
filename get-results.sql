@@ -44,4 +44,4 @@ where r.type = 'Alarm'
                       group by re.task
 )
 group by r.host, r.hostname, r.port, r.severity, n.solution_type, n.name, r.description, r.nvt, n.cve, t.uuid, t.name,
-         r.date, r.uuid, r.id, n.impact, n.solution, n.affected, n.insight, n.detection
+         r.date, r.uuid, r.id, n.impact, n.solution, n.affected, n.insight, n.detection, n.category, n.family
