@@ -1,3 +1,4 @@
+explain analyse verbose
 select r.host                                                                               as "ip",
        r.hostname                                                                           as "hostname",
        rhd_mac.value                                                                        as "macs",
@@ -39,9 +40,17 @@ select r.host                                                                   
 from results r
          left join report_hosts rh on r.host = rh.host
          left join report_host_details rhd_os_txt on rh.id = rhd_os_txt.report_host and rhd_os_txt.name = 'best_os_txt'
-         left join report_host_details rhd_smb_auth on rh.id = rhd_smb_auth.report_host and
-                                                       (rhd_smb_auth.name = 'Auth-SMB-Failure' or
-                                                        rhd_smb_auth.name = 'Auth-SMB-Success')
+         left join (select report_host, array_agg(value)[0] as "value"
+                    from report_host_details
+                    where name = 'best_os_txt'
+                    group by report_host, id
+                    order by id) rhd_smb_auth on rh.id = rhd_smb_auth.report_host
+         left join (select report_host, array_agg(value)[0] as "value"
+                    from report_host_details
+                    where name = 'Auth-SMB-Failure'
+                       or name = 'Auth-SMB-Success'
+                    group by report_host, id
+                    order by id) rhd_smb_auth on rh.id = rhd_smb_auth.report_host
          left join (select report_host, array_agg(value) as "value"
                     from report_host_details
                     where name = 'MAC'
@@ -52,4 +61,3 @@ from results r
          left join scanners s on t.scanner = s.id
 where r.id > :sql_last_value
 order by r.id
-limit 1000
