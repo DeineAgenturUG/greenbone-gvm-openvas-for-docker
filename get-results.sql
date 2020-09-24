@@ -58,4 +58,4 @@ from results r
          left join scanners s on t.scanner = s.id
 where r.id > :sql_last_value
 order by r.id
-limit 10000
+limit 1000
