@@ -1,4 +1,3 @@
-explain analyse verbose
 select r.host                                                                               as "ip",
        r.hostname                                                                           as "hostname",
        rhd_mac.value                                                                        as "macs",
