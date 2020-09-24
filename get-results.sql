@@ -39,25 +39,23 @@ select r.host                                                                   
        to_timestamp(re.date)                                                                as "scan_date"
 from results r
          left join report_hosts rh on r.host = rh.host
-         left join report_host_details rhd_os_txt on rh.id = rhd_os_txt.report_host and rhd_os_txt.name = 'best_os_txt'
-         left join (select report_host, array_agg(value)[0] as "value"
+         left join (select *
                     from report_host_details
-                    where name = 'best_os_txt'
-                    group by report_host, id
-                    order by id) rhd_smb_auth on rh.id = rhd_smb_auth.report_host
-         left join (select report_host, array_agg(value)[0] as "value"
+                    where id in (select max(id) from report_host_details group by report_host, name)) rhd_os_txt
+                   on rhd_os_txt.name = 'best_os_txt' and rh.id = rhd_os_txt.report_host
+         left join (select *
                     from report_host_details
-                    where name = 'Auth-SMB-Failure'
-                       or name = 'Auth-SMB-Success'
-                    group by report_host, id
-                    order by id) rhd_smb_auth on rh.id = rhd_smb_auth.report_host
-         left join (select report_host, array_agg(value) as "value"
+                    where id in (select max(id) from report_host_details group by report_host, name)) rhd_smb_auth
+                   on (rhd_smb_auth.name = 'Auth-SMB-Failure' or rhd_smb_auth.name = 'Auth-SMB-Success') and
+                      rh.id = rhd_smb_auth.report_host
+         left join (select *
                     from report_host_details
-                    where name = 'MAC'
-                    group by report_host) rhd_mac on rh.id = rhd_mac.report_host
+                    where id in (select max(id) from report_host_details group by report_host, name)) rhd_mac
+                   on rhd_mac.name = 'MAC' and rh.id = rhd_mac.report_host
          left join nvts n on r.nvt = n.oid
          left join tasks t on r.task = t.id
          left join reports re on r.report = re.id
          left join scanners s on t.scanner = s.id
 where r.id > :sql_last_value
 order by r.id
+limit 10000
