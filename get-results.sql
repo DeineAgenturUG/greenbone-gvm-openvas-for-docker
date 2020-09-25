@@ -37,7 +37,7 @@ select r.host                                                                   
        re.id                                                                                as "scan_id",
        to_timestamp(re.date)                                                                as "scan_date"
 from results r
-         left join report_hosts rh on r.host = rh.host
+         left join report_hosts rh on r.host = rh.host and r.report = rh.report
          left join (select *
                     from report_host_details
                     where id in (select max(id) from report_host_details group by report_host, name)) rhd_os_txt
