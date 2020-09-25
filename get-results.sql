@@ -1,6 +1,7 @@
+explain analyse verbose
 select r.host                                                                               as "ip",
        r.hostname                                                                           as "hostname",
-       rhd_mac.value                                                                        as "macs",
+       rhd_mac.value                                                                        as "mac",
        rhd_os_txt.value                                                                     as "os_txt",
        rhd_smb_auth.name                                                                    as "smb_auth_status",
        rhd_smb_auth.value                                                                   as "smb_auth_info",
