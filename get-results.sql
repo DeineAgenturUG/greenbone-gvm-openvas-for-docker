@@ -2,6 +2,8 @@ select r.host                                                                   
        r.hostname                                                                           as "hostname",
        rhd_mac.value                                                                        as "mac",
        rhd_os_txt.value                                                                     as "os_txt",
+       rhd_os_cpe.value                                                                     as "os_cpe",
+       app.cpes                                                                             as "app_cpes",
        rhd_smb_auth.name                                                                    as "smb_auth_status",
        rhd_smb_auth.value                                                                   as "smb_auth_info",
        split_part(r.port, '/', 1)                                                           as "port",
@@ -15,6 +17,22 @@ select r.host                                                                   
                 then 'Medium'
             when severity >= 7.0 and severity <= 10.0
                 then 'High' end)                                                            as "severity",
+       (case
+            when r.severity <= 0 then 1
+            else 0 end)                                                                     as "log",
+       (case
+            when r.severity >= 0.1 and r.severity <= 3.9
+                then 1
+            else 0 end)                                                                     as "low",
+       (case
+            when severity >= 4.0 and severity <= 6.9
+                then 1
+            else 0 end)                                                                     as "medium",
+       (case
+            when severity >= 7.0 and severity <= 10.0
+                then 1
+            else 0 end)                                                                     as "high",
+       r.qod                                                                                as "qod",
        n.solution_type                                                                      as "solution_type",
        n.name                                                                               as "nvt_name",
        r.description                                                                        as "summary",
@@ -33,15 +51,25 @@ select r.host                                                                   
        n.detection                                                                          as "detection_method",
        n.category                                                                           as "category",
        n.family                                                                             as "family",
+       cve.ids                                                                              as "cves",
+       url.ids                                                                              as "urls",
        concat(t.name, ' - (', to_char(to_timestamp(re.date), 'YYYY-MM-DD HH12:MI AM'), ')') as "scan_name",
        re.id                                                                                as "scan_id",
-       to_timestamp(re.date)                                                                as "scan_date"
+       to_timestamp(re.date)                                                                as "scan_date",
+       tar.name                                                                             as "target_name",
+       tar.hosts                                                                            as "target_hosts",
+       tar.exclude_hosts                                                                    as "target_exclude_hosts",
+       pl.name                                                                              as "port_list"
 from results r
          left join report_hosts rh on r.host = rh.host and r.report = rh.report
          left join (select *
                     from report_host_details
                     where id in (select max(id) from report_host_details group by report_host, name)) rhd_os_txt
                    on rhd_os_txt.name = 'best_os_txt' and rh.id = rhd_os_txt.report_host
+         left join (select *
+                    from report_host_details
+                    where id in (select max(id) from report_host_details group by report_host, name)) rhd_os_cpe
+                   on rhd_os_cpe.name = 'best_os_cpe' and rh.id = rhd_os_cpe.report_host
          left join (select *
                     from report_host_details
                     where id in (select max(id) from report_host_details group by report_host, name)) rhd_smb_auth
@@ -51,10 +79,22 @@ from results r
                     from report_host_details
                     where id in (select max(id) from report_host_details group by report_host, name)) rhd_mac
                    on rhd_mac.name = 'MAC' and rh.id = rhd_mac.report_host
+         left join (select array_agg(value) as cpes, report_host
+                    from report_host_details
+                    where name = 'App'
+                    group by report_host) app
+                   on rh.id = app.report_host
+         left join hosts h on r.host = h.name
          left join nvts n on r.nvt = n.oid
          left join tasks t on r.task = t.id
+         left join targets tar on t.target = tar.id
+         left join port_lists pl on tar.port_list = pl.id
          left join reports re on r.report = re.id
          left join scanners s on t.scanner = s.id
+         left join (select array_agg(ref_id) as ids, vt_oid from vt_refs where type = 'cve' group by vt_oid) cve
+                   on n.oid = cve.vt_oid
+         left join (select array_agg(ref_id) as ids, vt_oid from vt_refs where type = 'url' group by vt_oid) url
+                   on n.oid = url.vt_oid
 where r.id > :sql_last_value
 order by r.id
 limit 5000
