@@ -1,6 +1,5 @@
 path:
   config: /usr/share/logstash/pipeline/
-  data: /data
 queue:
   drain: true
   type: persisted
