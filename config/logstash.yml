@@ -1,7 +1,2 @@
 path:
   config: /usr/share/logstash/pipeline/
-queue:
-  drain: true
-  type: persisted
-  checkpoint.acks: 0
-  max_bytes: 8gb
