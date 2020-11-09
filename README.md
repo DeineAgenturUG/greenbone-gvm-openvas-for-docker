@@ -2,7 +2,8 @@
 
 This docker image contains logstash configured to pull data from a Greenbone Vulnerability Manager instance.
 
-
+Must login first
+docker login docker.pkg.github.com
 
 Example command:
 
