@@ -325,7 +325,7 @@ select r.host                                                                   
                 then 'Microsoft SharePoint Server'
             when n.name like 'Microsoft Exchange %'
                 then 'Microsoft Exchange Server'
-            when n.name like 'Microsoft IIS %' or 'IIS %'
+            when n.name like 'Microsoft IIS %' or n.name like 'IIS %'
                 then 'Microsoft IIS'
             when n.name like 'Microsoft Visual Studio %'
                 then 'Microsoft Visual Studio'
