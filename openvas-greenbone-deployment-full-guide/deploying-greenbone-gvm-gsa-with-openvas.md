@@ -50,6 +50,7 @@ You can use any ports you\'d like on the host side (left side) but the container
 ### NVD Download Status
 > NOTE:When you run the docker container for the first time, you may not be able to connect right away. This is because the docker container is downloading nvd information for it.
 > 
+
 To check the status of the NVD download for the docker container please run this command
 
 ```bash
