@@ -54,7 +54,7 @@ You can use any ports you\'d like on the host side (left side) but the container
 To check the status of the NVD download for the docker container please run this command
 
 ```bash
-docker logs -f --tail=20 gvm-container-name
+docker logs -f --tail=20 <container-name>
 ```
 
 **RESULT**
