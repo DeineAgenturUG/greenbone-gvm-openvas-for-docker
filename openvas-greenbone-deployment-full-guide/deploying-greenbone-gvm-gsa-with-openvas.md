@@ -25,14 +25,24 @@ If you need to update the container, run `docker pull securecompliance/gvm` to g
 
 #### Other options that can be changed in the docker run command:
 
-`--env PASSWORD="Your admin password here"` - This is for setting the webUI admin password. If you remove this from the command, the default username:password will be admin:admin. You need to change the password inside the quotes.
-(e.g. `--env PASSWORD="SuperSecurePassword"`)
+- USERNAME : Use a different default username. Default = admin
 
-`--env DB_PASSWORD="Use a different password here"` - This sets the postrgesql database password. This is needed if you are going to use the metabase connection or any other database management tool to run reports that greenbone doesn\'t give you. 
-(e.g. `--env DB_PASSWORD="UltraSecurePassword1"`)
+```shell
+--env USERNAME="<username>" 
+```
 
-`--env USERNAME="Alternate username"` - Use this variable if you would like to use a username other than the default admin username 
-(e.g. `--env USERNAME="frank"`)
+- PASSWORD : password for default user. Default = admin
+> This is for setting the webUI admin password. If you remove this from the command, the default username:password will be admin:admin. You need to change the password inside the quotes.
+```shell
+--env PASSWORD="<password>"
+```
+
+- DB_PASSWORD : Database Password
+> This sets the postrgesql database password. This is needed if you are going to use the metabase connection or any other database management tool to run reports that greenbone doesn\'t give you. 
+```shell
+--env DB_PASSWORD="<Password>"
+```
+
 
 `--volume gvm-data:/data` - This is for creating a persistent volume so you dont lose your data when you update the container. You can modify the host side (gvm-data) but it needs to mount to /data in the container.
 
