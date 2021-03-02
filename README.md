@@ -24,9 +24,9 @@ docker.pkg.github.com/secure-compliance-solutions-llc/gvm-logstash/gvm-logstash:
 
 | Environment Variable Name | Default Value           |
 | ------------------------- | ----------------------- |
-| DB_HOST                   | gvm                     |
-| DB_USER                   | gvm                     |
-| DB_PASSWORD               |                         |
-| ES_HOST                   | https://example.com:443 |
-| ES_USER                   | gvm-logstash            |
-| ES_PASSWORD               |                         |
+| `DB_HOST`                   | `gvm`                     |
+| `DB_USER`                   | `gvm`                     |
+| `DB_PASSWORD`               |                         |
+| `ES_HOST`                   | `https://example.com:443` |
+| `ES_USER`                   | `gvm-logstash `           |
+| `ES_PASSWORD`               |                         |
