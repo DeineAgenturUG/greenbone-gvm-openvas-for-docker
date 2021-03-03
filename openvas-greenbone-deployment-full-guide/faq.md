@@ -26,6 +26,9 @@ su -c "gvmd --unix-socket=/data/gvmd/gvmd.sock" gvm.
 # This will create a socket in the /data/gvmd folder
 ```
 
+### Question 3 - Can't view scan reports - get "An error has occurred on this page" 
+
+> When mounting your volumes, use this specific syntax instead: `--volume gvm-data:/data:exec`, this allows the report-building scripts to be executed from the volume.
 
 
 
