@@ -44,6 +44,26 @@ Then use ssh port forwarding to access the API port with `ssh -N -L 9390:localho
 This can be configured to access the container's API port from any machine that can connect to the exposed `9222` ssh port by changing the ssh host. Once you run this, you then have a `localhost:9390` port mapped into the container tunnelled securely over ssh. You can then tell `python-gvm` or `gvm-cli` to connect with TLS to that port.
 
 
+#### Question 5 - TypeError: Cannot read property 'userTags' of undefined
+
+There is a permission problem on the following directory:
+
+`INSTALL_DIR/var/lib/gvm/gvmd/report_formats`
+
+The missing <report> elements within the outer `<report id="...">` are created by the report formatting scripts. These scripts could not run because the above directory has no read or execute permissions for anyone but the directory owner. The scripts are run as "`nobody`" in "`nogroup`".
+
+Solution:
+
+Run the following command:
+
+`chmod 755 INSTALL_DIR/var/lib/gvm/gvmd/report_formats`
+
+- https://community.greenbone.net/t/fix-for-reports-not-displaying-in-gvm-20-8-due-to-javascript-errors/7905
+- https://github.com/greenbone/gsa/issues/2389
+
+
+
+
 
 
 
