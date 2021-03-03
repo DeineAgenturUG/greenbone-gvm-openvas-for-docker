@@ -1,4 +1,4 @@
-![GVM Logstash Logo](https://github.com/SCS-Labs/Images/raw/main/scs-gvm.png)
+![GVM Logstash Logo](https://github.com/SCS-Labs/Images/raw/main/GVM%20Logstash.png)
 
 This docker image contains logstash configured to pull data from a Greenbone Vulnerability Manager instance.
 
