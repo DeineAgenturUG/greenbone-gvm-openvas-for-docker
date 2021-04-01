@@ -52,7 +52,7 @@ This can be configured to access the container's API port from any machine that 
 
 ---------
 
-#### Question 5 - TypeError: Cannot read property 'userTags' of undefined
+### Question 5 - TypeError: Cannot read property 'userTags' of undefined
 
 There is a permission problem on the following directory:
 
