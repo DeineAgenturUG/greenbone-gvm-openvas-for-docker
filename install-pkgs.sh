@@ -3,6 +3,7 @@
 apt-get update
 
 { cat <<EOF
+autossh
 bison
 build-essential
 ca-certificates
