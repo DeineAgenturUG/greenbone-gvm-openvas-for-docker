@@ -2,7 +2,7 @@
 
 This image is designed for use with our GVM image located here: [GVM-Docker](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker)
 
-### Latest Version: 20.08-v1
+### Latest Version: 21.4.0
 
 ## Tags
 
