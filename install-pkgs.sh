@@ -25,6 +25,7 @@ libical-dev
 libksba-dev
 libldap2-dev
 libmicrohttpd-dev
+libnet1-dev
 libnet-snmp-perl
 libpcap-dev
 libpopt-dev
