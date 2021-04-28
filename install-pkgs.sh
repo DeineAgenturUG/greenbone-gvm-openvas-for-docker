@@ -31,6 +31,7 @@ libpcap-dev
 libpopt-dev
 libsnmp-dev
 libssh-gcrypt-dev
+libunistring-dev
 libxml2-dev
 net-tools
 nmap
