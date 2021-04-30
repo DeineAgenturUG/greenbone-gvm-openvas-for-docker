@@ -71,6 +71,19 @@ Run the following command:
 
 
 ---------
+### Question 6 - Problem when generate pdf report larger than 1Mo and send it by email
+
+#### Solution:
+
+If you run into this issue, this can be temporary solved by adding the following to the `script.sh`
+
+```
+su -c "gvmd --listen=0.0.0.0 --port=9390 --max-email-attachment-size="-1" --max-email-include-size="-1" --max-email-message-size="-1"" gvm
+```
+> NOTE: If we get more issues related to this we will research long-term solution. 
+
+---------
+
 
 
 
