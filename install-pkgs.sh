@@ -15,7 +15,7 @@ geoip-database
 gnutls-bin
 heimdal-dev
 ike-scan
-impacket-wmiexec
+python3-impacket
 libgcrypt20-dev
 libglib2.0-dev
 libgnutls28-dev
