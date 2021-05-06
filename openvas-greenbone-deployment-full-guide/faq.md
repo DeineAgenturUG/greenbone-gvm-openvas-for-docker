@@ -85,8 +85,40 @@ su -c "gvmd --listen=0.0.0.0 --port=9390 --max-email-attachment-size="-1" --max-
 ---------
 
 
+### Question 7 - Is there a way of having Super Admins?
+
+#### Solution
+
+You will need to find the name of the docker container first
+
+```
+docker ps
+```
+
+Then run the following
+
+```
+docker exec -it <name> bash
+su - gvm
+gvmd --create-user=MySecondSuperAdmin -v --role="Super Admin"
+```
+  
+This will result in a message saying that the user has been created along with the new password - take note of this before proceeding.
+
+If you have already create a normal admin and would like to become a super admin, do the following
 
 
+```
+docker exec -it <name> bash
+su - gvm
+gvmd --create-user=MyUser2 -v --role="Super Admin"
+gvmd –-delete-user=MyUser --inheritor=MyUser2
+gvmd --create-user=MyUser -v --role="Super Admin"
+gvmd –-delete-user=MyUser2 --inheritor=MyUser
+```
+  
+  
+Ensuring you take note of the password for the 2nd create user
 
 
 
