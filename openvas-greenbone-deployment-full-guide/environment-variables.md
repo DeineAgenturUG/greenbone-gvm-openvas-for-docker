@@ -6,5 +6,5 @@
 
 - SMTPPORT : The TCP port for the RELAYHOST. Default = 25
 ```
--e RELAYHOST=25
+-e SMTPPORT=25
 ```
