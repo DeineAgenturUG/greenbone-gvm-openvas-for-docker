@@ -1,0 +1,30 @@
+name: Sync NVT Data
+
+# Controls when the action will run. 
+on:
+  schedule:
+  - cron: "0 0 * * *"
+
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install Rsync
+        run: apt-get install -y rsync
+
+      - name: Run a multi-line script
+        run: rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/nvt-feed ./nvt-feed
+      
+      - name: Create zip
+        uses: ihiroky/archive-action@v1
+        with:
+          root_dir: ./nvt-feed
+          file_path: nvt.tar.xz
+          
+      - uses: actions/upload-artifact@v2
+        with:
+          name: nvt-feed
+          path: ./nvt-feed
