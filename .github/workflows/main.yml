@@ -15,13 +15,14 @@ jobs:
       - name: Run Rsync
         run: rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/nvt-feed ./nvt-feed
       
-      - name: Create zip
+      - name: Create TAR
         uses: ihiroky/archive-action@v1
         with:
           root_dir: ./nvt-feed
           file_path: nvt.tar.xz
           
-      - uses: actions/upload-artifact@v2
+      - name: Save TAR as artifact
+        uses: actions/upload-artifact@v2
         with:
           name: nvt-feed
           path: nvt.tar.xz
