@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Install Rsync
-        run: apt-get install -y rsync
+        run: sudo apt-get install -y rsync
 
       - name: Run a multi-line script
         run: rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/nvt-feed ./nvt-feed
@@ -27,4 +27,4 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: nvt-feed
-          path: ./nvt-feed
+          path: nvt.tar.xz
