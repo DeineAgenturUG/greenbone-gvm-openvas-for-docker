@@ -12,9 +12,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install Rsync
-        run: sudo apt-get install -y rsync
-
       - name: Run Rsync
         run: rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/nvt-feed ./nvt-feed
       
