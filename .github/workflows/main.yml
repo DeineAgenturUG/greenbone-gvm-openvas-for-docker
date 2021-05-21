@@ -1,4 +1,4 @@
-name: Sync NVT Data
+name: Sync Data
 
 # Controls when the action will run. 
 on:
@@ -12,14 +12,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Run Rsync
-        run: rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/nvt-feed ./nvt-feed
+      - name: Create dir
+        run: mkdir data
+        
+      - name: Run Rsync for NVT Feed data
+        run: rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/nvt-feed ./data/nvt-feed
+      
+      - name: Run Rsync for GVMd data
+        run: rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/data-objects/gvmd/ ./data/gvmd-data
+        
+      - name: Run Rsync for SCAP data
+        run: rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/scap-data ./data/scap-data
+        
+      - name: Run Rsync for CERT data
+        run: rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/cert-data ./data/cert-data
       
       - name: Create TAR
         uses: ihiroky/archive-action@v1
         with:
-          root_dir: ./nvt-feed
-          file_path: nvt.tar.xz
+          root_dir: ./data
+          file_path: data.tar.xz
       
       - uses: wilsonzlin/setup-b2@v3
       
@@ -27,4 +39,4 @@ jobs:
         run: b2 authorize-account ${{ secrets.BACKBLAZE_KEYID }} ${{ secrets.BACKBLAZE_APPKEY }}
       
       - name: Upload TAR to Backblaze
-        run: b2 upload-file --noProgress VulnData nvt.tar.xz nvt.tar.xz
+        run: b2 upload-file --noProgress VulnData data.tar.xz data.tar.xz
