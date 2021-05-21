@@ -18,19 +18,19 @@ jobs:
       - name: Run Rsync for NVT Feed data
         run: rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/nvt-feed ./data/nvt-feed
       
-      - name: Create dir
+      - name: sleep 5
         run: sleep 5
       
       - name: Run Rsync for GVMd data
         run: rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/data-objects/gvmd/ ./data/gvmd-data
       
-      - name: Create dir
+      - name: sleep 5
         run: sleep 5
       
       - name: Run Rsync for SCAP data
         run: rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/scap-data ./data/scap-data
       
-      - name: Create dir
+      - name: sleep 5
         run: sleep 5
       
       - name: Run Rsync for CERT data
