@@ -21,7 +21,7 @@ jobs:
           root_dir: ./nvt-feed
           file_path: nvt.tar.xz
       
-      - uses: wilsonzlin/setup-b2@v2
+      - uses: wilsonzlin/setup-b2@v3
       
       - name: Authorize Backblaze Account
         run: b2 authorize-account ${{ secrets.BACKBLAZE_KEYID }} ${{ secrets.BACKBLAZE_APPKEY }}
