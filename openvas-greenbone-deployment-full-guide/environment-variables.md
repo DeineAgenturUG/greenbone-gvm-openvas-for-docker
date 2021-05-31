@@ -1,10 +1,15 @@
-- RELAYHOST : The IP address or hostname of the email relay to send emails through. Default = 172.17.01 
-<!--(This is default for the docker host. If you are running the mail relay on your docker host, this should work, but you will need to make sure you allow the conections through the host`s firewall/iptables)-->
-```
--e RELAYHOST=mail.example.com 
-```
+### Environment variables
 
-- SMTPPORT : The TCP port for the RELAYHOST. Default = 25
-```
--e SMTPPORT=25
-```
+These settings can be set in the docker command line with the --env parameter, or edited in the docker-compose file.
+
+| Name        | Description                                                  | Default Value |
+| --------    | ------------------------------------------------------------ | ------------- |
+| USERNAME    | Default admin username                                       | admin         |
+| PASSWORD    | Default admin password                                       | admin         |
+| DB_PASSWORD | This sets the postgres DB password                           | random        |
+| SSHD        | This needs to be set to true if you are using the remote scanner    | false         |
+| TZ          | Timezone name for a list look here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones | UTC           |
+| RELAYHOST   | The IP address or hostname to send emails through.           | 127.17.0.1|
+| SMTPPORT    | The TCP port for the RELAYHOST                               | 25 |
+| AUTO_SYNC   | Synchronize definitions automatically on start up            | true |
+| HTTPS       | Use HTTPS for the web interface. Use HTTP if false           | true |
