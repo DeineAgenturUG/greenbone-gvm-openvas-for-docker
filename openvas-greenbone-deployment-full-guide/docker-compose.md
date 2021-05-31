@@ -21,7 +21,7 @@ volumes:
 ```
 ##### Environment variables
 
-You can change the environment variables listed. They are already set to their default values. Each setting is documented in [Deploying Distributed Greenbone GVM GSA with openvas](deploying-greenbone-gvm-gsa-with-openvas.md). Note that `DB_PASSWORD='none'` does not set a password at all (doesn't set it to 'none').
+You can change the environment variables listed. They are already set to their default values. Each setting is documented in [Environment Variables](environment-variables.md). Note that `DB_PASSWORD='none'` does not set a password at all (doesn't set it to 'none').
 
 ##### Additional ports
 By default only the web interface is exposed on port 8080. You can change 8080 to a different port if 8080 is already in use on your docker host.  Two additional ports are disabled by default and can be turned on if needed. Just remove the `#` at the start of the line.
