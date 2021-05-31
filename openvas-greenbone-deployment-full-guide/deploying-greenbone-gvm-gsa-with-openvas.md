@@ -9,40 +9,14 @@ This command will pull the image, create the container, and start it:
 docker run --detach --publish 8080:9392 --publish 5432:5432 --publish 2222:22 --env DB_PASSWORD="postgres DB password" --env PASSWORD="webUI password" --volume gvm-data:/data --name gvm securecompliance/gvm
 ```
 If you need to update the container, run `docker pull securecompliance/gvm` to get the latest version before running the above command.
-##### The following are variables that can be set/modified using the `--env` option
+##### Environment variables
 
-| Name     | Description                                                  | Default Value |
-| -------- | ------------------------------------------------------------ | ------------- |
-| USERNAME | Default admin username                                       | admin         |
-| PASSWORD | Default admin password                                       | admin         |
-| DB_PASSWORD | This sets the postgres DB password                        | random        |
-| HTTPS    | If you do not want to use HTTPS this can be set to false                     | true          |
-| SSHD     | This needs to be set to true if you are using the remote scanner    | false         |
-| TZ       | Timezone name for a list look here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones | UTC           |
+Environment variables that can be specified with the --env parameter are documented in [Environment Variables](environment-variables.md).
 
-
+Those settings include the username and password for the web interface, setting the timezone, etc.
 
 
 #### Other options that can be changed in the docker run command:
-
-- USERNAME : Use a different default username. Default = admin
-
-```shell
---env USERNAME="<username>" 
-```
-
-- PASSWORD : password for default user. Default = admin
-> This is for setting the webUI admin password. If you remove this from the command, the default username:password will be admin:admin. You need to change the password inside the quotes.
-```shell
---env PASSWORD="<password>"
-```
-
-- DB_PASSWORD : Database Password
-> This sets the postrgesql database password. This is needed if you are going to use the metabase connection or any other database management tool to run reports that greenbone doesn\'t give you. 
-```shell
---env DB_PASSWORD="<Password>"
-```
-
 
 `--volume gvm-data:/data` - This is for creating a persistent volume so you dont lose your data when you update the container. You can modify the host side (gvm-data) but it needs to mount to /data in the container.
 
@@ -55,7 +29,6 @@ If you need to update the container, run `docker pull securecompliance/gvm` to g
 `--publish 5432:5432` - This opens up access for database management tools to connect to the postgresql database and do advanced reporting, create graphs, etc. 
 
 You can use any ports you\'d like on the host side (left side) but the container side must use the ports specified.
-
 
 ### NVD Download Status
 > NOTE:When you run the docker container for the first time, you may not be able to connect right away. This is because the docker container is downloading nvd information for it.
