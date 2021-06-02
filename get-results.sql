@@ -1,66 +1,56 @@
-select r.host                                                                               as "ip",
-       r.hostname                                                                           as "hostname",
-       rhd_mac.value                                                                        as "mac",
-       rhd_os_txt.value                                                                     as "os_txt",
-       rhd_os_cpe.value                                                                     as "os_cpe",
-       app.cpes                                                                             as "app_cpes",
-       rhd_smb_auth.name                                                                    as "smb_auth_status",
-       rhd_smb_auth.value                                                                   as "smb_auth_info",
-       split_part(r.port, '/', 1)                                                           as "port",
-       split_part(r.port, '/', 2)                                                           as "port_protocol",
-       r.severity                                                                           as "cvss",
+select to_timestamp(r.date)                                                                 as "@timestamp",
+       n.affected                                                                           as "gvm.affected",
+       n.category                                                                           as "gvm.category",
+       n.cve                                                                                as "gvm.cves",
+       n.detection                                                                          as "gvm.detection.method",
+       n.family                                                                             as "gvm.family",
+       n.impact                                                                             as "gvm.impact",
+       n.insight                                                                            as "gvm.insight",
+       n.name                                                                               as "gvm.nvt.name",
+       r.nvt                                                                                as "gvm.nvt.oid",
+       r.id                                                                                 as "gvm.result.id",
+       r.uuid                                                                               as "gvm.result.uuid",
+       to_timestamp(re.date)                                                                as "gvm.scan.date",
+       re.id                                                                                as "gvm.scan.id",
+       concat(t.name, ' - (', to_char(to_timestamp(re.date), 'YYYY-MM-DD HH12:MI AM'), ')') as "gvm.scan.name",
+       t.name                                                                               as "gvm.scan.task.name",
+       rhd_smb_auth.name                                                                    as "gvm.smb.auth.status",
+       rhd_smb_auth.value                                                                   as "gvm.smb.auth.info",
+       n.solution_type                                                                      as "gvm.solution.action",
+       n.solution                                                                           as "gvm.solution.name",
+       r.description                                                                        as "gvm.summary",
+       tar.exclude_hosts                                                                    as "gvm.target.exclude.hosts",
+       tar.hosts                                                                            as "gvm.target.hosts",
+       tar.name                                                                             as "gvm.target.name",
+       pl.name                                                                              as "gvm.port.list",
+       r.qod                                                                                as "gvm.qod",
+       r.host                                                                               as "host.ip",
+       r.hostname                                                                           as "host.name",
+       rhd_mac.value                                                                        as "host.mac",
+       split_part(r.port, '/', 2)                                                           as "network.protocol",
+       rhd_os_txt.value                                                                     as "os.name",
+       rhd_os_cpe.value                                                                     as "os.cpe",
+       app.cpes                                                                             as "package.cpe",
+       split_part(r.port, '/', 1)                                                           as "server.port",
+       cve.ids                                                                              as "vulnerability.id",
+       url.ids                                                                              as "vulnerability.reference",
+       t.uuid                                                                               as "vulnerability.report_id",
+       s.name                                                                               as "vulnerability.scanner.vendor",
+       r.severity                                                                           as "vulnerability.score.base",
        (case
-            when r.severity <= 0 then 'Log'
+            when r.severity <= 0 then 'None'
             when r.severity >= 0.1 and r.severity <= 3.9
                 then 'Low'
             when severity >= 4.0 and severity <= 6.9
                 then 'Medium'
-            when severity >= 7.0 and severity <= 10.0
-                then 'High' end)                                                            as "severity",
-       (case
-            when r.severity <= 0
-                then 1
-            else 0 end)                                                                     as "log",
-       (case
-            when r.severity >= 0.1 and r.severity <= 3.9
-                then 1
-            else 0 end)                                                                     as "low",
-       (case
-            when severity >= 4.0 and severity <= 6.9
-                then 1
-            else 0 end)                                                                     as "medium",
+            when severity >= 7.0 and severity <= 8.9
+                then 'High'
+            when severity >= 9.0 and severity <= 10.0
+                then 'Critical' end)                                                        as "vulnerability.severity",
        (case
             when severity >= 7.0 and severity <= 10.0
-                then 1
-            else 0 end)                                                                     as "high",
-       r.qod                                                                                as "qod",
-       n.solution_type                                                                      as "solution_type",
-       n.name                                                                               as "nvt_name",
-       r.description                                                                        as "summary",
-       r.nvt                                                                                as "nvt_oid",
-       n.cve                                                                                as "cves",
-       t.uuid                                                                               as "task_id",
-       t.name                                                                               as "task_name",
-       s.name                                                                               as "scanner_name",
-       to_timestamp(r.date)                                                                 as "timestamp",
-       r.uuid                                                                               as "result_uuid",
-       r.id                                                                                 as "result_id",
-       n.impact                                                                             as "impact",
-       n.solution                                                                           as "solution",
-       n.affected                                                                           as "affected",
-       n.insight                                                                            as "insight",
-       n.detection                                                                          as "detection_method",
-       n.category                                                                           as "category",
-       n.family                                                                             as "family",
-       cve.ids                                                                              as "cves",
-       url.ids                                                                              as "urls",
-       concat(t.name, ' - (', to_char(to_timestamp(re.date), 'YYYY-MM-DD HH12:MI AM'), ')') as "scan_name",
-       re.id                                                                                as "scan_id",
-       to_timestamp(re.date)                                                                as "scan_date",
-       tar.name                                                                             as "target_name",
-       tar.hosts                                                                            as "target_hosts",
-       tar.exclude_hosts                                                                    as "target_exclude_hosts",
-       pl.name                                                                              as "port_list",
+                then true
+            else false end)                                                                 as "vulnerability.score.high",
        (case
             when n.name like 'Beatport Player %'
                 then 'Beatport Player'
@@ -383,7 +373,7 @@ select r.host                                                                   
                 then 'MongoDB'
             when n.name like 'Microsoft Windows%' or n.name like 'MS Windows %' or n.affected like '%Microsoft Windows%'
                 then 'Microsoft Windows'
-           end)                                                                             as "app"
+           end)                                                                             as "package.name"
 from results r
          left join report_hosts rh on r.host = rh.host and r.report = rh.report
          left join (select *
@@ -421,4 +411,3 @@ from results r
                    on n.oid = url.vt_oid
 where r.id > :sql_last_value
 order by r.id
-limit 10000
