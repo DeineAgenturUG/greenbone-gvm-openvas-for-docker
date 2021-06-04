@@ -20,6 +20,9 @@ write_feed_xml () {
   echo "Online information about this feed: '$FEED_HOME'." >> $FEED_DIR/feed.xml
   echo "</description>" >> $FEED_DIR/feed.xml
   echo "</feed>" >> $FEED_DIR/feed.xml
+  
+  echo $FEED_DIR
+  cat $FEED_DIR/feed.xml
 }
 
 mkdir data
