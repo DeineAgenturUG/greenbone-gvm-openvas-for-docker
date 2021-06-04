@@ -1,6 +1,5 @@
 name: Sync Data
 
-# Controls when the action will run. 
 on:
   schedule:
   - cron: "0 0 * * *"
@@ -12,30 +11,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v2
+      
       - name: Create dir
-        run: mkdir data
-        
-      - name: Run Rsync for NVT Feed data
-        run: rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/nvt-feed ./data/nvt-feed
-      
-      - name: sleep 5
-        run: sleep 5
-      
-      - name: Run Rsync for GVMd data
-        run: rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/data-objects/gvmd/ ./data/gvmd-data
-      
-      - name: sleep 5
-        run: sleep 5
-      
-      - name: Run Rsync for SCAP data
-        run: rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/scap-data ./data/scap-data
-      
-      - name: sleep 5
-        run: sleep 5
-      
-      - name: Run Rsync for CERT data
-        run: rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/cert-data ./data/cert-data
-      
+        run: bash ./download.sh
+
       - name: Create data TAR
         uses: ihiroky/archive-action@v1
         with:
