@@ -3,7 +3,7 @@
 pkgname=greenbone-security-assistant
 _pkgname=gsad
 pkgver=21.4.0
-pkgrel=0
+pkgrel=1
 pkgdesc="Greenbone Security Assistant (gsa) - OpenVAS web frontend"
 url="https://www.openvas.org/"
 arch="all !mips !mips64"

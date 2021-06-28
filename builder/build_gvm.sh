@@ -3,7 +3,12 @@
 # Run the first time to setup keys
 #
 
+BUILD_CHECKSUM=${CHECKSUM:-0}
+
 BuilldAndSingMe() {
+    if [ "${BUILD_CHECKSUM}" == "1" ]; then
+        abuild checksum
+    fi
     sleep 1
     abuild -c -r -P /target
     sleep 1
