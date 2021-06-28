@@ -1,0 +1,22 @@
+diff --git a/src/manage_sql.c b/src/manage_sql.c
+index b41e5c6..a36acdf 100644
+--- a/src/manage_sql.c
++++ b/src/manage_sql.c
+@@ -26579,7 +26579,7 @@ host_summary_append (GString *host_summary_buffer, const char *host,
+           struct tm start_tm;
+ 
+           memset (&start_tm, 0, sizeof (struct tm));
+-          if (strptime (start_iso, "%FT%H:%M:%S", &start_tm) == NULL)
++          if (strptime (start_iso, "%Y-%m-%dT%H:%M:%S", &start_tm) == NULL)
+             {
+               g_warning ("%s: Failed to parse start", __func__);
+               return;
+@@ -26599,7 +26599,7 @@ host_summary_append (GString *host_summary_buffer, const char *host,
+           struct tm end_tm;
+ 
+           memset (&end_tm, 0, sizeof (struct tm));
+-          if (strptime (end_iso, "%FT%H:%M:%S", &end_tm) == NULL)
++          if (strptime (end_iso, "%Y-%m-%dT%H:%M:%S", &end_tm) == NULL)
+             {
+               g_warning ("%s: Failed to parse end", __func__);
+               return;

@@ -1,0 +1,8 @@
+/target/main/
+/target/community/
+
+https://dl-5.alpinelinux.org/alpine/v3.14/main
+https://dl-cdn.alpinelinux.org/alpine/v3.14/main
+https://dl-5.alpinelinux.org/alpine/v3.14/community
+https://dl-cdn.alpinelinux.org/alpine/v3.14/community
+
