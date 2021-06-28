@@ -42,7 +42,7 @@ aports_update_V3.14: aports_set_V3.14
 user.abuild:
 	mkdir -p user.abuild
 
-build: builder target aports
+build: builder target
 	docker run -ti \
 		-v ${PWD}/user.abuild/:/home/packager/.abuild \
 		-v ${PWD}/aports2:/work \

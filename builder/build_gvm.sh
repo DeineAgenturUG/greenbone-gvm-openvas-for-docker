@@ -3,8 +3,6 @@
 # Run the first time to setup keys
 #
 
-~/bin/apkrepo.sh
-
 BuilldAndSingMe() {
     sleep 1
     abuild -c -r -P /target
