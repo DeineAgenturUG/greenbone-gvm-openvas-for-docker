@@ -27,4 +27,4 @@ if [ "${numpub2}" -gt "0" ]; then
     unset PACKAGER_PRIVKEY
 fi
 
-exec sh
+exec "$@"

@@ -49,4 +49,4 @@ build: builder target
 		-v ${PWD}/target:/target \
 		-v ${HOME}/.gitconfig/:/home/packager/.gitconfig \
 		apk_builder:${BUILD_ID} \
-		sh
+		sh -c '~/bin/build.sh'
