@@ -1,5 +1,6 @@
 
 BUILD_ID ?= ${USER}
+CHECKSUM ?= ${CHECKSUM:-0}
 
 
 .PHONY: builder
@@ -8,6 +9,7 @@ builder:
 
 target:
 	mkdir -p target
+	rm -rf target/*.tar.gz target/*.apk
 	mkdir -p aports2
 
 .PHONY: cp_build_files
@@ -48,5 +50,16 @@ build: builder target
 		-v ${PWD}/aports2:/work \
 		-v ${PWD}/target:/target \
 		-v ${HOME}/.gitconfig/:/home/packager/.gitconfig \
+		-e CHECKSUM=${CHECKSUM} \
 		apk_builder:${BUILD_ID} \
 		sh -c '~/bin/build.sh'
+
+build2: builder target
+	docker run -ti \
+		-v ${PWD}/user.abuild/:/home/packager/.abuild \
+		-v ${PWD}/aports2:/work \
+		-v ${PWD}/target:/target \
+		-v ${HOME}/.gitconfig/:/home/packager/.gitconfig \
+		-e CHECKSUM=${CHECKSUM} \
+		apk_builder:${BUILD_ID} \
+		sh 

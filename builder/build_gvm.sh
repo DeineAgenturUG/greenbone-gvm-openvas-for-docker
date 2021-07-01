@@ -15,9 +15,7 @@ BuilldAndSingMe() {
     cd /target/community/x86_64/ || exit
     sleep 1
     apk index -o APKINDEX.tar.gz *.apk
-    sleep 1
     abuild-sign APKINDEX.tar.gz
-    sleep 1
 }
 BuildThis() {
     cd /work/community/"$1"/ || exit
@@ -32,3 +30,18 @@ BuildThis py3-gvm
 BuildThis gvm-tools
 BuildThis ospd-openvas
 BuildThis greenbone-security-assistant
+BuildThis texlive
+
+sleep 10
+
+cd /target/community/x86_64/ || exit
+sleep 1
+apk index -o APKINDEX.tar.gz *.apk
+abuild-sign APKINDEX.tar.gz
+
+cd /target/community/noarch/ || exit
+cp ../x86_64/py3-gvm*.apk ./
+cp ../x86_64/ospd-openvas*.apk ./
+sleep 1
+apk index -o APKINDEX.tar.gz *.apk
+abuild-sign APKINDEX.tar.gz
