@@ -10,6 +10,7 @@ You must edit the docker-compose.yml file to suit your environment.
 
 At a minimum, you must replace `<path to data>` with the path on the host system or a docker volume to store persistent data in. The path can be absolute or relative to the directory you are launching the container from eg:
 
+Before and equal TAG `21.4.0-v5` 
 ```yaml
 volumes:
     - ./gvmdata:/data
@@ -18,6 +19,15 @@ or
 ```yaml
 volumes:
     - /opt/gvmdata:/data
+```
+
+With TAG after `21.4.0-v5`
+```yaml
+volumes:
+    - ./storage/postgres-db:/opt/database
+    - ./storage/openvas-plugins:/var/lib/openvas/plugins
+    - ./storage/gvm:/var/lib/gvm
+    - ./storage/ssh:/etc/ssh 
 ```
 ##### Environment variables
 

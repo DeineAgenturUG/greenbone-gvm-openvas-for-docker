@@ -8,4 +8,5 @@
   * [Setup Remote OpenVAS Scanner](openvas-greenbone-deployment-full-guide/setup-remote-openvas-scanner.md)
   * [Environment Variables](openvas-greenbone-deployment-full-guide/environment-variables.md)
   * [FAQ](openvas-greenbone-deployment-full-guide/faq.md)
+  * [Build](openvas-greenbone-deployment-full-guide/build.md)
 
