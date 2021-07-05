@@ -1,0 +1,21 @@
+diff -ruN aports2/community/gvm-libs/APKBUILD aports/community/gvm-libs/APKBUILD
+--- aports2/community/gvm-libs/APKBUILD	2021-07-01 15:22:58.677870926 +0200
++++ aports/community/gvm-libs/APKBUILD	2021-06-28 21:19:03.920045864 +0200
+@@ -2,7 +2,7 @@
+ # Maintainer: Francesco Colista <fcolista@alpinelinux.org>
+ pkgname=gvm-libs
+ pkgver=21.4.1
+-pkgrel=10
++pkgrel=0
+ pkgdesc="Greenbone Vulnerability Management Libraries"
+ url="https://www.openvas.org/"
+ arch="all"
+@@ -39,7 +39,7 @@
+ 		-DSYSCONFDIR=/etc \
+ 		-DLOCALSTATEDIR=/var \
+ 		-DGVM_PID_DIR=/var/lib/gvm \
+-		..
++	..
+ 	make
+ }
+ 

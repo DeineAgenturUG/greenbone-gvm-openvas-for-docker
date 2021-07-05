@@ -1,0 +1,30 @@
+diff -ruN aports2/community/openvas/APKBUILD aports/community/openvas/APKBUILD
+--- aports2/community/openvas/APKBUILD	2021-07-04 19:05:22.950943781 +0200
++++ aports/community/openvas/APKBUILD	2021-06-28 21:19:04.076047047 +0200
+@@ -3,7 +3,7 @@
+ # Maintainer: Francesco Colista <fcolista@alpinelinux.org>
+ pkgname=openvas
+ pkgver=21.4.1
+-pkgrel=10
++pkgrel=0
+ pkgdesc="Open Vulnerability Assessment Scanner"
+ url="https://openvas.org/"
+ arch="all !x86 !armhf !armv7" # Fails to build, see #12616
+@@ -15,7 +15,7 @@
+ makedepends="cmake bison gvm-libs-dev glib-dev libgcrypt-dev
+ 	doxygen xmltoman graphviz libpcap-dev gpgme-dev
+ 	clang-dev libssh-dev libksba-dev net-snmp-dev
+-	linux-headers glibmm-dev flex"
++	linux-headers glibmm-dev"
+ subpackages="$pkgname-doc $pkgname-config"
+ source="$pkgname-$pkgver.tar.gz::https://github.com/greenbone/openvas/archive/v$pkgver.tar.gz
+ 	greenbone-nvt-sync.cron
+@@ -39,7 +39,7 @@
+ 		-DSYSCONFDIR=/etc \
+ 		-DLOCALSTATEDIR=/var \
+ 		-DOPENVAS_RUN_DIR=/run/ospd \
+-		..
++	..
+ 	make
+ }
+ 
