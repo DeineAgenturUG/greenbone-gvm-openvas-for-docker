@@ -42,7 +42,7 @@ abuild-sign APKINDEX.tar.gz
 cd /target/community/noarch/ || exit
 cp ../x86_64/py3-gvm*.apk ./
 cp ../x86_64/gvm-tools*.apk ./
-cp ../x86_64/ospd-openvas*.apk ./
+cp ../x86_64/ospd*.apk ./
 sleep 1
 apk index -o APKINDEX.tar.gz *.apk
 abuild-sign APKINDEX.tar.gz
