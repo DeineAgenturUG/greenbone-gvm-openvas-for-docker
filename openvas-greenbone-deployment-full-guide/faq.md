@@ -5,14 +5,17 @@
 
 
 ```shell
+# this can be run direct in the container
 su -c "gvmd --user=admin --new-password=new_password" gvm
-```
 
+# or
+# run this from host
+docker exec -ti <docker-container-id-or-name> /reset-gvmd-admin-password.sh
+```
 
 ---------
 
 ### Question 2 - python-gvm for automation with the docker image but while establishing connection it fails saying "could not find /usr/local/var/run/gvmd.sock"
-
 
 
 
@@ -22,9 +25,9 @@ su -c "gvmd --listen=0.0.0.0 --port=9390"
 
 # gvm in the start.sh with
 
-su -c "gvmd --unix-socket=/data/gvmd/gvmd.sock" gvm. 
+su -c "gvmd --unix-socket=/usr/var/run/gvmd.sock/gvmd.sock" gvm. 
 
-# This will create a socket in the /data/gvmd folder
+# This will create a socket in the /usr/var/run/ folder
 ```
 
 
@@ -43,7 +46,7 @@ su -c "gvmd --unix-socket=/data/gvmd/gvmd.sock" gvm.
 
 enable SSH, and have docker map it to port `9222`
 
-add a public key to `/data/scanner-ssh-keys/authorized_keys`
+add a public key to `var/lib/gvm/.ssh/authorized_keys`
 
 Then use ssh port forwarding to access the API port with `ssh -N -L 9390:localhost:9390 gvm@localhost -p 9222 -i <private key file>`
 

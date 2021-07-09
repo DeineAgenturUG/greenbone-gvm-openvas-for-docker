@@ -5,8 +5,15 @@ Read this entire page before starting your container.
 
 
 This command will pull the image, create the container, and start it:
+
+Before and equal Image TAG `21.4.0-v5` 
 ```console
 docker run --detach --publish 8080:9392 --publish 5432:5432 --publish 2222:22 --env DB_PASSWORD="postgres DB password" --env PASSWORD="webUI password" --volume gvm-data:/data --name gvm securecompliance/gvm
+```
+
+With Image TAG after `21.4.0-v5`
+```console
+docker run --detach --publish 8080:9392 --publish 5432:5432 --publish 2222:22 --env DB_PASSWORD="postgres DB password" --env PASSWORD="webUI password" --volume ./storage/postgres-db:/opt/database --volume ./storage/openvas-plugins:/var/lib/openvas/plugin --volume ./storage/gvm:/var/lib/gvm --volume ./storage/ssh:/etc/ssh --name gvm securecompliance/gvm
 ```
 If you need to update the container, run `docker pull securecompliance/gvm` to get the latest version before running the above command.
 ##### Environment variables
@@ -18,11 +25,23 @@ Those settings include the username and password for the web interface, setting 
 
 #### Other options that can be changed in the docker run command:
 
-`--volume gvm-data:/data` - This is for creating a persistent volume so you dont lose your data when you update the container. You can modify the host side (gvm-data) but it needs to mount to /data in the container.
+```
+# until TAG <= 21.4.0-v5
+--volume gvm-data:/data
+
+# or TAG > 21.4.0-v5
+--volume ./storage/postgres-db:/opt/database 
+--volume ./storage/openvas-plugins:/var/lib/openvas/plugin 
+--volume ./storage/gvm:/var/lib/gvm 
+--volume ./storage/ssh:/etc/ssh
+``` 
+`--volume gvm-data:/data` This is for creating a persistent volume so you dont lose your data when you update the container. You can modify the host side (gvm-data) but it needs to mount to /data in the container.
 
 `--name gvm` Obviously you can name it whatever you\'d like. The rest of the documentation will assume that you\'ve named it gvm like we did in our example.
 
 `--publish 8080:9392` - This is the port designation for the WebUI.
+
+`--publish 8081:8081` - This is the port designation for the Supervisor WebUI -> Don't make it public to the internet!
 
 `--publish 2222:22` - This is required if you would like to run the distrubted scanner setup. This allows the remote scanner to connect back to the host over SSH. For security reasons, shell access is not allowed. This is **only** for the remote sensor to communicate with the GVM.
 
@@ -32,16 +51,24 @@ You can use any ports you\'d like on the host side (left side) but the container
 
 ### NVD Download Status
 > NOTE:When you run the docker container for the first time, you may not be able to connect right away. This is because the docker container is downloading nvd information for it.
-> 
+>
+> !!! It can take based on you bandwidth up to 10 minutes or longer.
 
 To check the status of the NVD download for the docker container please run this command
 
 ```bash
 docker logs -f --tail=20 <container-name>
+
+# or
+docker exec -ti <nameOrIDofContainer> cat /var/log/gvm/(gvmd|openvas|gsad).log 
+
+# or
+docker exec -ti <nameOrIDofContainer> supervisorctl tail <service>
 ```
 
 **RESULT**
 ```
+### THIS IS AN EXAMPLE ###
 COPYING
           1,719 100%    1.64MB/s    0:00:00 (xfr#1, to-chk=43/45)
 nvdcve-2.0-2002.xml
