@@ -30,7 +30,7 @@ BuildThis py3-gvm
 BuildThis gvm-tools
 BuildThis ospd-openvas
 BuildThis greenbone-security-assistant
-BuildThis texlive
+# BuildThis texlive
 
 sleep 10
 
