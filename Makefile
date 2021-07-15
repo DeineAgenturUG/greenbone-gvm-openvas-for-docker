@@ -45,7 +45,7 @@ user.abuild:
 	mkdir -p user.abuild
 
 build: builder target
-	docker run -ti \
+	docker run \
 		-v ${PWD}/user.abuild/:/home/packager/.abuild \
 		-v ${PWD}/aports2:/work \
 		-v ${PWD}/target:/target \
