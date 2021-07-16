@@ -124,7 +124,27 @@ gvmd –-delete-user=MyUser2 --inheritor=MyUser
 Ensuring you take note of the password for the 2nd create user
 
 
+### Question 8 - How can I use my own SSL Certificate?
 
+#### Solution 1
+
+You can build your own image:
+```
+FROM securecompliance/gvm:latest
+ENV HTTPS=true \
+    CERTIFICATE=/etc/ssl/cert/MY_SSL_CERT.pem \
+    CERTIFICATE_KEY=/etc/ssl/private/MY_SSL_CERT.key
+COPY ./ssl/MY_SSL_CERT.pem /etc/ssl/cert/MY_SSL_CERT.pem
+COPY ./ssl/MY_SSL_CERT.key /etc/ssl/private/MY_SSL_CERT.key
+RUN chmod 0644 /etc/ssl/cert/MY_SSL_CERT.pem ; chmod 0600 /etc/ssl/private/MY_SSL_CERT.key
+```
+
+
+#### Solution 2
+
+You can use Volumes:
+
+`-v ./ssl/:/secrets/ssl/ -e HTTPS=true -e CERTIFICATE=/secrets/ssl/MY_SSL_CERT.pem -e CERTIFICATE=/secrets/ssl/MY_SSL_CERT.key`
 
 
 

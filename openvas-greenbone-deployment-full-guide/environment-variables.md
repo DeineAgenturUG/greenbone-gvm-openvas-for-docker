@@ -15,4 +15,6 @@ These settings can be set in the docker command line with the --env parameter, o
 | SMTPPORT    | The TCP port for the RELAYHOST                               | 25 |
 | AUTO_SYNC   | Synchronize definitions automatically on start up            | true |
 | HTTPS       | Use HTTPS for the web interface. Use HTTP if false           | true |
+| CERTIFICATE | Use the Path to your SSL-Certificate | none |
+| CERTIFICATE_KEY | Use the Path to your SSL-Certificate Private Key | none |
 | OPT_PDF     | Install deps for PDF Reports (texlive) on firststart         | 0 |
