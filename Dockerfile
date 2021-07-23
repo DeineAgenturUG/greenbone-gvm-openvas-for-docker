@@ -1,94 +1,74 @@
-FROM ubuntu:20.10
+FROM alpine:3
 
-ENV DEBIAN_FRONTEND=noninteractive
-ENV LANG=C.UTF-8
+ENTRYPOINT [ "/entrypoint.sh" ]
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
 
-COPY install-pkgs.sh /install-pkgs.sh
+ARG SUPVISD=supervisorctl
+ARG DEBUG=N
+ARG TZ=UTC
+ARG SETUP=0
 
-RUN bash /install-pkgs.sh
+RUN mkdir -p /repo/main \
+    && mkdir -p /repo/community
 
-ENV gvm_libs_version="v21.4.0" \
-    openvas_scanner_version="v21.4.0" \
-    openvas_smb="v21.4.0" \
-    open_scanner_protocol_daemon="v21.4.0" \
-    ospd_openvas="v21.4.0"
+COPY apk-build/target/ /repo/
+COPY apk-build/user.abuild/*.pub /etc/apk/keys/
 
-RUN echo "Starting Build..." && mkdir /build
+ENV SUPVISD=${SUPVISD:-supervisorctl} \
+    DEBUG=${DEBUG:-N} \
+    TZ=${TZ:-UTC} \
+    SETUP=${SETUP:-0}
 
-    #
-    # install libraries module for the Greenbone Vulnerability Management Solution
-    #
-    
-RUN cd /build && \
-    wget --no-verbose https://github.com/greenbone/gvm-libs/archive/$gvm_libs_version.tar.gz && \
-    tar -zxf $gvm_libs_version.tar.gz && \
-    cd /build/*/ && \
-    mkdir build && \
-    cd build && \
-    cmake -DCMAKE_BUILD_TYPE=Release .. && \
-    make && \
-    make install && \
-    cd /build && \
-    rm -rf *
+RUN { \
+    echo '@custcom /repo/community/'; \
+    echo 'https://dl-5.alpinelinux.org/alpine/v3.14/main/' ; \
+    echo 'https://dl-5.alpinelinux.org/alpine/v3.14/community/' ;\
+    echo 'https://dl-4.alpinelinux.org/alpine/v3.14/main/' ; \
+    echo 'https://dl-4.alpinelinux.org/alpine/v3.14/community/' ;\
+    echo 'https://dl-cdn.alpinelinux.org/alpine/v3.14/main/' ; \
+    echo 'https://dl-cdn.alpinelinux.org/alpine/v3.14/community/' ; \
+    } >/etc/apk/repositories \
+    && cat /etc/apk/repositories \
+    && sleep 5 \
+    && apk update --update-cache \
+    && sleep 5 \
+    && apk upgrade --available \
+    && sleep 5 \
+    && apk add --allow-untrusted curl su-exec tzdata bash openssh supervisor openvas@custcom openvas-smb@custcom openvas-config@custcom gvm-libs@custcom ospd-openvas@custcom \
+    && mkdir -p /var/log/supervisor/ \
+    && sync
 
-    #
-    # install smb module for the OpenVAS Scanner
-    #
-    
-RUN cd /build && \
-    wget --no-verbose https://github.com/greenbone/openvas-smb/archive/$openvas_smb.tar.gz && \
-    tar -zxf $openvas_smb.tar.gz && \
-    cd /build/*/ && \
-    mkdir build && \
-    cd build && \
-    cmake -DCMAKE_BUILD_TYPE=Release .. && \
-    make && \
-    make install && \
-    cd /build && \
-    rm -rf *
-    
-    #
-    # Install Open Vulnerability Assessment System (OpenVAS) Scanner of the Greenbone Vulnerability Management (GVM) Solution
-    #
-    
-RUN cd /build && \
-    wget --no-verbose https://github.com/greenbone/openvas-scanner/archive/$openvas_scanner_version.tar.gz && \
-    tar -zxf $openvas_scanner_version.tar.gz && \
-    cd /build/*/ && \
-    mkdir build && \
-    cd build && \
-    cmake -DCMAKE_BUILD_TYPE=Release .. && \
-    make && \
-    make install && \
-    cd /build && \
-    rm -rf *
-    
-    #
-    # Install Open Scanner Protocol daemon (OSPd)
-    #
-    
-RUN cd /build && \
-    wget --no-verbose https://github.com/greenbone/ospd/archive/$open_scanner_protocol_daemon.tar.gz && \
-    tar -zxf $open_scanner_protocol_daemon.tar.gz && \
-    cd /build/*/ && \
-    python3 setup.py install && \
-    cd /build && \
-    rm -rf *
-    
-    #
-    # Install Open Scanner Protocol for OpenVAS
-    #
-    
-RUN cd /build && \
-    wget --no-verbose https://github.com/greenbone/ospd-openvas/archive/$ospd_openvas.tar.gz && \
-    tar -zxf $ospd_openvas.tar.gz && \
-    cd /build/*/ && \
-    python3 setup.py install && \
-    cd /build && \
-    rm -rf *
-    
-RUN echo "/usr/local/lib" > /etc/ld.so.conf.d/openvas.conf && ldconfig && cd / && rm -rf /build
-
+COPY gvm-sync-data/gvm-sync-data.tar.xz /opt/gvm-sync-data.tar.xz
 COPY scripts/* /
+COPY config/supervisord.conf /etc/supervisord.conf
+COPY config/redis-openvas.conf /etc/redis.conf
 
-ENTRYPOINT ["/start.sh"]
+VOLUME [ "/var/lib/openvas/plugins" ]
+
+RUN if [ "${SETUP}" == "1" ]; then \
+    ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" >/etc/timezone \
+    && /usr/bin/supervisord -c /etc/supervisord.conf || true ; \
+    unset SETUP ;\
+    fi \
+    && rm /etc/localtime || true\
+    && echo "UTC" >/etc/timezone \
+    && rm -rf /tmp/* /var/cache/apk/* \
+    && echo "!!! FINISH Setup !!!"
+
+#
+#   Owned by User gvm
+#
+#       /run/ospd
+#       /var/lib/openvas/plugins
+#       /var/lib/gvm
+#       /var/lib/gvm/gvmd
+#       /var/lib/gvm/gvmd/gnupg
+#       /var/log/gvm
+#
+#   Owned by Group gvm
+#
+#       /run/ospd
+#       /var/lib/gvm
+#       /var/lib/gvm/gvmd
+#       /var/lib/gvm/gvmd/gnupg
+#
