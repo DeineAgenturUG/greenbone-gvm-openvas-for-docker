@@ -3,6 +3,9 @@
 # Run the first time to setup keys
 #
 
+mkdir -p /target/community/noarch/
+mkdir -p /target/community/x86_64/
+
 BUILD_CHECKSUM=${CHECKSUM:-0}
 
 BuilldAndSingMe() {
