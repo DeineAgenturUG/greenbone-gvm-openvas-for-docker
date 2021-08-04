@@ -1,7 +1,7 @@
 # Contributor: Francesco Colista <fcolista@alpinelinux.org>
 # Maintainer: Francesco Colista <fcolista@alpinelinux.org>
 pkgname=ospd
-pkgver=21.4.1
+pkgver=21.4.3
 pkgrel=10
 pkgdesc="Collection of scanner wrappers for OpenVAS"
 url="https://www.openvas.org/"
