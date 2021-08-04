@@ -13,7 +13,7 @@ docker run --detach --publish 8080:9392 --publish 5432:5432 --publish 2222:22 --
 
 With Image TAG after `21.4.0-v5`
 ```console
-docker run --detach --publish 8080:9392 --publish 5432:5432 --publish 2222:22 --env DB_PASSWORD="postgres DB password" --env PASSWORD="webUI password" --volume ./storage/postgres-db:/opt/database --volume ./storage/openvas-plugins:/var/lib/openvas/plugin --volume ./storage/gvm:/var/lib/gvm --volume ./storage/ssh:/etc/ssh --name gvm securecompliance/gvm
+docker run --detach --publish 8080:9392 --publish 5432:5432 --publish 2222:22 --env DB_PASSWORD="postgres DB password" --env PASSWORD="webUI password" --volume ./storage/postgres-db:/opt/database --volume ./storage/openvas-plugins:/var/lib/openvas/plugins --volume ./storage/gvm:/var/lib/gvm --volume ./storage/ssh:/etc/ssh --name gvm securecompliance/gvm
 ```
 If you need to update the container, run `docker pull securecompliance/gvm` to get the latest version before running the above command.
 ##### Environment variables
@@ -31,7 +31,7 @@ Those settings include the username and password for the web interface, setting 
 
 # or TAG > 21.4.0-v5
 --volume ./storage/postgres-db:/opt/database 
---volume ./storage/openvas-plugins:/var/lib/openvas/plugin 
+--volume ./storage/openvas-plugins:/var/lib/openvas/plugins
 --volume ./storage/gvm:/var/lib/gvm 
 --volume ./storage/ssh:/etc/ssh
 ``` 
