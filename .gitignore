@@ -1,4 +1,6 @@
 .*.swp
+/*.tar.gz
+/jq*.json
 user.abuild/
 target/
 aports/
