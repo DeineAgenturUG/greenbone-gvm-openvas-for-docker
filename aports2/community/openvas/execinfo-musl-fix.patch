@@ -1,5 +1,5 @@
 diff --git a/src/sighand.c b/src/sighand.c
-index c82e7e3..4d7001e 100644
+index 38205ec4..72b2e056 100644
 --- a/src/sighand.c
 +++ b/src/sighand.c
 @@ -22,8 +22,9 @@
@@ -13,16 +13,16 @@ index c82e7e3..4d7001e 100644
  #include <glib.h>     /* for G_LOG_DOMAIN, for g_critical() */
  #include <signal.h>   /* for kill() */
  #include <sys/wait.h> /* for waitpid() */
-@@ -106,7 +107,7 @@ sighand_chld (pid_t pid)
- 
-   waitpid (pid, &status, WNOHANG);
+@@ -105,7 +106,7 @@ sighand_chld (int sig)
+   (void) sig;
+   waitpid (-1, NULL, WNOHANG);
  }
 -
 +#ifdef HAVE_EXECINFO_H
  static void
- print_trace ()
+ print_trace (void)
  {
-@@ -125,12 +126,15 @@ print_trace ()
+@@ -124,12 +125,15 @@ print_trace (void)
  
    g_free (strings);
  }

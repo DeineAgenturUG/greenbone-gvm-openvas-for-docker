@@ -30,12 +30,12 @@ for name in gvmd gsa gvm-libs gvm-tools ospd ospd-openvas openvas-scanner openva
     echo ">>> ${name}: ${version}"
 
     LOCALDIR="${MYDIR}/aports2/community/${TOOLMATCHES[$name]}/"
-    rm -rf "${LOCALDIR}src/"
+    #rm -rf "${LOCALDIR}src/"
     LOCALREPO="${MYDIR}/src/${TOOLMATCHES[$name]}"
-    rm -rf "$LOCALREPO"
+    #rm -rf "$LOCALREPO"
     git clone https://github.com/greenbone/${name}.git "${LOCALREPO}" 2>/dev/null || git -C "${LOCALREPO}" pull
     git -C "${LOCALREPO}" fetch --all --tags
-    git -C "${LOCALREPO}" checkout "tags/${version}"
+    git -C "${LOCALREPO}" checkout -qf "tags/${version}"
     git -C "${LOCALREPO}" reset --hard HEAD
     #echo "${jsonData}" | jq --arg PVERSION "${version}" -r '.[] | select(.tag_name | startswith($PVERSION)).tarball_url' <"jq_${name}.json" | xargs curl -L -o "./${name}_${version}.tar.gz"
     #jq --arg PVERSION "${version}" -r '.[] | select(.tag_name | startswith($PVERSION)).tarball_url' <"jq_${name}.json" | xargs curl -L -o "./${name}_${version}.tar.gz"
