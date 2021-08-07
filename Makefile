@@ -46,6 +46,7 @@ user.abuild:
 
 build: builder target
 	docker run \
+		--name apk_builder \
 		-v ${PWD}/user.abuild/:/home/packager/.abuild \
 		-v ${PWD}/aports2:/work \
 		-v ${PWD}/target:/target \
@@ -56,6 +57,7 @@ build: builder target
 
 build2: builder target
 	docker run -ti \
+		--name apk_builder2 \
 		-v ${PWD}/user.abuild/:/home/packager/.abuild \
 		-v ${PWD}/aports2:/work \
 		-v ${PWD}/target:/target \
