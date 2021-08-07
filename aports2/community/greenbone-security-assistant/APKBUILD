@@ -11,7 +11,7 @@ license="GPL-2.0-or-later"
 depends="wget"
 makedepends="cmake doxygen xmltoman graphviz gvm-libs-dev
 	libxslt-dev libmicrohttpd-dev py3-polib libgcrypt-dev
-	nodejs-current npm yarn clang-dev"
+	nodejs-current npm yarn clang-dev glib-dev"
 checkdepends="cppcheck"
 subpackages="$pkgname-doc $pkgname-openrc"
 source="$pkgname-$pkgver.tar.gz::https://github.com/greenbone/gsa/archive/v$pkgver.tar.gz
