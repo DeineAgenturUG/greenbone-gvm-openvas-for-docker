@@ -1,0 +1,530 @@
+diff --git a/misc/network.c b/misc/network.c
+index e4227dc9..eb4e98de 100644
+--- a/misc/network.c
++++ b/misc/network.c
+@@ -29,7 +29,7 @@
+ #include <arpa/inet.h> /* for inet_pton */
+ #include <errno.h>
+ #include <fcntl.h>
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <gnutls/gnutls.h>
+ #include <gnutls/x509.h>
+ #include <gvm/base/logging.h>
+diff --git a/misc/scanneraux.h b/misc/scanneraux.h
+index 3f852a7f..d107678f 100644
+--- a/misc/scanneraux.h
++++ b/misc/scanneraux.h
+@@ -25,7 +25,7 @@
+ #ifndef _OPENVAS_SCANNERAUX_H
+ #define _OPENVAS_SCANNERAUX_H
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <gvm/base/nvti.h>
+ #include <gvm/util/kb.h>
+ 
+diff --git a/misc/strutils.c b/misc/strutils.c
+index 829c2939..21dbb84f 100644
+--- a/misc/strutils.c
++++ b/misc/strutils.c
+@@ -16,7 +16,7 @@
+  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
+  */
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ /**
+  * @brief Matches a string against a pattern.
+diff --git a/misc/strutils.h b/misc/strutils.h
+index 8e2a595b..88d39804 100644
+--- a/misc/strutils.h
++++ b/misc/strutils.h
+@@ -19,7 +19,7 @@
+ #ifndef MISC2_STRUTILS_H__
+ #define MISC2_STRUTILS_H__
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ int
+ str_match (const gchar *, const gchar *, int);
+diff --git a/misc/vendorversion.c b/misc/vendorversion.c
+index b816f02a..1440e43b 100644
+--- a/misc/vendorversion.c
++++ b/misc/vendorversion.c
+@@ -24,7 +24,7 @@
+ 
+ #include "vendorversion.h"
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ /**
+  * @brief Vendor version, or NULL.
+diff --git a/misc/vendorversion.h b/misc/vendorversion.h
+index e3291e8a..1305de16 100644
+--- a/misc/vendorversion.h
++++ b/misc/vendorversion.h
+@@ -25,7 +25,7 @@
+ #ifndef _OPENVAS_VENDORVERSION_H
+ #define _OPENVAS_VENDORVERSION_H
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ const gchar *
+ vendor_version_get (void);
+diff --git a/nasl/capture_packet.c b/nasl/capture_packet.c
+index 1013d27f..5876b9e1 100644
+--- a/nasl/capture_packet.c
++++ b/nasl/capture_packet.c
+@@ -22,7 +22,7 @@
+ #include "../misc/pcap_openvas.h" /* for get_datalink_size */
+ 
+ #include <arpa/inet.h> /* for inet_ntoa */
+-#include <glib.h>      /* for gfree */
++#include <glib-2.0/glib.h>      /* for gfree */
+ #include <netinet/ip.h>
+ #include <pcap.h>
+ #include <string.h> /* for bcopy */
+diff --git a/nasl/exec.c b/nasl/exec.c
+index 5157cdf2..304cccc9 100644
+--- a/nasl/exec.c
++++ b/nasl/exec.c
+@@ -31,8 +31,8 @@
+ #include "nasl_tree.h"
+ #include "nasl_var.h"
+ 
+-#include <glib.h>        /* for g_get_current_dir and others */
+-#include <glib/gstdio.h> /* for g_chdir */
++#include <glib-2.0/glib.h>        /* for g_get_current_dir and others */
++#include <glib-2.0/glib/gstdio.h> /* for g_chdir */
+ #include <gvm/base/logging.h>
+ #include <gvm/base/prefs.h>     /* for prefs_get */
+ #include <gvm/util/nvticache.h> /* for nvticache_get_kb */
+diff --git a/nasl/iconv.c b/nasl/iconv.c
+index 4fff507a..88749fd4 100644
+--- a/nasl/iconv.c
++++ b/nasl/iconv.c
+@@ -29,7 +29,7 @@
+ #include "charset.h"
+ #include "smb.h"
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ typedef unsigned int bool;
+ 
+diff --git a/nasl/nasl-lint.c b/nasl/nasl-lint.c
+index 1a4f3e9f..34690b0b 100644
+--- a/nasl/nasl-lint.c
++++ b/nasl/nasl-lint.c
+@@ -24,8 +24,8 @@
+ 
+ #include "nasl.h" /* exec_nasl_script */
+ 
+-#include <gio/gio.h> /* g_file_... */
+-#include <glib.h>    /* gchar, g_malloc, g_error, g_print, ... */
++#include <glib-2.0/gio/gio.h> /* g_file_... */
++#include <glib-2.0/glib.h>    /* gchar, g_malloc, g_error, g_print, ... */
+ #include <stdio.h>   /* for printf */
+ #include <stdlib.h>  /* for exit */
+ 
+diff --git a/nasl/nasl.c b/nasl/nasl.c
+index 5061f05e..6deb642d 100644
+--- a/nasl/nasl.c
++++ b/nasl/nasl.c
+@@ -32,7 +32,7 @@
+ 
+ #include <errno.h>  /* for errno */
+ #include <gcrypt.h> /* for gcry_control */
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <gnutls/gnutls.h>       /* for gnutls_check_version */
+ #include <gpgme.h>               /* for gpgme_check_version */
+ #include <gvm/base/hosts.h>      /* for gvm_hosts_* and gvm_host_* */
+diff --git a/nasl/nasl.h b/nasl/nasl.h
+index e341e316..6e17a235 100644
+--- a/nasl/nasl.h
++++ b/nasl/nasl.h
+@@ -21,7 +21,7 @@
+ 
+ #include "../misc/scanneraux.h"
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ /* Signature information extraction and verification (not nasl- specific
+   anymore, thus likely to be moved to openvas-libraries): */
+diff --git a/nasl/nasl_builtin_find_service.c b/nasl/nasl_builtin_find_service.c
+index d3c55109..7de2871c 100644
+--- a/nasl/nasl_builtin_find_service.c
++++ b/nasl/nasl_builtin_find_service.c
+@@ -25,7 +25,7 @@
+ 
+ #include <ctype.h> /* for tolower() */
+ #include <errno.h> /* for errno() */
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <gvm/util/nvticache.h>
+ #include <regex.h>     /* for regex_t */
+ #include <signal.h>    /* for signal() */
+diff --git a/nasl/nasl_builtin_openvas_tcp_scanner.c b/nasl/nasl_builtin_openvas_tcp_scanner.c
+index 96a12df6..44d7d99a 100644
+--- a/nasl/nasl_builtin_openvas_tcp_scanner.c
++++ b/nasl/nasl_builtin_openvas_tcp_scanner.c
+@@ -22,7 +22,7 @@
+ 
+ #include <errno.h> /* for errno() */
+ #include <fcntl.h> /* for fcntl() */
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <gvm/base/logging.h>
+ #include <gvm/base/prefs.h> /* for prefs_get */
+ #include <netdb.h>          /* for getprotobyname() */
+diff --git a/nasl/nasl_cert.c b/nasl/nasl_cert.c
+index 52ffb63d..bfd7641e 100644
+--- a/nasl/nasl_cert.c
++++ b/nasl/nasl_cert.c
+@@ -38,8 +38,8 @@
+ 
+ #include <errno.h>
+ #include <gcrypt.h>
+-#include <glib.h>
+-#include <glib/gstdio.h>
++#include <glib-2.0/glib.h>
++#include <glib-2.0/glib/gstdio.h>
+ #include <gnutls/gnutls.h>
+ #include <gnutls/x509.h>
+ #include <gvm/base/logging.h>
+diff --git a/nasl/nasl_cmd_exec.c b/nasl/nasl_cmd_exec.c
+index 3da83772..ab19f88a 100644
+--- a/nasl/nasl_cmd_exec.c
++++ b/nasl/nasl_cmd_exec.c
+@@ -33,7 +33,7 @@
+ 
+ #include <errno.h>                    /* for errno */
+ #include <fcntl.h>                    /* for open */
+-#include <glib.h>                     /* for g_get_tmp_dir */
++#include <glib-2.0/glib.h>                     /* for g_get_tmp_dir */
+ #include <gvm/base/drop_privileges.h> /* for drop_privileges */
+ #include <gvm/base/prefs.h>           /* for prefs_get_bool() */
+ #include <signal.h>                   /* for kill */
+diff --git a/nasl/nasl_crypto.c b/nasl/nasl_crypto.c
+index 3002d8b8..bfd551e8 100644
+--- a/nasl/nasl_crypto.c
++++ b/nasl/nasl_crypto.c
+@@ -41,7 +41,7 @@
+ #include <assert.h>
+ #include <ctype.h>
+ #include <gcrypt.h>
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <gvm/base/logging.h>
+ #include <stdlib.h>
+ 
+diff --git a/nasl/nasl_func.c b/nasl/nasl_func.c
+index 5f4829ae..83a77c87 100644
+--- a/nasl/nasl_func.c
++++ b/nasl/nasl_func.c
+@@ -25,7 +25,7 @@
+ #include "nasl_tree.h"
+ #include "nasl_var.h"
+ 
+-#include <glib.h>   /* for g_free */
++#include <glib-2.0/glib.h>   /* for g_free */
+ #include <stdlib.h> /* for free */
+ #include <string.h> /* for strcmp */
+ 
+diff --git a/nasl/nasl_grammar.y b/nasl/nasl_grammar.y
+index 4b3be046..c5f4118a 100644
+--- a/nasl/nasl_grammar.y
++++ b/nasl/nasl_grammar.y
+@@ -31,7 +31,7 @@
+ #include <string.h> /* for strlen */
+ #include <sys/stat.h> /* for stat */
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ #include "nasl_tree.h"
+ #include "nasl_global_ctxt.h"
+diff --git a/nasl/nasl_http.c b/nasl/nasl_http.c
+index bb897f90..1d463913 100644
+--- a/nasl/nasl_http.c
++++ b/nasl/nasl_http.c
+@@ -30,7 +30,7 @@
+ #include "nasl_var.h"
+ 
+ #include <ctype.h> /* for isspace */
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <gvm/base/prefs.h> /* for prefs_get */
+ #include <gvm/util/kb.h>    /* for kb_item_get_str */
+ #include <string.h>         /* for strlen */
+diff --git a/nasl/nasl_isotime.c b/nasl/nasl_isotime.c
+index cb3171a0..7176428a 100644
+--- a/nasl/nasl_isotime.c
++++ b/nasl/nasl_isotime.c
+@@ -55,8 +55,8 @@
+ #include "nasl_var.h"
+ 
+ #include <ctype.h>
+-#include <glib.h>
+-#include <glib/gstdio.h>
++#include <glib-2.0/glib.h>
++#include <glib-2.0/glib/gstdio.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+diff --git a/nasl/nasl_lex_ctxt.c b/nasl/nasl_lex_ctxt.c
+index 68b011ca..97f431a1 100644
+--- a/nasl/nasl_lex_ctxt.c
++++ b/nasl/nasl_lex_ctxt.c
+@@ -23,7 +23,7 @@
+ #include "nasl_tree.h"
+ #include "nasl_var.h"
+ 
+-#include <glib.h> /* for g_free() */
++#include <glib-2.0/glib.h> /* for g_free() */
+ 
+ void
+ init_nasl_library (lex_ctxt *);
+diff --git a/nasl/nasl_lex_ctxt.h b/nasl/nasl_lex_ctxt.h
+index cd140088..8bad9916 100644
+--- a/nasl/nasl_lex_ctxt.h
++++ b/nasl/nasl_lex_ctxt.h
+@@ -19,7 +19,7 @@
+ #ifndef _NASL_LEX_CTXT_H
+ #define _NASL_LEX_CTXT_H
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ /* for tree_cell */
+ #include "nasl_tree.h"
+diff --git a/nasl/nasl_misc_funcs.c b/nasl/nasl_misc_funcs.c
+index b687bb37..d98b8b5d 100644
+--- a/nasl/nasl_misc_funcs.c
++++ b/nasl/nasl_misc_funcs.c
+@@ -38,7 +38,7 @@
+ #include "nasl_var.h"
+ 
+ #include <errno.h> /* for errno */
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <gvm/util/compressutils.h> /* for gvm_uncompress */
+ #include <gvm/util/kb.h>            /* for KB_TYPE_STR */
+ #include <stdlib.h>                 /* for lrand48 */
+diff --git a/nasl/nasl_scanner_glue.c b/nasl/nasl_scanner_glue.c
+index 7dbb0502..8a7c9213 100644
+--- a/nasl/nasl_scanner_glue.c
++++ b/nasl/nasl_scanner_glue.c
+@@ -40,7 +40,7 @@
+ #include <ctype.h> /* for isdigit */
+ #include <errno.h> /* for errno */
+ #include <fcntl.h> /* for open */
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <gvm/base/logging.h>
+ #include <gvm/base/prefs.h> /* for prefs_get */
+ #include <gvm/util/kb.h>    /* for KB_TYPE_INT */
+diff --git a/nasl/nasl_ssh.c b/nasl/nasl_ssh.c
+index 1c615592..ff17e1dc 100644
+--- a/nasl/nasl_ssh.c
++++ b/nasl/nasl_ssh.c
+@@ -42,8 +42,8 @@
+ #include <ctype.h>
+ #include <errno.h>
+ #include <fcntl.h>
+-#include <glib.h>
+-#include <glib/gstdio.h>
++#include <glib-2.0/glib.h>
++#include <glib-2.0/glib/gstdio.h>
+ #include <gvm/base/logging.h>
+ #include <gvm/base/networking.h>
+ #include <gvm/base/prefs.h> /* for prefs_get() */
+diff --git a/nasl/nasl_text_utils.c b/nasl/nasl_text_utils.c
+index 137fb24f..ea12ef82 100644
+--- a/nasl/nasl_text_utils.c
++++ b/nasl/nasl_text_utils.c
+@@ -36,7 +36,7 @@
+ #include "nasl_var.h"
+ 
+ #include <ctype.h>  /* for isspace */
+-#include <glib.h>   /* for g_free */
++#include <glib-2.0/glib.h>   /* for g_free */
+ #include <regex.h>  /* for regex_t */
+ #include <string.h> /* for strlen */
+ #include <string.h> /* for memmem */
+diff --git a/nasl/nasl_tree.c b/nasl/nasl_tree.c
+index 11dbe3f7..a3af825f 100644
+--- a/nasl/nasl_tree.c
++++ b/nasl/nasl_tree.c
+@@ -25,7 +25,7 @@
+ #include "nasl_lex_ctxt.h"
+ #include "nasl_var.h"
+ 
+-#include <glib.h> /* for g_free */
++#include <glib-2.0/glib.h> /* for g_free */
+ #include <regex.h>
+ #include <stdlib.h> /* for abort */
+ #include <string.h> /* for memcpy */
+diff --git a/nasl/nasl_var.c b/nasl/nasl_var.c
+index c48aed89..9627267f 100644
+--- a/nasl/nasl_var.c
++++ b/nasl/nasl_var.c
+@@ -25,7 +25,7 @@
+ #include "nasl_lex_ctxt.h"
+ #include "nasl_tree.h"
+ 
+-#include <glib.h>   /* for g_free */
++#include <glib-2.0/glib.h>   /* for g_free */
+ #include <stdlib.h> /* for abort */
+ #include <string.h> /* for strlen */
+ 
+diff --git a/nasl/ntlmssp.c b/nasl/ntlmssp.c
+index a540e147..11247fec 100644
+--- a/nasl/ntlmssp.c
++++ b/nasl/ntlmssp.c
+@@ -25,7 +25,7 @@
+ 
+ #include "ntlmssp.h"
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ #define NTLMSSP_NEGOTIATE_LM_KEY 0x00000080
+ 
+diff --git a/nasl/smb_crypt.c b/nasl/smb_crypt.c
+index 05c107d9..a334b6ba 100644
+--- a/nasl/smb_crypt.c
++++ b/nasl/smb_crypt.c
+@@ -60,7 +60,7 @@
+ 
+ #include "proto.h"
+ 
+-#include <glib.h> /* for g_malloc0() */
++#include <glib-2.0/glib.h> /* for g_malloc0() */
+ #define int16 1
+ 
+ #ifndef FSTRING_LEN
+diff --git a/src/attack.c b/src/attack.c
+index 2c48f18f..b88eb265 100644
+--- a/src/attack.c
++++ b/src/attack.c
+@@ -41,7 +41,7 @@
+ #include <arpa/inet.h> /* for inet_ntoa() */
+ #include <errno.h>     /* for errno() */
+ #include <fcntl.h>
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <gvm/base/hosts.h>
+ #include <gvm/base/networking.h>
+ #include <gvm/base/prefs.h> /* for prefs_get() */
+diff --git a/src/hosts.c b/src/hosts.c
+index 0069930b..0bdd98d0 100644
+--- a/src/hosts.c
++++ b/src/hosts.c
+@@ -29,7 +29,7 @@
+ #include "utils.h"           /* for data_left() */
+ 
+ #include <errno.h>               /* for errno() */
+-#include <glib.h>                /* for g_free() */
++#include <glib-2.0/glib.h>                /* for g_free() */
+ #include <gvm/base/networking.h> /* for gvm_resolve_list */
+ #include <stdio.h>               /* for snprintf() */
+ #include <string.h>              /* for strlen() */
+diff --git a/src/nasl_plugins.c b/src/nasl_plugins.c
+index 5afed203..44fc2ba6 100644
+--- a/src/nasl_plugins.c
++++ b/src/nasl_plugins.c
+@@ -32,7 +32,7 @@
+ #include "processes.h"
+ 
+ #include <errno.h> /* for errno */
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <gvm/base/drop_privileges.h> /* for drop_privileges */
+ #include <gvm/base/networking.h>
+ #include <gvm/base/prefs.h> /* for prefs_get_bool */
+diff --git a/src/openvas.c b/src/openvas.c
+index 1890fe08..65ab4996 100644
+--- a/src/openvas.c
++++ b/src/openvas.c
+@@ -44,7 +44,7 @@
+ #include <errno.h>  /* for errno() */
+ #include <fcntl.h>  /* for open() */
+ #include <gcrypt.h> /* for gcry_control */
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <gnutls/gnutls.h> /* for gnutls_global_set_log_*  */
+ #include <grp.h>
+ #include <gvm/base/logging.h> /* for setup_log_handler, load_log_configuration, free_log_configuration*/
+diff --git a/src/pluginload.c b/src/pluginload.c
+index 70689379..beb833a4 100644
+--- a/src/pluginload.c
++++ b/src/pluginload.c
+@@ -31,7 +31,7 @@
+ #include "utils.h"
+ 
+ #include <errno.h>
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <gvm/base/prefs.h> /* for prefs_get() */
+ #include <gvm/base/proctitle.h>
+ #include <gvm/util/nvticache.h> /* for nvticache_new */
+diff --git a/src/pluginscheduler.c b/src/pluginscheduler.c
+index f7334d9b..43307367 100644
+--- a/src/pluginscheduler.c
++++ b/src/pluginscheduler.c
+@@ -30,7 +30,7 @@
+ #include "pluginlaunch.h"
+ #include "pluginload.h"
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <gvm/base/prefs.h>     /* for prefs_get() */
+ #include <gvm/util/nvticache.h> /* for nvticache_t */
+ #include <malloc.h>
+diff --git a/src/pluginscheduler.h b/src/pluginscheduler.h
+index 8ded9988..e539ce81 100644
+--- a/src/pluginscheduler.h
++++ b/src/pluginscheduler.h
+@@ -26,7 +26,7 @@
+ #ifndef PLUGINSCHEDULER_H
+ #define PLUGINSCHEDULER_H
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ struct plugins_scheduler;
+ 
+diff --git a/src/processes.c b/src/processes.c
+index ba65a13c..9f43c7ed 100644
+--- a/src/processes.c
++++ b/src/processes.c
+@@ -28,7 +28,7 @@
+ #include "sighand.h"
+ 
+ #include <errno.h>            /* for errno() */
+-#include <glib.h>             /* for g_error */
++#include <glib-2.0/glib.h>             /* for g_error */
+ #include <gvm/base/logging.h> /* for gvm_log_lock/unlock() */
+ #include <setjmp.h>
+ #include <signal.h>   /* for kill() */
+diff --git a/src/sighand.c b/src/sighand.c
+index 38205ec4..9dde082e 100644
+--- a/src/sighand.c
++++ b/src/sighand.c
+@@ -24,7 +24,7 @@
+  */
+ 
+ #include <execinfo.h> /* for backtrace() */
+-#include <glib.h>     /* for G_LOG_DOMAIN, for g_critical() */
++#include <glib-2.0/glib.h>     /* for G_LOG_DOMAIN, for g_critical() */
+ #include <signal.h>   /* for kill() */
+ #include <sys/wait.h> /* for waitpid() */
+ #include <unistd.h>   /* for getpid() */

@@ -26,7 +26,8 @@ source="$pkgname-$pkgver.tar.gz::https://github.com/greenbone/gvmd/archive/v$pkg
 	greenbone-nvt-sync.conf
 
 	added-missing-includes.patch
-	malloc-trim.patch"
+	malloc-trim.patch
+	glib_full.patch"
 
 case "$CARCH" in
 # cppcheck is not available

@@ -18,7 +18,8 @@ source="$pkgname-$pkgver.tar.gz::https://github.com/greenbone/openvas-smb/archiv
 	fix-missing-includes-path.patch
 	comparison_fn_t.patch
 	disable-backtrace.patch
-	001-cmakelist-fortify.patch"
+	001-cmakelist-fortify.patch
+	glib_full.patch"
 
 build() {
 	cmake \

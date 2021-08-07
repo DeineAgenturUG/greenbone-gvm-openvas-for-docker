@@ -1,0 +1,26 @@
+diff --git a/samba/pidl/lib/Parse/Pidl/Wireshark/NDR.pm b/samba/pidl/lib/Parse/Pidl/Wireshark/NDR.pm
+index 14b9223..e684b91 100644
+--- a/samba/pidl/lib/Parse/Pidl/Wireshark/NDR.pm
++++ b/samba/pidl/lib/Parse/Pidl/Wireshark/NDR.pm
+@@ -894,7 +894,7 @@ sub Parse($$$$)
+ 	$res{headers} .= "#ifdef HAVE_CONFIG_H\n";
+ 	$res{headers} .= "#include \"config.h\"\n";
+ 	$res{headers} .= "#endif\n\n";
+-	$res{headers} .= "#include <glib.h>\n";
++	$res{headers} .= "#include <glib-2.0/glib.h>\n";
+ 	$res{headers} .= "#include <string.h>\n";
+ 	$res{headers} .= "#include <epan/packet.h>\n\n";
+ 
+diff --git a/winexe/wincmd.c b/winexe/wincmd.c
+index 0bdf9ff..257e00f 100644
+--- a/winexe/wincmd.c
++++ b/winexe/wincmd.c
+@@ -44,7 +44,7 @@
+ #include "winexe.h"
+ #include "winexesvc/shared.h"
+ 
+-#include <glib.h> /* for g_malloc0 */
++#include <glib-2.0/glib.h> /* for g_malloc0 */
+ 
+ #include <sys/fcntl.h>
+ #include <unistd.h>

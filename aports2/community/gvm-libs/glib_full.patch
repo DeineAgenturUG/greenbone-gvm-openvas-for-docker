@@ -1,0 +1,599 @@
+diff --git a/base/array.h b/base/array.h
+index 223a3c7..dbaa6d9 100644
+--- a/base/array.h
++++ b/base/array.h
+@@ -25,7 +25,7 @@
+ #ifndef _GVM_ARRAY_H
+ #define _GVM_ARRAY_H
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ typedef GPtrArray array_t;
+ 
+diff --git a/base/credentials.h b/base/credentials.h
+index bb74bb1..d1985b2 100644
+--- a/base/credentials.h
++++ b/base/credentials.h
+@@ -25,7 +25,7 @@
+ #ifndef _GVM_CREDENTIALS_H
+ #define _GVM_CREDENTIALS_H
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ /**
+  * @brief A username password pair.
+diff --git a/base/cvss.c b/base/cvss.c
+index f3af02b..9f58787 100644
+--- a/base/cvss.c
++++ b/base/cvss.c
+@@ -76,7 +76,7 @@
+  *                       complete:          0.660
+  */
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <math.h>
+ #include <string.h>
+ 
+diff --git a/base/cvss.h b/base/cvss.h
+index bd1c785..3b52221 100644
+--- a/base/cvss.h
++++ b/base/cvss.h
+@@ -27,7 +27,7 @@
+ #ifndef _GVM_CVSS_H
+ #define _GVM_CVSS_H
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ double
+ get_cvss_score_from_base_metrics (const char *);
+diff --git a/base/drop_privileges.h b/base/drop_privileges.h
+index 85bfa6c..4ed8273 100644
+--- a/base/drop_privileges.h
++++ b/base/drop_privileges.h
+@@ -25,7 +25,7 @@
+ #ifndef _GVM_DROP_PRIVILEGES_H
+ #define _GVM_DROP_PRIVILEGES_H
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ /**
+  * @brief The GQuark for privilege dropping errors.
+diff --git a/base/hosts.h b/base/hosts.h
+index d8268b4..f7b43ab 100644
+--- a/base/hosts.h
++++ b/base/hosts.h
+@@ -28,7 +28,7 @@
+ #ifndef _GVM_HOSTS_H
+ #define _GVM_HOSTS_H
+ 
+-#include <glib.h>       /* for gchar, GList */
++#include <glib-2.0/glib.h>       /* for gchar, GList */
+ #include <netinet/in.h> /* for in6_addr, in_addr */
+ 
+ /* Static values */
+diff --git a/base/logging.h b/base/logging.h
+index 8041ea6..ce38fa5 100644
+--- a/base/logging.h
++++ b/base/logging.h
+@@ -25,7 +25,7 @@
+ #ifndef _GVM_LOGGING_H
+ #define _GVM_LOGGING_H
+ 
+-#include <glib.h> /* for GSList, gchar, GLogLevelFlags, gpointer */
++#include <glib-2.0/glib.h> /* for GSList, gchar, GLogLevelFlags, gpointer */
+ 
+ GSList *
+ load_log_configuration (gchar *);
+diff --git a/base/networking.c b/base/networking.c
+index 41017db..9f8b1dc 100644
+--- a/base/networking.c
++++ b/base/networking.c
+@@ -28,7 +28,7 @@
+ #include <assert.h>    /* for assert */
+ #include <ctype.h>     /* for isblank */
+ #include <errno.h>     /* for errno, EAFNOSUPPORT */
+-#include <glib/gstdio.h>
++#include <glib-2.0/glib/gstdio.h>
+ #include <ifaddrs.h>    /* for ifaddrs, freeifaddrs, getifaddrs */
+ #include <net/if.h>     /* for IFNAMSIZ */
+ #include <stdint.h>     /* for uint32_t, uint8_t */
+diff --git a/base/nvti.h b/base/nvti.h
+index f8c0c0d..8e20ef2 100644
+--- a/base/nvti.h
++++ b/base/nvti.h
+@@ -27,7 +27,7 @@
+ #ifndef _NVTI_H
+ #define _NVTI_H
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ typedef struct nvtpref nvtpref_t;
+ 
+diff --git a/base/pidfile.c b/base/pidfile.c
+index 562c91a..bec4fb5 100644
+--- a/base/pidfile.c
++++ b/base/pidfile.c
+@@ -25,8 +25,8 @@
+ #include "pidfile.h"
+ 
+ #include <errno.h>       /* for errno */
+-#include <glib.h>        /* for g_free, gchar, g_build_filename, g_strconcat */
+-#include <glib/gstdio.h> /* for g_unlink, g_fopen */
++#include <glib-2.0/glib.h>        /* for g_free, gchar, g_build_filename, g_strconcat */
++#include <glib-2.0/glib/gstdio.h> /* for g_unlink, g_fopen */
+ #include <stdio.h>       /* for fclose, FILE */
+ #include <stdlib.h>      /* for atoi */
+ #include <string.h>      /* for strerror */
+diff --git a/base/pidfile.h b/base/pidfile.h
+index b0639f4..753edf6 100644
+--- a/base/pidfile.h
++++ b/base/pidfile.h
+@@ -25,7 +25,7 @@
+ #ifndef _GVM_PIDFILE_H
+ #define _GVM_PIDFILE_H
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ int
+ pidfile_create (gchar *);
+diff --git a/base/prefs.c b/base/prefs.c
+index 083ecc2..b03a84b 100644
+--- a/base/prefs.c
++++ b/base/prefs.c
+@@ -27,7 +27,7 @@
+ 
+ #include "settings.h" /* for init_settings_iterator_from_file */
+ 
+-#include <glib.h>   /* for gchar */
++#include <glib-2.0/glib.h>   /* for gchar */
+ #include <stdio.h>  /* for printf() */
+ #include <stdlib.h> /* for atoi() */
+ #include <string.h> /* for strlen() */
+diff --git a/base/prefs.h b/base/prefs.h
+index 45d36a8..f8e5f57 100644
+--- a/base/prefs.h
++++ b/base/prefs.h
+@@ -27,7 +27,7 @@
+ #ifndef _GVM_PREFS_H
+ #define _GVM_PREFS_H
+ 
+-#include <glib.h> /* for gchar */
++#include <glib-2.0/glib.h> /* for gchar */
+ 
+ void
+ prefs_config (const char *);
+diff --git a/base/proctitle.c b/base/proctitle.c
+index b558f53..2a824e9 100644
+--- a/base/proctitle.c
++++ b/base/proctitle.c
+@@ -24,7 +24,7 @@
+ 
+ #include "proctitle.h"
+ 
+-#include <glib.h> /* for g_free, g_malloc0, g_strdup */
++#include <glib-2.0/glib.h> /* for g_free, g_malloc0, g_strdup */
+ #include <stdio.h>
+ #include <string.h> /* for strlen, strdup, bzero, strncpy */
+ #include <sys/param.h>
+diff --git a/base/pwpolicy.c b/base/pwpolicy.c
+index ad56d48..94fef35 100644
+--- a/base/pwpolicy.c
++++ b/base/pwpolicy.c
+@@ -28,7 +28,7 @@
+ #include "pwpolicy.h"
+ 
+ #include <errno.h> /* for errno */
+-#include <glib.h>  /* for g_strdup_printf, g_ascii_strcasecmp, g_free, ... */
++#include <glib-2.0/glib.h>  /* for g_strdup_printf, g_ascii_strcasecmp, g_free, ... */
+ #include <stdio.h> /* for fclose, fgets, fopen, FILE, ferror, EOF, getc */
+ #include <stdlib.h>
+ #include <string.h> /* for strstr, strlen, strncmp */
+diff --git a/base/settings.h b/base/settings.h
+index 4bf1c9d..623e057 100644
+--- a/base/settings.h
++++ b/base/settings.h
+@@ -27,7 +27,7 @@
+ #ifndef _GVM_SETTINGS_H
+ #define _GVM_SETTINGS_H
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ /**
+  * @brief Struct holding options for settings taken from a key-value
+diff --git a/base/strings.c b/base/strings.c
+index 010ded7..9864a28 100644
+--- a/base/strings.c
++++ b/base/strings.c
+@@ -25,7 +25,7 @@
+ #include "strings.h"
+ 
+ #include <assert.h> /* for assert */
+-#include <glib.h>   /* for g_free, g_strconcat, gchar, g_strdup, g_strndup */
++#include <glib-2.0/glib.h>   /* for g_free, g_strconcat, gchar, g_strdup, g_strndup */
+ 
+ #undef G_LOG_DOMAIN
+ /**
+diff --git a/base/strings.h b/base/strings.h
+index 0ef3bda..279e184 100644
+--- a/base/strings.h
++++ b/base/strings.h
+@@ -25,7 +25,7 @@
+ #ifndef _GVM_STRINGS_H
+ #define _GVM_STRINGS_H
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ void
+ gvm_append_string (gchar **, const gchar *);
+diff --git a/boreas/arp.c b/boreas/arp.c
+index 53e1806..7ce6072 100644
+--- a/boreas/arp.c
++++ b/boreas/arp.c
+@@ -31,7 +31,7 @@
+ #include "../base/networking.h" /* for gvm_source_addr() */
+ 
+ #include <errno.h>
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <ifaddrs.h>
+ #include <libnet.h>
+ #include <limits.h>
+diff --git a/boreas/boreas_error.c b/boreas/boreas_error.c
+index e490271..e7a6241 100644
+--- a/boreas/boreas_error.c
++++ b/boreas/boreas_error.c
+@@ -19,7 +19,7 @@
+ 
+ #include "boreas_error.h"
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ #undef G_LOG_DOMAIN
+ /**
+diff --git a/boreas/boreas_io.c b/boreas/boreas_io.c
+index c7f88de..ab56fc2 100644
+--- a/boreas/boreas_io.c
++++ b/boreas/boreas_io.c
+@@ -23,7 +23,7 @@
+ #include "alivedetection.h"
+ #include "util.h"
+ 
+-#include <glib/gprintf.h>
++#include <glib-2.0/glib/gprintf.h>
+ #include <stdlib.h>
+ 
+ #undef G_LOG_DOMAIN
+diff --git a/boreas/cli.c b/boreas/cli.c
+index bb23cea..c89baf2 100644
+--- a/boreas/cli.c
++++ b/boreas/cli.c
+@@ -26,8 +26,8 @@
+ #include "sniffer.h"
+ #include "util.h"
+ 
+-#include <glib.h>
+-#include <glib/gprintf.h>
++#include <glib-2.0/glib.h>
++#include <glib-2.0/glib/gprintf.h>
+ #include <unistd.h>
+ 
+ #undef G_LOG_DOMAIN
+diff --git a/boreas/ping.c b/boreas/ping.c
+index e6816c4..2037ffa 100644
+--- a/boreas/ping.c
++++ b/boreas/ping.c
+@@ -24,7 +24,7 @@
+ 
+ #include <arpa/inet.h>
+ #include <errno.h>
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <ifaddrs.h> /* for getifaddrs() */
+ #include <linux/sockios.h>
+ #include <netinet/icmp6.h>
+diff --git a/boreas/ping.h b/boreas/ping.h
+index 627ee05..d93b26a 100644
+--- a/boreas/ping.h
++++ b/boreas/ping.h
+@@ -20,7 +20,7 @@
+ #ifndef BOREAS_PING_H
+ #define BOREAS_PING_H
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ void send_icmp (gpointer, gpointer, gpointer);
+ 
+diff --git a/boreas/sniffer.c b/boreas/sniffer.c
+index 930c2af..2a92e49 100644
+--- a/boreas/sniffer.c
++++ b/boreas/sniffer.c
+@@ -24,7 +24,7 @@
+ 
+ #include <arpa/inet.h>
+ #include <errno.h>
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <net/if_arp.h>
+ #include <netinet/ip.h>
+ #include <stdlib.h>
+diff --git a/boreas/util.c b/boreas/util.c
+index 791152a..2504215 100644
+--- a/boreas/util.c
++++ b/boreas/util.c
+@@ -22,7 +22,7 @@
+ #include "../base/networking.h" /* for range_t */
+ 
+ #include <errno.h>
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <ifaddrs.h> /* for getifaddrs() */
+ #include <linux/sockios.h>
+ #include <net/ethernet.h>
+diff --git a/gmp/gmp.h b/gmp/gmp.h
+index 10b5a7b..6fb6aa1 100644
+--- a/gmp/gmp.h
++++ b/gmp/gmp.h
+@@ -29,8 +29,8 @@
+ #include "../util/serverutils.h" /* for gvm_connection_t */
+ #include "../util/xmlutils.h"    /* for entity_t */
+ 
+-#include <glib.h>          /* for gchar */
+-#include <glib/gtypes.h>   /* for gsize */
++#include <glib-2.0/glib.h>          /* for gchar */
++#include <glib-2.0/glib/gtypes.h>   /* for gsize */
+ #include <gnutls/gnutls.h> /* for gnutls_session_t */
+ #include <stddef.h>        /* for NULL */
+ 
+diff --git a/osp/osp.h b/osp/osp.h
+index fdb130a..9cc2ffc 100644
+--- a/osp/osp.h
++++ b/osp/osp.h
+@@ -27,7 +27,7 @@
+ 
+ #include "../util/xmlutils.h"
+ 
+-#include <glib.h> /* for GHashTable, GSList */
++#include <glib-2.0/glib.h> /* for GHashTable, GSList */
+ 
+ /* Type definitions */
+ 
+diff --git a/tests/test-hosts.c b/tests/test-hosts.c
+index 812e30c..c2c3922 100644
+--- a/tests/test-hosts.c
++++ b/tests/test-hosts.c
+@@ -28,7 +28,7 @@
+ #include "../base/hosts.h" /* for gvm_host_type_str, gvm_host_resolve, gvm_... */
+ 
+ #include <arpa/inet.h>  /* for inet_ntop */
+-#include <glib.h>       /* for g_free */
++#include <glib-2.0/glib.h>       /* for g_free */
+ #include <netinet/in.h> /* for INET6_ADDRSTRLEN, INET_ADDRSTRLEN, in6_addr */
+ #include <stdio.h>      /* for printf, fprintf, NULL, stderr */
+ #include <sys/socket.h> /* for AF_INET, AF_INET6 */
+diff --git a/util/authutils.h b/util/authutils.h
+index a7ed345..c90a929 100644
+--- a/util/authutils.h
++++ b/util/authutils.h
+@@ -25,7 +25,7 @@
+ #ifndef _GVM_AUTHUTILS_H
+ #define _GVM_AUTHUTILS_H
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ /**
+  * @brief Numerical representation of the supported authentication methods.
+diff --git a/util/compressutils.c b/util/compressutils.c
+index d528645..3eb760f 100644
+--- a/util/compressutils.c
++++ b/util/compressutils.c
+@@ -31,7 +31,7 @@
+ 
+ #include "compressutils.h"
+ 
+-#include <glib.h> /* for g_free, g_malloc0 */
++#include <glib-2.0/glib.h> /* for g_free, g_malloc0 */
+ #include <zlib.h> /* for z_stream, Z_NULL, Z_OK, Z_BUF_ERROR, Z_STREAM_END */
+ 
+ #undef G_LOG_DOMAIN
+diff --git a/util/fileutils.c b/util/fileutils.c
+index e4be854..dc6e953 100644
+--- a/util/fileutils.c
++++ b/util/fileutils.c
+@@ -28,9 +28,9 @@
+ #include "fileutils.h"
+ 
+ #include <errno.h>       /* for errno */
+-#include <gio/gio.h>     /* for g_file_new_for_path, GFile */
+-#include <glib/gstdio.h> /* for g_lstat, g_remove */
+-#include <glib/gtypes.h> /* for gsize */
++#include <glib-2.0/gio/gio.h>     /* for g_file_new_for_path, GFile */
++#include <glib-2.0/glib/gstdio.h> /* for g_lstat, g_remove */
++#include <glib-2.0/glib/gtypes.h> /* for gsize */
+ #include <string.h>      /* for strlen, memset, strcmp */
+ #include <sys/stat.h>    /* for stat, S_ISDIR */
+ #include <time.h>        /* for tm, strptime, localtime, time, time_t */
+diff --git a/util/fileutils.h b/util/fileutils.h
+index 32ca77c..b085d30 100644
+--- a/util/fileutils.h
++++ b/util/fileutils.h
+@@ -27,7 +27,7 @@
+ #ifndef _GVM_FILEUTILS_H
+ #define _GVM_FILEUTILS_H
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ int
+ gvm_file_exists (const char *name);
+diff --git a/util/gpgmeutils.h b/util/gpgmeutils.h
+index 4e55ae6..3c6ad31 100644
+--- a/util/gpgmeutils.h
++++ b/util/gpgmeutils.h
+@@ -27,7 +27,7 @@
+ #ifndef _GVM_GPGMEUTILS_H
+ #define _GVM_GPGMEUTILS_H
+ 
+-#include <glib.h>  /* for gchar */
++#include <glib-2.0/glib.h>  /* for gchar */
+ #include <gpgme.h> /* for gpgme_ctx_t */
+ 
+ void
+diff --git a/util/kb.c b/util/kb.c
+index c41b53a..2938cad 100644
+--- a/util/kb.c
++++ b/util/kb.c
+@@ -27,7 +27,7 @@
+ #include "kb.h"
+ 
+ #include <errno.h> /* for ENOMEM, EINVAL, EPROTO, EALREADY, ECONN... */
+-#include <glib.h>  /* for g_log, g_free */
++#include <glib-2.0/glib.h>  /* for g_log, g_free */
+ #include <hiredis/hiredis.h> /* for redisReply, freeReplyObject, redisCommand */
+ #include <stdbool.h>         /* for bool, true, false */
+ #include <stdio.h>
+diff --git a/util/ldaputils.c b/util/ldaputils.c
+index 4b8f788..64d561f 100644
+--- a/util/ldaputils.c
++++ b/util/ldaputils.c
+@@ -26,8 +26,8 @@
+ 
+ #ifdef ENABLE_LDAP_AUTH
+ 
+-#include <glib.h>        /* for g_free, gchar, g_warning, g_strdup */
+-#include <glib/gstdio.h> /* for g_unlink, g_chmod */
++#include <glib-2.0/glib.h>        /* for g_free, gchar, g_warning, g_strdup */
++#include <glib-2.0/glib/gstdio.h> /* for g_unlink, g_chmod */
+ #include <lber.h>        /* for berval */
+ #include <ldap.h> /* for ldap_err2string, LDAP_SUCCESS, ldap_initialize */
+ #include <stdio.h>
+diff --git a/util/ldaputils.h b/util/ldaputils.h
+index 27c0392..8af4195 100644
+--- a/util/ldaputils.h
++++ b/util/ldaputils.h
+@@ -25,7 +25,7 @@
+ #ifndef _GVM_LDAPUTILS_H
+ #define _GVM_LDAPUTILS_H
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ /** @brief Authentication schema and address type. */
+ typedef struct ldap_auth_info *ldap_auth_info_t;
+diff --git a/util/nvticache.h b/util/nvticache.h
+index 6bbbf71..1ae2749 100644
+--- a/util/nvticache.h
++++ b/util/nvticache.h
+@@ -30,7 +30,7 @@
+ #include "../base/nvti.h" /* for nvti_t */
+ #include "kb.h"           /* for kb_t */
+ 
+-#include <glib.h> /* for gchar */
++#include <glib-2.0/glib.h> /* for gchar */
+ 
+ #ifndef NVTICACHE_STR
+ #define NVTICACHE_STR "nvticache"
+diff --git a/util/radiusutils.c b/util/radiusutils.c
+index 8d41b01..6e344f4 100644
+--- a/util/radiusutils.c
++++ b/util/radiusutils.c
+@@ -44,7 +44,7 @@
+ 
+ #include "../base/networking.h" /* for gvm_resolve */
+ 
+-#include <glib.h> /* for g_warning */
++#include <glib-2.0/glib.h> /* for g_warning */
+ 
+ #undef G_LOG_DOMAIN
+ /**
+diff --git a/util/serverutils.c b/util/serverutils.c
+index 4e7f15e..b3cdf86 100644
+--- a/util/serverutils.c
++++ b/util/serverutils.c
+@@ -35,7 +35,7 @@
+ #include <errno.h>  /* for errno, ENOTCONN, EAGAIN */
+ #include <fcntl.h>  /* for fcntl, F_SETFL, O_NONBLOCK */
+ #include <gcrypt.h> /* for gcry_control */
+-#include <glib.h>   /* for g_warning, g_free, g_debug, gchar, g_markup... */
++#include <glib-2.0/glib.h>   /* for g_warning, g_free, g_debug, gchar, g_markup... */
+ #include <gnutls/x509.h> /* for gnutls_x509_crt_..., gnutls_x509_privkey_... */
+ #include <netdb.h>      /* for addrinfo, freeaddrinfo, gai_strerror, getad... */
+ #include <signal.h>     /* for sigaction, SIGPIPE, sigemptyset, SIG_IGN */
+diff --git a/util/serverutils.h b/util/serverutils.h
+index 906e708..9afa17c 100644
+--- a/util/serverutils.h
++++ b/util/serverutils.h
+@@ -28,7 +28,7 @@
+ #ifndef _GVM_SERVERUTILS_H
+ #define _GVM_SERVERUTILS_H
+ 
+-#include <glib.h>          /* for gchar, gboolean, gint */
++#include <glib-2.0/glib.h>          /* for gchar, gboolean, gint */
+ #include <gnutls/gnutls.h> /* for gnutls_session_t, gnutls_certificate_cred... */
+ #include <stdarg.h>        /* for va_list */
+ #include <sys/param.h>
+diff --git a/util/sshutils.c b/util/sshutils.c
+index 52bff76..a4f5a8d 100644
+--- a/util/sshutils.c
++++ b/util/sshutils.c
+@@ -24,7 +24,7 @@
+ 
+ #include "sshutils.h"
+ 
+-#include <glib.h>          /* for g_free, g_strdup, g_strdup_printf */
++#include <glib-2.0/glib.h>          /* for g_free, g_strdup, g_strdup_printf */
+ #include <gnutls/gnutls.h> /* for gnutls_datum_t */
+ #include <gnutls/x509.h> /* for gnutls_x509_privkey_deinit, gnutls_x509_p... */
+ #include <libssh/libssh.h> /* for ssh_key_free, ssh_key_type, ssh_key_type_... */
+diff --git a/util/uuidutils.c b/util/uuidutils.c
+index a675ded..6e62ee2 100644
+--- a/util/uuidutils.c
++++ b/util/uuidutils.c
+@@ -24,7 +24,7 @@
+ 
+ #include "uuidutils.h"
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <stdlib.h>
+ #include <uuid/uuid.h>
+ 
+diff --git a/util/xmlutils.c b/util/xmlutils.c
+index fee864c..1a3ea5b 100644
+--- a/util/xmlutils.c
++++ b/util/xmlutils.c
+@@ -31,8 +31,8 @@
+ #include <assert.h>      /* for assert */
+ #include <errno.h>       /* for errno, EAGAIN, EINTR */
+ #include <fcntl.h>       /* for fcntl, F_SETFL, O_NONBLOCK */
+-#include <glib.h>        /* for g_free, GSList, g_markup_parse_context_free */
+-#include <glib/gtypes.h> /* for GPOINTER_TO_INT, GINT_TO_POINTER, gsize */
++#include <glib-2.0/glib.h>        /* for g_free, GSList, g_markup_parse_context_free */
++#include <glib-2.0/glib/gtypes.h> /* for GPOINTER_TO_INT, GINT_TO_POINTER, gsize */
+ #include <libxml/parser.h>
+ #include <libxml/tree.h>
+ #include <string.h> /* for strcmp, strerror, strlen */
+diff --git a/util/xmlutils.h b/util/xmlutils.h
+index 2d67974..7a2536e 100644
+--- a/util/xmlutils.h
++++ b/util/xmlutils.h
+@@ -27,7 +27,7 @@
+ 
+ #include "serverutils.h"
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <gnutls/gnutls.h>
+ #include <stdio.h>
+ 
