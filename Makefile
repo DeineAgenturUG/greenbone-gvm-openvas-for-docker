@@ -46,6 +46,7 @@ user.abuild:
 
 build: builder target
 	docker run \
+		--rm \
 		--name apk_builder \
 		-v ${PWD}/user.abuild/:/home/packager/.abuild \
 		-v ${PWD}/aports2:/work \
@@ -55,8 +56,21 @@ build: builder target
 		apk_builder:${BUILD_ID} \
 		sh -c '~/bin/build.sh'
 
+build_checksum: builder target
+	docker run \
+		--rm \
+		--name apk_builder \
+		-v ${PWD}/user.abuild/:/home/packager/.abuild \
+		-v ${PWD}/aports2:/work \
+		-v ${PWD}/target:/target \
+		-v ${HOME}/.gitconfig/:/home/packager/.gitconfig \
+		-e CHECKSUM=${CHECKSUM} \
+		apk_builder:${BUILD_ID} \
+		sh -c '~/bin/update_checksum.sh'
+
 build2: builder target
 	docker run -ti \
+		--rm \
 		--name apk_builder2 \
 		-v ${PWD}/user.abuild/:/home/packager/.abuild \
 		-v ${PWD}/aports2:/work \

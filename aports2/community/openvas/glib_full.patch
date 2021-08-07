@@ -477,7 +477,7 @@ index 70689379..beb833a4 100644
  #include <gvm/base/proctitle.h>
  #include <gvm/util/nvticache.h> /* for nvticache_new */
 diff --git a/src/pluginscheduler.c b/src/pluginscheduler.c
-index f7334d9b..43307367 100644
+index 6ce573b1..2683f13e 100644
 --- a/src/pluginscheduler.c
 +++ b/src/pluginscheduler.c
 @@ -30,7 +30,7 @@
@@ -516,13 +516,13 @@ index ba65a13c..9f43c7ed 100644
  #include <setjmp.h>
  #include <signal.h>   /* for kill() */
 diff --git a/src/sighand.c b/src/sighand.c
-index 38205ec4..9dde082e 100644
+index 72b2e056..675b4926 100644
 --- a/src/sighand.c
 +++ b/src/sighand.c
-@@ -24,7 +24,7 @@
-  */
- 
+@@ -25,7 +25,7 @@
+ #ifdef HAVE_EXECINFO_H
  #include <execinfo.h> /* for backtrace() */
+ #endif
 -#include <glib.h>     /* for G_LOG_DOMAIN, for g_critical() */
 +#include <glib-2.0/glib.h>     /* for G_LOG_DOMAIN, for g_critical() */
  #include <signal.h>   /* for kill() */

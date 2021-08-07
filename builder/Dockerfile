@@ -14,6 +14,7 @@ RUN     mkdir -p /var/cache/distfiles && \
 
 ADD     setup.sh /home/packager/bin/setup.sh
 ADD     build_gvm.sh /home/packager/bin/build.sh
+ADD     update_checksum.sh /home/packager/bin/update_checksum.sh
 # TODO: customize /etc/abuild.conf
 
 WORKDIR /work
