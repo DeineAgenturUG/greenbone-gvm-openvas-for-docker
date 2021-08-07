@@ -2,6 +2,7 @@
 #
 # Run the first time to setup keys
 #
+set -euo pipefail
 
 mkdir -p /target/community/noarch/
 mkdir -p /target/community/x86_64/
