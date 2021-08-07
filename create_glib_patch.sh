@@ -25,13 +25,13 @@ for name in gvmd gsa gvm-libs gvm-tools ospd ospd-openvas openvas-scanner openva
     fi
 
     LOCALDIR="${MYDIR}/aports2/community/${TOOLMATCHES[$name]}/"
-    LOCALREPO="${LOCALDIR}src/"
+    LOCALREPO="${MYDIR}/src/${TOOLMATCHES[$name]}"
     echo "> ${name} (${LOCALDIR}"
     (
         cd "${LOCALREPO}" || exit 1
         #   grep -E -o "([a-z0-9-]*.patch)" aports2/community/gvm-libs/APKBUILD | awk '!seen[$0]++'
 
-        for patch in $(cat "${LOCALDIR}/APKBUILD" | grep -E -o "([a-z0-9-]*.patch)" | awk '!seen[$0]++'); do
+        for patch in $(cat "${LOCALDIR}APKBUILD" | grep -E -o "([a-z0-9-]*.patch)" | grep -v "glib_full.patch" | awk '!seen[$0]++'); do
             echo "  > ${patch}"
             git apply "${LOCALDIR}${patch}" || exit 1
             git add .

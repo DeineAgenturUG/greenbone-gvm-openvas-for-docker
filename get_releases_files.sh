@@ -28,9 +28,13 @@ for name in gvmd gsa gvm-libs gvm-tools ospd ospd-openvas openvas-scanner openva
     #version=$(jq -r .[].tag_name <"jq_${name}.json" | grep '21\.[0-9]*\.[0-9]*$' -m1)
 
     echo ">>> ${name}: ${version}"
-    #rm -rf ./aports2/community/${TOOLMATCHES[$name]}/src/
-    LOCALREPO="./aports2/community/${TOOLMATCHES[$name]}/src"
+
+    LOCALDIR="${MYDIR}/aports2/community/${TOOLMATCHES[$name]}/"
+    rm -rf "${LOCALDIR}src/"
+    LOCALREPO="${MYDIR}/src/${TOOLMATCHES[$name]}"
+    rm -rf "$LOCALREPO"
     git clone https://github.com/greenbone/${name}.git "${LOCALREPO}" 2>/dev/null || git -C "${LOCALREPO}" pull
+    git -C "${LOCALREPO}" fetch --all --tags
     git -C "${LOCALREPO}" checkout "tags/${version}"
     git -C "${LOCALREPO}" reset --hard HEAD
     #echo "${jsonData}" | jq --arg PVERSION "${version}" -r '.[] | select(.tag_name | startswith($PVERSION)).tarball_url' <"jq_${name}.json" | xargs curl -L -o "./${name}_${version}.tar.gz"

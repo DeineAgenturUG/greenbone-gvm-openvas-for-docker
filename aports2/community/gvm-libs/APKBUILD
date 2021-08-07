@@ -21,7 +21,6 @@ makedepends="cmake bison glib-dev libpcap-dev libssh-dev
 subpackages="$pkgname-dev $pkgname-doc"
 source="$pkgname-$pkgver.tar.gz::https://github.com/greenbone/gvm-libs/archive/v$pkgver.tar.gz
 	malloc-trim.patch
-	glib-include-path.patch
 	strptime.patch
 	glib_full.patch
 	"
@@ -68,7 +67,6 @@ doc() {
 sha512sums="
 2eb1855c60a3afb66634d1aee07455b7d2868f6d7e772618215dc0991ca773d95ee04a65ffa41d4737e7d3cdbd28b546d82ba0aa371a5cec0a656297dd7103b1  gvm-libs-21.4.2.tar.gz
 ae93ac7ec929325926d785bb58ed9c09f8bdaf518adf09db54bb9a8a4b5e4474c0ab61fc987c91114f2013cbe39868115006b528865fbd027e5b88eca58f1954  malloc-trim.patch
-c0fe0add24cb4336f0ce313197042e60a3aba3eeb983f31b243e665a488e520ffa260ab9a3feb852500310a9df66f2eaf82ac4294d7980b983a78454b30eb9f9  glib-include-path.patch
 b10f2b6a8e126a184c65c91bdd18a21e4ee16cbc442775288a11c2768c8e5c1db4ce3749025e7cc3f360c7c1011b79dca836fee742fb9f06034ca0a986f718b5  strptime.patch
-991000d1741fc616292533f47c7c5b9d34a76104e1f7aa0a4e8313119926337716cf015fcf1bace311699118b45a5b3d7a2961424d92e87bb4b7f98d9ed7efbf  glib_full.patch
+09e4216a2db63fe1e013e21e11fdc84409c2adb7eb36003285e17746796484c7fa0579e80e710e6370ee0bbefa4b46207a23bb0f1b9a5e8d4a272ad7d23f35c6  glib_full.patch
 "
