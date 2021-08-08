@@ -10,7 +10,8 @@ RUN     mkdir -p /var/cache/distfiles && \
         addgroup packager abuild && \
         chgrp abuild /var/cache/distfiles && \
         chmod g+w /var/cache/distfiles && \
-        echo "packager    ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+        echo "packager    ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+        apk -U upgrade
 
 ADD     setup.sh /home/packager/bin/setup.sh
 ADD     build_gvm.sh /home/packager/bin/build.sh
