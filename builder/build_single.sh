@@ -2,6 +2,9 @@
 #
 # Run the first time to setup keys
 #
+
+PKG=${1:-gvmd}
+
 set -euo pipefail
 
 mkdir -p /target/community/noarch/
@@ -26,16 +29,19 @@ BuildThis() {
     BuilldAndSingMe
 }
 
-BuildThis gvm-libs
-BuildThis openvas-smb
-BuildThis gvmd
-BuildThis openvas
-BuildThis py3-gvm
-BuildThis gvm-tools
-BuildThis ospd
-BuildThis ospd-openvas
-BuildThis greenbone-security-assistant
-# BuildThis texlive
+case "${PKG}" in
+libs | "gvm-libs") BuildThis gvm-libs ;;
+"openvas-smb") BuildThis openvas-smb ;;
+"gvmd") BuildThis gvmd ;;
+"openvas") BuildThis openvas ;;
+"py3-gvm") BuildThis py3-gvm ;;
+tools | "gvm-tools") BuildThis gvm-tools ;;
+"ospd") BuildThis ospd ;;
+"ospd-openvas") BuildThis ospd-openvas ;;
+"greenbone-security-assistant") BuildThis greenbone-security-assistant ;;
+#"texlive") BuildThis texlive ;;
+*) echo "  ERROR" ;;
+esac
 
 sleep 10
 

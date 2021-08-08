@@ -1,6 +1,7 @@
 
 BUILD_ID ?= ${USER}
 CHECKSUM ?= ${CHECKSUM:-0}
+PKG ?= ${PKG:-gvmd}
 
 
 .PHONY: builder
@@ -67,6 +68,18 @@ build_checksum: builder target
 		-e CHECKSUM=${CHECKSUM} \
 		apk_builder:${BUILD_ID} \
 		sh -c '~/bin/update_checksum.sh'
+
+build_single: builder target
+	docker run \
+		--rm \
+		--name apk_builder \
+		-v ${PWD}/user.abuild/:/home/packager/.abuild \
+		-v ${PWD}/aports2:/work \
+		-v ${PWD}/target:/target \
+		-v ${HOME}/.gitconfig/:/home/packager/.gitconfig \
+		-e CHECKSUM=${CHECKSUM} \
+		apk_builder:${BUILD_ID} \
+		sh -c '~/bin/build_single.sh $(PKG)'
 
 build2: builder target
 	docker run -ti \
