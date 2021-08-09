@@ -8,14 +8,8 @@ if [ -z "${MASTER_ADDRESS}" ]; then
 	exit 1
 fi
 
-if [ ! -f "/var/lib/gvm/.scannerid" ]; then
-	echo "Generating scanner id..."
-
-	cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 10 | head -n 1 >/var/lib/gvm/.scannerid
-fi
-
 if [ ! -d /var/lib/gvm/.ssh ]; then
-	mkdir /var/lib/gvm/.ssh
+	mkdir -p /var/lib/gvm/.ssh
 fi
 
 if [ ! -f /var/lib/gvm/.ssh/known_hosts ]; then
@@ -32,7 +26,7 @@ fi
 ## Start Redis
 
 if [ ! -d "/run/redis" ]; then
-	mkdir /run/redis
+	mkdir -p /run/redis
 fi
 
 if [ -S /run/redis/redis.sock ]; then
@@ -41,7 +35,7 @@ fi
 
 if [ ! -d "/run/redis-openvas" ]; then
 	echo "create /run/redis-openvas"
-	mkdir /run/redis-openvas
+	mkdir -p /run/redis-openvas
 fi
 
 if [ -S /run/redis-openvas/redis.sock ]; then
@@ -91,7 +85,7 @@ if [ -S /var/run/ospd/ospd.sock ]; then
 fi
 
 if [ ! -d /var/run/ospd ]; then
-	mkdir /var/run/ospd
+	mkdir -p /var/run/ospd
 fi
 
 echo "Starting Open Scanner Protocol daemon for OpenVAS..."
@@ -104,13 +98,6 @@ while [ ! -S /var/run/ospd/ospd.sock ]; do
 	sleep 1
 done
 
-SCANNER_ID=$(cat /var/lib/gvm/.scannerid)
-export SCANNER_ID=${SCANNER_ID}
-${SUPVISD} start autossh
-if [ "${DEBUG}" == "Y" ]; then
-	${SUPVISD} status autossh
-fi
-
 echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 echo "+ Your OpenVAS Scanner container is now ready to use! +"
 echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++"
@@ -121,7 +108,18 @@ echo "Public key: $(cat /var/lib/gvm/.ssh/key.pub)"
 echo "Master host key (Check that it matches the public key from the master):"
 cat /var/lib/gvm/.ssh/known_hosts
 echo "-------------------------------------------------------"
-echo ""
+echo "If you start the firsttime, you should now add the scanner"
+echo "to the gvmd container, via the /add/scanner.sh"
+echo "After it, you need to restart this container!"
+echo "-------------------------------------------------------"
+touch /var/lib/gvm/.firststart
+if [ -f /var/lib/gvm/.secondstart ]; then
+	${SUPVISD} start autossh
+	if [ "${DEBUG}" == "Y" ]; then
+		${SUPVISD} status autossh
+	fi
+fi
+
 echo "++++++++++++++++"
 echo "+ Tailing logs +"
 echo "++++++++++++++++"

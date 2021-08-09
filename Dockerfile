@@ -5,6 +5,7 @@ CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
 
 ARG SUPVISD=supervisorctl
 ARG DEBUG=N
+ARG AUTOSSH_DEBUG=${AUTOSSH_DEBUG:-0}
 ARG TZ=UTC
 ARG SETUP=0
 
@@ -16,6 +17,7 @@ COPY apk-build/user.abuild/*.pub /etc/apk/keys/
 
 ENV SUPVISD=${SUPVISD:-supervisorctl} \
     DEBUG=${DEBUG:-N} \
+    AUTOSSH_DEBUG=${AUTOSSH_DEBUG:-0} \
     TZ=${TZ:-UTC} \
     SETUP=${SETUP:-0}
 
@@ -30,11 +32,9 @@ RUN { \
     } >/etc/apk/repositories \
     && cat /etc/apk/repositories \
     && sleep 5 \
-    && apk update --update-cache \
+    && apk upgrade --no-cache --available \
     && sleep 5 \
-    && apk upgrade --available \
-    && sleep 5 \
-    && apk add --allow-untrusted curl su-exec tzdata bash openssh supervisor openvas@custcom openvas-smb@custcom openvas-config@custcom gvm-libs@custcom ospd-openvas@custcom \
+    && apk add --no-cache --allow-untrusted curl wget rsync autossh su-exec tzdata bash openssh supervisor openvas@custcom openvas-smb@custcom openvas-config@custcom gvm-libs@custcom ospd-openvas@custcom \
     && mkdir -p /var/log/supervisor/ \
     && sync
 
@@ -43,13 +43,15 @@ COPY scripts/* /
 COPY config/supervisord.conf /etc/supervisord.conf
 COPY config/redis-openvas.conf /etc/redis.conf
 
-VOLUME [ "/var/lib/openvas/plugins" ]
+VOLUME [ "/var/lib/openvas/plugins", "/var/lib/gvm" ]
 
 RUN if [ "${SETUP}" == "1" ]; then \
     ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" >/etc/timezone \
     && /usr/bin/supervisord -c /etc/supervisord.conf || true ; \
     unset SETUP ;\
     fi \
+    && apk upgrade --no-cache --available \
+    && chmod +x /*.sh \
     && rm /etc/localtime || true\
     && echo "UTC" >/etc/timezone \
     && rm -rf /tmp/* /var/cache/apk/* \
