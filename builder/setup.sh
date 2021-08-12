@@ -26,5 +26,5 @@ if [ "${numpub2}" -gt "0" ]; then
     sudo apk update
     unset PACKAGER_PRIVKEY
 fi
-
+sudo apk update
 exec "$@"

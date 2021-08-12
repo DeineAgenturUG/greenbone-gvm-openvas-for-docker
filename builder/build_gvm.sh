@@ -17,8 +17,10 @@ BuilldAndSingMe() {
     abuild -c -r -P /target
     sleep 1
     # ignore all python packages
-    if [ "$1" == "gvm-tools" ] || [ "$1" == "ospd" ] || [ "$1" == "ospd-openvas" ] || [ "$1" == "python-gvm" ]; then
+    if [ "$1" == "nmap" ] || [ "$1" == "gvm-tools" ] || [ "$1" == "ospd" ] || [ "$1" == "ospd-openvas" ] || [ "$1" == "python-gvm" ]; then
         cd /target/community/noarch/ || exit
+        cp ../x86_64/nmap-scripts*.apk ./ || true
+        cp ../x86_64/nmap-nselibs*.apk ./ || true
         cp ../x86_64/py3-gvm*.apk ./ || true
         cp ../x86_64/gvm-tools*.apk ./ || true
         cp ../x86_64/ospd*.apk ./ || true
@@ -37,7 +39,7 @@ BuildThis() {
     cd /work/community/"$1"/ || exit
     BuilldAndSingMe "$1"
 }
-
+BuildThis nmap
 BuildThis gvm-libs
 BuildThis openvas-smb
 BuildThis gvmd
@@ -57,6 +59,8 @@ apk index -o APKINDEX.tar.gz *.apk
 abuild-sign APKINDEX.tar.gz
 
 cd /target/community/noarch/ || exit
+cp ../x86_64/nmap-scripts*.apk ./
+cp ../x86_64/nmap-nselibs*.apk ./
 cp ../x86_64/py3-gvm*.apk ./
 cp ../x86_64/gvm-tools*.apk ./
 cp ../x86_64/ospd*.apk ./

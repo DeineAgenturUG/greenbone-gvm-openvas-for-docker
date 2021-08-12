@@ -9,6 +9,7 @@ BuildThis() {
     abuild checksum
 }
 
+BuildThis nmap
 BuildThis gvm-libs
 BuildThis openvas-smb
 BuildThis gvmd
@@ -18,4 +19,5 @@ BuildThis gvm-tools
 BuildThis ospd
 BuildThis ospd-openvas
 BuildThis greenbone-security-assistant
+
 # BuildThis texlive

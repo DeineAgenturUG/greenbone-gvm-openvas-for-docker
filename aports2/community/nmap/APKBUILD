@@ -1,0 +1,81 @@
+# Maintainer: Leonardo Arena <rnalrd@alpinelinux.org>
+pkgname=nmap
+pkgver=7.92
+pkgrel=0
+pkgdesc="network exploration tool and security/port scanner"
+url="https://nmap.org"
+arch="all"
+license="custom"
+makedepends="linux-headers openssl-dev libpcap-dev pcre-dev zlib-dev libssh2-dev lua5.3-dev"
+options="!check" #FIXME: fails on armhf and aarch64
+subpackages="
+	$pkgname-doc
+	$pkgname-scripts::noarch
+	$pkgname-nselibs::noarch
+	$pkgname-nping
+	$pkgname-ncat"
+source="https://nmap.org/dist/nmap-$pkgver.tar.bz2
+	fortify-source.patch"
+
+# secfixes:
+#   7.80-r0:
+#     - CVE-2017-18594
+#     - CVE-2018-15173
+
+prepare() {
+    default_prepare
+    update_config_sub
+}
+
+build() {
+    ./configure \
+        --build=$CBUILD \
+        --host=$CHOST \
+        --prefix=/usr \
+        --sysconfdir=/etc \
+        --mandir=/usr/share/man \
+        --infodir=/usr/share/info \
+        --without-zenmap \
+        --with-openssl=yes \
+        --with-libpcap=yes \
+        --with-libpcre=yes \
+        --with-libz=yes \
+        --with-libssh2=yes \
+        --with-liblua=/usr/lua5.3
+    make
+}
+
+check() {
+    make check
+}
+
+package() {
+    make -j1 DESTDIR="$pkgdir" install
+}
+
+scripts() {
+    depends="$pkgname-nselibs"
+    pkgdesc="$pkgdesc (scripts)"
+    amove usr/share/nmap/scripts
+}
+
+nselibs() {
+    pkgdesc="$pkgdesc (nselibs)"
+    amove usr/share/nmap/nse_main.lua
+    amove usr/share/nmap/nselib
+}
+
+ncat() {
+    pkgdesc="$pkgdesc (ncat tool)"
+    amove usr/bin/ncat
+}
+
+nping() {
+    pkgdesc="$pkgdesc (nping tool)"
+    amove usr/bin/nping
+}
+
+sha512sums="
+7828367f9dc76ff4d1e8c821260e565fb0c3cb6aba0473d24759133a3006cdf2cb087574f0dd7d2ba47a63754ba4f72e0b78cdae1333a58f05c41d428b56ad59  nmap-7.92.tar.bz2
+23c1fa38256a73a1fcec81560d54d0fd68123745cdfc601e43e4a4e24df0b551c9d26a28fc4f1890b5cd318ff4197e9201e1cb2446c2b7a7c4cdc5f898c1adc2  fortify-source.patch
+"
