@@ -16,7 +16,7 @@ makedepends="cmake bison gvm-libs-dev glib-dev libgcrypt-dev
 	doxygen xmltoman graphviz libpcap-dev gpgme-dev
 	clang-dev libssh-dev libksba-dev net-snmp-dev
 	linux-headers glibmm-dev flex"
-subpackages="$pkgname-doc $pkgname-config"
+subpackages="$pkgname-dbg $pkgname-doc $pkgname-config"
 source="$pkgname-$pkgver.tar.gz::https://github.com/greenbone/openvas/archive/v$pkgver.tar.gz
 	greenbone-nvt-sync.cron
 	execinfo-musl-fix.patch

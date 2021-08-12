@@ -18,7 +18,7 @@ makedepends="cmake bison glib-dev libpcap-dev libssh-dev
 	clang-dev freeradius-client-dev
 	doxygen libxslt graphviz xmltoman perl-sql-translator
 	libxml2-dev libnet-dev"
-subpackages="$pkgname-dev $pkgname-doc"
+subpackages="$pkgname-dbg $pkgname-dev $pkgname-doc"
 source="$pkgname-$pkgver.tar.gz::https://github.com/greenbone/gvm-libs/archive/v$pkgver.tar.gz
 	malloc-trim.patch
 	strptime.patch

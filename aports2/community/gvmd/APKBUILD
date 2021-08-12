@@ -16,7 +16,7 @@ makedepends="cmake gvm-libs-dev clang-dev glib-dev
 	postgresql-dev gnutls-dev
 	doxygen xmltoman perl-sql-translator"
 checkdepends="cppcheck"
-subpackages="$pkgname-doc $pkgname-openrc"
+subpackages="$pkgname-dbg $pkgname-doc $pkgname-openrc"
 source="$pkgname-$pkgver.tar.gz::https://github.com/greenbone/gvmd/archive/v$pkgver.tar.gz
 	$pkgname.initd
 	$pkgname.logrotate

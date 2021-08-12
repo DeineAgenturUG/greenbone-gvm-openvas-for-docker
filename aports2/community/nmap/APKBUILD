@@ -9,6 +9,7 @@ license="custom"
 makedepends="linux-headers openssl-dev libpcap-dev pcre-dev zlib-dev libssh2-dev lua5.3-dev"
 options="!check" #FIXME: fails on armhf and aarch64
 subpackages="
+    $pkgname-dbg
 	$pkgname-doc
 	$pkgname-scripts::noarch
 	$pkgname-nselibs::noarch
