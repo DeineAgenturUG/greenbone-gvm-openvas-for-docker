@@ -63,7 +63,7 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
           tags: apk-builder:latest
           push: false
-          load: true
+          load: false
 
       - name: Prepare Folders and Secrets for Build
         if: steps.restore-cache-apk.outputs.cache-hit != 'true'
