@@ -1,12 +1,13 @@
 # Maintainer: Leonardo Arena <rnalrd@alpinelinux.org>
 pkgname=nmap
 pkgver=7.92
-pkgrel=0
+pkgrel=11
 pkgdesc="network exploration tool and security/port scanner"
 url="https://nmap.org"
 arch="all"
 license="custom"
-makedepends="linux-headers openssl-dev libpcap-dev pcre-dev zlib-dev libssh2-dev lua5.3-dev"
+depends="gcompat"
+makedepends="linux-headers openssl-dev libpcap-dev pcre-dev zlib-dev libssh2-dev lua5.3-dev gcompat"
 options="!check" #FIXME: fails on armhf and aarch64
 subpackages="
     $pkgname-dbg

@@ -2,7 +2,7 @@
 # Maintainer: Francesco Colista <fcolista@alpinelinux.org>
 pkgname=gvm-libs
 pkgver=21.4.2
-pkgrel=10
+pkgrel=11
 pkgdesc="Greenbone Vulnerability Management Libraries"
 url="https://www.openvas.org/"
 arch="all"
@@ -11,13 +11,14 @@ options="!check" # test fails: https://github.com/greenbone/gvm-libs/issues/279
 pkgusers="gvm"
 pkggroups="gvm"
 install="$pkgname.pre-install"
+depends="gcompat"
 makedepends="cmake bison glib-dev libpcap-dev libssh-dev
 	hiredis-dev gnutls-dev util-linux-dev
 	libgcrypt-dev libksba-dev openldap-dev
 	gpgme-dev gpgmepp net-snmp-libs e2fsprogs-dev
 	clang-dev freeradius-client-dev
 	doxygen libxslt graphviz xmltoman perl-sql-translator
-	libxml2-dev libnet-dev"
+	libxml2-dev libnet-dev gcompat"
 subpackages="$pkgname-dbg $pkgname-dev $pkgname-doc"
 source="$pkgname-$pkgver.tar.gz::https://github.com/greenbone/gvm-libs/archive/v$pkgver.tar.gz
 	malloc-trim.patch
