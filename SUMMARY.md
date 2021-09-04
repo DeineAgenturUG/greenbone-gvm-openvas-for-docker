@@ -1,8 +1,8 @@
 # Table of contents
 
 * [Overview](README.md)
+* [Installing_Docker](Installing_Docker/README.md)
 * [Full Guide](full-guide/README.md)
-  * [Installing Docker](full-guide/installing-docker.md)
   * [Deploying Greenbone GVM GSA with OpenVAS](full-guide/deploying-greenbone-gvm-gsa-with-openvas.md)
   * [Docker Compose](full-guide/docker-compose.md)
   * [Setup Remote OpenVAS Scanner](full-guide/setup-remote-openvas-scanner.md)
