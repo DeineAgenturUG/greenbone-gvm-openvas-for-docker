@@ -18,7 +18,7 @@ If you need to update the container, run `docker pull securecompliance/gvm` to g
 
 ##### Environment variables
 
-Environment variables that can be specified with the --env parameter are documented in [Environment Variables](VARIABLES/README.md).
+Environment variables that can be specified with the --env parameter are documented in [Environment Variables](https://securecompliance.gitbook.io/projects/variables).
 
 Those settings include the username and password for the web interface, setting the timezone, etc.
 
