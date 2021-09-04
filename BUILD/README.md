@@ -6,4 +6,4 @@ This settings can be used while you build your own image via `docker build`.
 
 `--build-arg OPT_PDF=1` - This setting will add texlive for PDF generation. This option is to reduce the size of the image. By default the dependencies of texlive are not installed.
 
-> Also you can use each of the   [Environment Variables](openvas-greenbone-deployment-full-guide/environment-variables.md) as `--build-arg` like the TZ Variable `--build-arg TZ=Europe/Berlin` so this will be the default one in the image and you don't need to set this on your `docker-compose.yml` or as Environment on `docker run`
+Also you can use each of the   [Environment Variables](VARIABLES/README.md) as `--build-arg` like the TZ Variable `--build-arg TZ=Europe/Berlin` so this will be the default one in the image and you don't need to set this on your `docker-compose.yml` or as Environment on `docker run`
