@@ -1,6 +1,5 @@
 ### Setup remote OpenVAS scanner for a distributed openvas setup
 
-
 A typical GVM deployment with remote scanners requires the GVM (server) to connect to the scanner. We found this to be problematic when scanning clients who either can\'t, or don\'t want to, setup port forwarding. We modify this in our setup by making the remote scanner connect to the GVM server using ssh keys. 
 
 After starting the remote scanner, you will find the scanner\'s Public Key and the \"Scanner ID\" in the docker logs. This information is used to add the scanner to the GVM server using a script we\'ve created.
