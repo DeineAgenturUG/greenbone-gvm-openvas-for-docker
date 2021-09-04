@@ -1,7 +1,7 @@
 # Table of contents
 
 * [Overview](README.md)
-* [Openvas Greenbone Deployment Full Guide](ull-guide/README.md)
+* [Full Guide](full-guide/README.md)
   * [Installing Docker](full-guide/installing-docker.md)
   * [Deploying Greenbone GVM GSA with OpenVAS](full-guide/deploying-greenbone-gvm-gsa-with-openvas.md)
   * [Docker Compose](full-guide/docker-compose.md)
