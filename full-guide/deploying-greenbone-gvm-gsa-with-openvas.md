@@ -35,6 +35,18 @@ Those settings include the username and password for the web interface, setting 
 --volume ./storage/gvm:/var/lib/gvm 
 --volume ./storage/ssh:/etc/ssh
 ``` 
+
+| Environment variables     	| Description                                                                                                                                                                                                                                                     	|
+|---------------------------	|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	|
+| `--volume gvm-data:/data` 	| This is for creating a persistent volume so you don't lose your data when you update the container. You can modify the host side (gvm-data) but it needs to mount to /data in the container.                                                                    	|
+| `--name gvm`              	| Obviously you can name it whatever you\'d like. The rest of the documentation will assume that you\'ve named it gvm like we did in our example.                                                                                                                 	|
+| `--publish 8080:9392`     	| This is the port designation for the WebUI.                                                                                                                                                                                                                     	|
+| `--publish 8081:8081`     	| This is the port designation for the Supervisor WebUI -> Don't make it public to the internet!                                                                                                                                                                  	|
+| `--publish 2222:22`       	| This is required if you would like to run the distrubted scanner setup. This allows the remote scanner to connect back to the host over SSH. For security reasons, shell access is not allowed. This is only for the remote sensor to communicate with the GVM. 	|
+| `--publish 5432:5432`     	| This opens up access for database management tools to connect to the postgresql database and do advanced reporting, create graphs, etc.                                                                                                                         	|
+|                           	|                                                                                                                                                                                                                                                               
+
+<!--
 `--volume gvm-data:/data` This is for creating a persistent volume so you dont lose your data when you update the container. You can modify the host side (gvm-data) but it needs to mount to /data in the container.
 
 `--name gvm` Obviously you can name it whatever you\'d like. The rest of the documentation will assume that you\'ve named it gvm like we did in our example.
@@ -47,7 +59,11 @@ Those settings include the username and password for the web interface, setting 
 
 `--publish 5432:5432` - This opens up access for database management tools to connect to the postgresql database and do advanced reporting, create graphs, etc. 
 
+-->
+
 You can use any ports you\'d like on the host side (left side) but the container side must use the ports specified.
+
+
 
 ### NVD Download Status
 > NOTE:When you run the docker container for the first time, you may not be able to connect right away. This is because the docker container is downloading nvd information for it.
