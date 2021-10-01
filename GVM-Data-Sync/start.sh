@@ -13,9 +13,6 @@ sync () {
 	echo "Extracting data TAR..."
 	tar --extract --file=/tmp/data.tar.xz --directory=/tmp/data
 	
-	echo "Fixing Permissions..."
-	chmod 644 -R /tmp/data
-	
 	echo "Removing Old Data..."
 	rm -rf /gvm/var/lib/gvm/data-objects/gvmd
 	rm -rf /gvm/var/lib/gvm/scap-data
@@ -26,6 +23,11 @@ sync () {
 	mv --force /tmp/data/gvmd-data /gvm/var/lib/gvm/data-objects/gvmd
 	mv --force /tmp/data/scap-data /gvm/var/lib/gvm/scap-data
 	mv --force /tmp/data/cert-data /gvm/var/lib/gvm/cert-data
+	
+	echo "Fixing Permissions..."
+	chmod 777 -R /gvm/var/lib/gvm/data-objects
+	chmod 777 -R /gvm/var/lib/gvm/scap-data
+	chmod 777 -R /gvm/var/lib/gvm/cert-data
 	
 	rm /tmp/data.tar.xz
 	rm -r /tmp/data
