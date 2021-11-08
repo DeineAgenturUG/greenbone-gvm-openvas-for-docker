@@ -31,7 +31,11 @@ mkdir data
 
 echo "RSYNC: NVT-Feed..."
 
-rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/nvt-feed ./data/nvt-feed
+while ! rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/nvt-feed ./data/nvt-feed
+do
+  echo "Retrying..."
+  sleep 10
+done
 
 sleep 10
 
@@ -41,7 +45,11 @@ FEED_NAME="Greenbone Community gvmd Data Feed"
 
 echo "RSYNC: Data-Objects GVMD..."
 
-rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/data-objects/gvmd/ $FEED_DIR
+while ! rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/data-objects/gvmd/ $FEED_DIR
+do
+  echo "Retrying..."
+  sleep 10
+done
 
 write_feed_xml
 
@@ -53,7 +61,11 @@ FEED_NAME="Greenbone Community CERT Feed"
 
 echo "RSYNC: Cert-Data..."
 
-rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/cert-data $FEED_DIR
+while ! rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/cert-data $FEED_DIR
+do
+  echo "Retrying..."
+  sleep 10
+done
 
 write_feed_xml
 
@@ -65,6 +77,10 @@ FEED_NAME="Greenbone Community SCAP Feed"
 
 echo "RSYNC: Scap-Data..."
 
-rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/scap-data $FEED_DIR
+while ! rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/scap-data $FEED_DIR
+do
+  echo "Retrying..."
+  sleep 10
+done
 
 write_feed_xml
