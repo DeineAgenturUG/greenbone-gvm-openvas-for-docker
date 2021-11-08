@@ -5,6 +5,11 @@ FEED_VENDOR="Greenbone Networks GmbH"
 
 write_feed_xml () {
 
+  if [ ! -f $FEED_DIR/timestamp ]; then
+    echo "timestamp file not found!"
+    exit 1
+  fi
+
   FEED_VERSION=`cat $FEED_DIR/timestamp`
 
   mkdir -p $FEED_DIR
