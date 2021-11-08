@@ -31,7 +31,7 @@ mkdir data
 
 rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/nvt-feed ./data/nvt-feed
 
-sleep 5
+sleep 10
 
 FEED_DIR="./data/gvmd-data"
 FEED_TYPE="GVMD_DATA"
@@ -41,7 +41,7 @@ rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial 
 
 write_feed_xml
 
-sleep 5
+sleep 10
 
 FEED_DIR="./data/cert-data"
 FEED_TYPE="CERT"
@@ -51,7 +51,7 @@ rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial 
 
 write_feed_xml
 
-sleep 5
+sleep 10
 
 FEED_DIR="./data/scap-data"
 FEED_TYPE="SCAP"
