@@ -29,6 +29,8 @@ write_feed_xml () {
 
 mkdir data
 
+echo "RSYNC: NVT-Feed..."
+
 rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/nvt-feed ./data/nvt-feed
 
 sleep 10
@@ -36,6 +38,8 @@ sleep 10
 FEED_DIR="./data/gvmd-data"
 FEED_TYPE="GVMD_DATA"
 FEED_NAME="Greenbone Community gvmd Data Feed"
+
+echo "RSYNC: Data-Objects GVMD..."
 
 rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/data-objects/gvmd/ $FEED_DIR
 
@@ -47,6 +51,8 @@ FEED_DIR="./data/cert-data"
 FEED_TYPE="CERT"
 FEED_NAME="Greenbone Community CERT Feed"
 
+echo "RSYNC: Cert-Data..."
+
 rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/cert-data $FEED_DIR
 
 write_feed_xml
@@ -56,6 +62,8 @@ sleep 10
 FEED_DIR="./data/scap-data"
 FEED_TYPE="SCAP"
 FEED_NAME="Greenbone Community SCAP Feed"
+
+echo "RSYNC: Scap-Data..."
 
 rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/scap-data $FEED_DIR
 
