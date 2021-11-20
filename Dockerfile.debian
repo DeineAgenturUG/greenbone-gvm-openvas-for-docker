@@ -3,9 +3,9 @@ FROM debian:10-slim
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG=C.UTF-8
 
-COPY install-pkgs.sh /install-pkgs.sh
+COPY build.sh /build.sh
 
-RUN bash /install-pkgs.sh
+RUN bash /build.sh
 
 ENV gvm_libs_version="v21.4.0" \
     openvas_scanner_version="v21.4.0" \
