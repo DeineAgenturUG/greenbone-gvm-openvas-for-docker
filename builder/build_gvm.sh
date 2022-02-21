@@ -15,7 +15,7 @@ env
 echo 'Running sudo env'
 sudo env
 
-PACKAGER_PRIVKEY="/home/packager/.abuild/build.rsa"
+export PACKAGER_PRIVKEY="/home/packager/.abuild/build.rsa"
 
 mkdir -p /target/community/noarch/
 mkdir -p /target/community/x86_64/
@@ -29,8 +29,8 @@ BuilldAndSingMe() {
     fi
     sleep 1
     echo '--------------- Running abuild-sign --installed'
-    VAR=$(abuild-sign --installed)
-    echo $VAR
+    abuild-sign --installed
+    echo $?
     env
     echo '----------------------- Before abuild'
     abuild -c -r -P /target
