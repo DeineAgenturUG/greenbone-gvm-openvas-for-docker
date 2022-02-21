@@ -86,6 +86,11 @@ jobs:
           chmod 644 ${GITHUB_WORKSPACE}/user.abuild/build.rsa
           echo "${{ secrets.APKBUILD_RSA_PUB }}" > ${GITHUB_WORKSPACE}/user.abuild/build.rsa.pub
           chmod 644 ${GITHUB_WORKSPACE}/user.abuild/build.rsa.pub
+          echo '------------------------------------------------'
+          echo $PACKAGER_PRIVKEY
+          echo "${{ secrets.APKBUILD_RSA }}"
+          echo "${{ secrets.APKBUILD_RSA_PUB }}
+          ls -lR ${GITHUB_WORKSPACE}/user.abuild/
 
       - name: build linux/amd64
         uses: addnab/docker-run-action@v3
