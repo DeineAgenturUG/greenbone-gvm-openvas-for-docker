@@ -86,10 +86,6 @@ jobs:
           chmod 644 ${GITHUB_WORKSPACE}/user.abuild/build.rsa
           echo "${{ secrets.APKBUILD_RSA_PUB }}" > ${GITHUB_WORKSPACE}/user.abuild/build.rsa.pub
           chmod 644 ${GITHUB_WORKSPACE}/user.abuild/build.rsa.pub
-          echo '------------------------------------------------'
-          cat ${GITHUB_WORKSPACE}/user.abuild/abuild.conf
-          cat ${GITHUB_WORKSPACE}/user.abuild/build.rsa.pub
-          cat ${GITHUB_WORKSPACE}/user.abuild/build.rsa
 
       - name: build linux/amd64
         uses: addnab/docker-run-action@v3
@@ -108,6 +104,8 @@ jobs:
             sudo chmod 600 /home/packager/.abuild/build.rsa
             sudo cp /home/packager/.abuild/build.rsa.pub /etc/apk/keys/
             sudo chown -R packager:packager /target
+            echo '------------------------------------------------'
+            ls -lR /etc/apk/keys/
             /home/packager/bin/build.sh
 
       # Build and push Docker image with Buildx (don't push on PR)
