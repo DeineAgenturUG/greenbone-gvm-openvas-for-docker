@@ -32,6 +32,8 @@ BuilldAndSingMe() {
     abuild-sign --installed
     echo $?
     env
+    echo '-------- ls -lR /target'
+    ls -lR /target
     echo '----------------------- Before abuild'
     abuild -c -r -P /target
     sleep 1
