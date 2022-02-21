@@ -7,7 +7,7 @@ set -euo pipefail
 echo 'I AM IN build.sh !!!'
 echo 'I AM:'
 whoami
-cat /etc/apt/keys/build.rsa.pub
+cat /etc/apk/keys/build.rsa.pub
 
 mkdir -p /target/community/noarch/
 mkdir -p /target/community/x86_64/
