@@ -29,7 +29,9 @@ BuilldAndSingMe() {
     fi
     sleep 1
     echo '--------------- Running abuild-sign --installed'
-    abuild-sign --installed
+    VAR=$(abuild-sign --installed)
+    echo $VAR
+    env
     echo '----------------------- Before abuild'
     abuild -c -r -P /target
     sleep 1
