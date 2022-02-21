@@ -28,6 +28,8 @@ BuilldAndSingMe() {
         abuild checksum
     fi
     sleep 1
+    echo '--------------- Running abuild-sign --installed'
+    abuild-sign --installed
     echo '----------------------- Before abuild'
     abuild -c -r -P /target
     sleep 1
