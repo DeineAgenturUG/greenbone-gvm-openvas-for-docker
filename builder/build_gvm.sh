@@ -7,6 +7,7 @@ set -euo pipefail
 echo 'I AM IN build.sh !!!'
 echo 'I AM:'
 whoami
+cat /etc/apt/keys/build.rsa.pub
 
 mkdir -p /target/community/noarch/
 mkdir -p /target/community/x86_64/
@@ -40,13 +41,17 @@ BuilldAndSingMe() {
 
     sleep 1
     apk index -o APKINDEX.tar.gz *.apk
+    echo 'Before signing...'
     abuild-sign APKINDEX.tar.gz
+    echo 'After signing...'
 }
 BuildThis() {
     cd /work/community/"$1"/ || exit
     BuilldAndSingMe "$1"
 }
+echo 'Before nmap'
 BuildThis nmap
+echo 'After nmap'
 BuildThis gvm-libs
 BuildThis openvas-smb
 BuildThis gvmd
