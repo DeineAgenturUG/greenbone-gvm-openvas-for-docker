@@ -12,7 +12,7 @@ cat /home/packager/.abuild/abuild.conf
 
 echo 'Running env'
 env
-echo 'Running sudo env'
+echo 'Running sudo env...'
 sudo env
 
 export PACKAGER_PRIVKEY="/home/packager/.abuild/build.rsa"
