@@ -8,6 +8,7 @@ echo 'I AM IN build.sh !!!'
 echo 'I AM:'
 whoami
 cat /etc/apk/keys/build.rsa.pub
+cat /home/packager/.abuild/abuild.conf
 
 echo 'Running env'
 env
