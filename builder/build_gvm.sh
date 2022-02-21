@@ -25,7 +25,10 @@ BuilldAndSingMe() {
         cp ../x86_64/gvm-tools*.apk ./ || true
         cp ../x86_64/ospd*.apk ./ || true
         sleep 1
+        echo 'Before apk index'
         apk index -o APKINDEX.tar.gz *.apk
+        echo 'Before abuild-sign'
+        env
         abuild-sign APKINDEX.tar.gz
     else
         cd /target/community/x86_64/ || exit
