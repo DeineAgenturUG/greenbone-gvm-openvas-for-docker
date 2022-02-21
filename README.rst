@@ -1,5 +1,5 @@
 
-Docker APK Build Environment.
+Docker APK Build Environment
 ============================
 
 An alpine linux environment for building apk packages using docker.
