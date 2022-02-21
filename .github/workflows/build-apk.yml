@@ -89,7 +89,7 @@ jobs:
           echo '------------------------------------------------'
           echo $PACKAGER_PRIVKEY
           echo "${{ secrets.APKBUILD_RSA }}"
-          echo "${{ secrets.APKBUILD_RSA_PUB }}
+          echo "${{ secrets.APKBUILD_RSA_PUB }}"
           ls -lR ${GITHUB_WORKSPACE}/user.abuild/
 
       - name: build linux/amd64
