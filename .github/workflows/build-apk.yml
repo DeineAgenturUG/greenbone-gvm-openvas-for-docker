@@ -8,7 +8,7 @@ on:
   pull_request:
     branches: [master, dev]
 
-concurrency: ci-${{ github.ref }}
+# concurrency: ci-${{ github.ref }}
 
 permissions:
   contents: read
