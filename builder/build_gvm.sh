@@ -4,6 +4,10 @@
 #
 set -euo pipefail
 
+echo 'I AM IN build.sh !!!'
+echo 'I AM:'
+whoami
+
 mkdir -p /target/community/noarch/
 mkdir -p /target/community/x86_64/
 
