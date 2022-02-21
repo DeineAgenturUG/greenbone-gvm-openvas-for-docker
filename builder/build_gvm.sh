@@ -12,6 +12,10 @@ cat /home/packager/.abuild/abuild.conf
 
 echo 'Running env'
 env
+echo 'Running sudo env'
+sudo env
+
+PACKAGER_PRIVKEY="/home/packager/.abuild/build.rsa"
 
 mkdir -p /target/community/noarch/
 mkdir -p /target/community/x86_64/
