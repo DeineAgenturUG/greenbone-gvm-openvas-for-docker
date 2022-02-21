@@ -24,7 +24,7 @@ if [ "${numpub2}" -gt "0" ]; then
     sudo cp "${PACKAGER_PRIVKEY}.pub" /etc/apk/keys/
     sudo chown -R root: /etc/apk/keys/
     sudo apk update
-    unset PACKAGER_PRIVKEY
+    # unset PACKAGER_PRIVKEY
 fi
 sudo apk update
 exec "$@"
