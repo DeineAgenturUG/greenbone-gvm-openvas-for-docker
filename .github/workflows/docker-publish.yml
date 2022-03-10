@@ -24,6 +24,7 @@ permissions:
 
 jobs:
   build_test_trivy:
+    if: false
     name: Build and Test - Trivy
     runs-on: ubuntu-latest
     steps:
@@ -101,6 +102,7 @@ jobs:
         run: sudo chown -R $USER:$GROUP .trivy
 
   build_test_anchore:
+    if: false
     name: Build and Test - Anchore
     runs-on: ubuntu-latest
     steps:
@@ -152,6 +154,7 @@ jobs:
           sarif_file: ${{ steps.scan.outputs.sarif }}
 
   build_release:
+    if: false
     name: Build and Release
     runs-on: ubuntu-latest
 
