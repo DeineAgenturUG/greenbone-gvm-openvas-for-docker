@@ -10,6 +10,11 @@ echo "APT::Install-Recommends \"0\" ; APT::Install-Suggests \"0\" ;" | tee /etc/
 apt-get update
 apt-get install -yq --no-install-recommends gnupg curl wget sudo ca-certificates postfix supervisor cron openssh-server nano
 
+## START:HELPER poetry
+python3 -m pip install --user poetry
+# END:HELPER poetry
+
+
 ## START Postgres
 
 sudo apt-get update

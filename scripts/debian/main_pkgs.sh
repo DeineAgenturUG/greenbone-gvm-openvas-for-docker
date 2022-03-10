@@ -283,9 +283,11 @@ sudo apt-get install -y --no-install-recommends \
     python3-pip \
     python3-setuptools \
     python3-packaging \
+    python3-paho-mqtt \
     python3-wrapt \
     python3-cffi \
     python3-psutil/buster-backports \
+    python3-depreacted/buster-backports \
     python3-lxml \
     python3-defusedxml \
     python3-paramiko \
