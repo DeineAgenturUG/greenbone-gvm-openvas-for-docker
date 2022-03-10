@@ -287,7 +287,7 @@ sudo apt-get install -y --no-install-recommends \
     python3-wrapt \
     python3-cffi \
     python3-psutil/buster-backports \
-    python3-depreacted/buster-backports \
+    python3-deprecated/buster-backports \
     python3-lxml \
     python3-defusedxml \
     python3-paramiko \
