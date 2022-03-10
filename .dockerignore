@@ -5,4 +5,5 @@
 !gvm-sync-data/
 !report_formats/
 !scripts/
+scripts/.github/
 !sshd_config

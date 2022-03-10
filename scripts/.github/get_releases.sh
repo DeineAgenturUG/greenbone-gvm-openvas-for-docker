@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 
-for name in gvmd gsa gsad gvm-libs gvm-tools ospd-openvas openvas-scanner openvas-smb python-gvm; do
+listeq=": "
+if [[ "${CI}" == "true" ]]; then
+  listeq="="
+fi
 
-    echo "${${name^^}//-/_}: $(curl --silent \
-        -H "Accept: application/vnd.github.v3+json" \
-        https://api.github.com/repos/greenbone/${name}/releases | jq -r .[].tag_name | grep '^v21\.[0-9]*\.[0-9]*$' -m1)"
+for name in gvmd gsa gsad gvm-libs gvm-tools ospd-openvas openvas-scanner openvas-smb python-gvm; do
+    package_name="${name^^}"
+    echo "${package_name//-/_}_VERSION${listeq}$(gh api "repos/greenbone/${name}/releases" -q '.[].tag_name' | grep -E '^v[0-9]*\.[0-9]*\.[0-9]*$' -m1)"
+    sleep $(( $RANDOM % 3 + 1 ))s
 done
