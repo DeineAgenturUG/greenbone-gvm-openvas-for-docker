@@ -43,7 +43,7 @@ jobs:
           if [ ! -e ./.checkupdates/latest_version.sum ]; then
             touch ./.checkupdates/latest_version.sum
           fi
-          chmod +x ./get_releases.sh
+          chmod +x ./scripts/.github/get_releases.sh
           echo 'NEWRELEASES<<EOF' >> $GITHUB_ENV
           ./scripts/.github/get_releases.sh >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
