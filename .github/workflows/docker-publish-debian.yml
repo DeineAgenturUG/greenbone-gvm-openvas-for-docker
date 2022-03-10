@@ -218,9 +218,9 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
+          platforms: linux/amd64,linux/arm64
           cache-from: type=gha
           cache-to: type=gha
-          platforms: linux/amd64,linux/arm64
           push: true
           file: "./Dockerfile.debian"
           tags: ${{ steps.meta2.outputs.tags }}
@@ -265,6 +265,8 @@ jobs:
         with:
           context: .
           platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha
           push: true
           file: "./Dockerfile.debian"
           tags: ${{ steps.meta3.outputs.tags }}
@@ -309,6 +311,8 @@ jobs:
         with:
           context: .
           platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha
           push: true
           file: "./Dockerfile.debian"
           tags: ${{ steps.meta4.outputs.tags }}
@@ -352,6 +356,8 @@ jobs:
         with:
           context: .
           platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha
           push: true
           file: "./Dockerfile.debian"
           tags: ${{ steps.meta5.outputs.tags }}
