@@ -93,7 +93,7 @@ sudo apt-get install -y --no-install-recommends \
     libglib2.0-dev \
     libgnutls28-dev \
     libpq-dev \
-    postgresql-server-dev-all \
+    postgresql-server-dev-${POSTGRESQL_VERSION:-all} \
     libical-dev \
     libical3 \
     xsltproc \
@@ -176,20 +176,30 @@ tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/gsa-${gsa_version}.tar.gz
 #gpg --verify ${SOURCE_DIR}/gsa-node-modules-${gsa_version}.tar.gz.asc ${SOURCE_DIR}/gsa-node-modules-${gsa_version}.tar.gz
 #tar -C ${SOURCE_DIR}/gsa-${gsa_version}/gsa -xvzf ${SOURCE_DIR}/gsa-node-modules-${gsa_version}.tar.gz
 
-mkdir -p ${BUILD_DIR}/gsa && cd ${BUILD_DIR}/gsa
+mkdir -p ${SOURCE_DIR}/gsa-${gsa_version} && cd $_
 
-yarnpkg install
+yarnpkg
+yarnpkg build
 
-cmake ${SOURCE_DIR}/gsa-${gsa_version} \
+mkdir -p $INSTALL_PREFIX/share/gvm/gsad/web/
+cp -r build/* $INSTALL_PREFIX/share/gvm/gsad/web/
+
+
+# download gsad
+
+curl -sSL https://github.com/greenbone/gsad/archive/refs/tags/v${gsa_version}.tar.gz -o ${SOURCE_DIR}/gsad-${gsa_version}.tar.gz
+curl -sSL https://github.com/greenbone/gsad/releases/download/v${gsa_version}/gsad-${gsa_version}.tar.gz.asc -o ${SOURCE_DIR}/gsad-${gsa_version}.tar.gz.asc
+gpg --verify ${SOURCE_DIR}/gsad-${gsa_version}.tar.gz.asc ${SOURCE_DIR}/gsad-${gsa_version}.tar.gz
+tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/gsad-${gsa_version}.tar.gz
+
+mkdir -p ${BUILD_DIR}/gsad && cd $_
+
+cmake ${SOURCE_DIR}/gsad-${gsa_version} \
     -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
     -DCMAKE_BUILD_TYPE=Release \
     -DSYSCONFDIR=/etc \
     -DLOCALSTATEDIR=/var \
-    -DGVM_RUN_DIR=/run/gvm \
-    -DGSAD_PID_DIR=/run/gvm \
     -DLOGROTATE_DIR=/etc/logrotate.d
-
-make -j$(nproc)
 
 make DESTDIR=${INSTALL_DIR} install
 sudo cp -rv ${INSTALL_DIR}/* /
@@ -287,20 +297,12 @@ sudo python3 -m pip install --upgrade setuptools
 #sudo python3 -m pip install --no-warn-script-location psutil
 
 # Download and install ospd-openvas
-curl -sSL https://github.com/greenbone/ospd/archive/refs/tags/v${open_scanner_protocol_daemon}.tar.gz -o ${SOURCE_DIR}/ospd-${open_scanner_protocol_daemon}.tar.gz
-curl -sSL https://github.com/greenbone/ospd/releases/download/v${open_scanner_protocol_daemon}/ospd-${open_scanner_protocol_daemon}.tar.gz.asc -o ${SOURCE_DIR}/ospd-${open_scanner_protocol_daemon}.tar.gz.asc
-gpg --verify ${SOURCE_DIR}/ospd-${open_scanner_protocol_daemon}.tar.gz.asc ${SOURCE_DIR}/ospd-${open_scanner_protocol_daemon}.tar.gz
 
 curl -sSL https://github.com/greenbone/ospd-openvas/archive/refs/tags/v${ospd_openvas}.tar.gz -o ${SOURCE_DIR}/ospd-openvas-${ospd_openvas}.tar.gz
 curl -sSL https://github.com/greenbone/ospd-openvas/releases/download/v${ospd_openvas}/ospd-openvas-${ospd_openvas}.tar.gz.asc -o ${SOURCE_DIR}/ospd-openvas-${ospd_openvas}.tar.gz.asc
 gpg --verify ${SOURCE_DIR}/ospd-openvas-${ospd_openvas}.tar.gz.asc ${SOURCE_DIR}/ospd-openvas-${ospd_openvas}.tar.gz
 
-tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/ospd-${open_scanner_protocol_daemon}.tar.gz
 tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/ospd-openvas-${ospd_openvas}.tar.gz
-
-cd ${SOURCE_DIR}/ospd-${open_scanner_protocol_daemon}
-python3 -m pip install . --prefix=${INSTALL_PREFIX} --root=${INSTALL_DIR}
-python3 -m pip install .
 
 cd ${SOURCE_DIR}/ospd-openvas-${ospd_openvas}
 python3 -m pip install . --prefix=${INSTALL_PREFIX} --root=${INSTALL_DIR} --no-warn-script-location
@@ -358,7 +360,7 @@ sudo chmod 740 /usr/sbin/greenbone-*-sync
 echo '%gvm ALL = NOPASSWD: /usr/sbin/openvas' | sudo EDITOR='tee -a' visudo
 
 # Install Postgres
-sudo apt-get install -y --no-install-recommends postgresql
+sudo apt-get install -yq --no-install-recommends "postgresql-${POSTGRESQL_VERSION:-all}"
 
 # Remove required dependencies for gvm-libs
 sudo apt-get purge --auto-remove -y \
@@ -382,15 +384,15 @@ sudo apt-get purge --auto-remove -y \
     uuid-dev \
     python3-dev \
     build-essential \
-    postgresql-server-dev-all \
+    postgresql-server-dev-${POSTGRESQL_VERSION:-all} \
     nodejs \
     yarnpkg \
     graphviz-dev \
     cmake
-sudo apt-get purge --auto-remove -y *-dev
-
-sudo apt-get -y autoremove
-
+sudo apt-get purge --auto-remove -yq *-dev *-dev-"${POSTGRESQL_VERSION:-all}"
+sudo apt-get clean all
+sudo apt-get -yq autoremove
+sudo apt-get clean all
 echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf && ldconfig
 
 rm -rf ${SOURCE_DIR} ${BUILD_DIR} ${INSTALL_DIR}

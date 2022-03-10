@@ -11,22 +11,40 @@ apt-get update
 apt-get install -yq --no-install-recommends gnupg curl wget sudo ca-certificates postfix supervisor cron openssh-server nano
 
 ## START Postgres
-#echo "deb http://apt.postgresql.org/pub/repos/apt buster-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
-#curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 
 sudo apt-get update
 sudo apt-get -yq upgrade
 
-sudo apt-get install -y postgresql postgresql-server-dev-all
+if [ "${POSTGRESQL_VERSION:-all}" != "all" ]; then
+  ## START: INSTALL POSTGRES 13
+  sudo apt -yq install gnupg2 lsb-release
+  wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+  echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |sudo tee  /etc/apt/sources.list.d/pgdg.list
+
+  sudo apt-get update
+  sudo apt-get -yq upgrade
+
+  sudo apt -yq install "postgresql-${POSTGRESQL_VERSION:-all}" \
+                      "postgresql-client-${POSTGRESQL_VERSION:-all}" \
+                      "postgresql-server-dev-${POSTGRESQL_VERSION:-all}"
+  ## END: INSTALL POSTGRES 13
+else
+  # default postgres debian
+  sudo apt-get install -yq postgresql postgresql-server-dev-all
+fi
+
+
 
 sudo update-alternatives --install /usr/bin/postgres postgres /usr/lib/postgresql/11/bin/postgres 10
 sudo update-alternatives --install /usr/bin/initdb initdb /usr/lib/postgresql/11/bin/initdb 10
 sudo update-alternatives --install /usr/bin/postgres postgres /usr/lib/postgresql/12/bin/postgres 20
 sudo update-alternatives --install /usr/bin/initdb initdb /usr/lib/postgresql/12/bin/initdb 20
 sudo update-alternatives --install /usr/bin/postgres postgres /usr/lib/postgresql/13/bin/postgres 30
-sudo update-alternatives --install /usr/bin/initdb initdb /usr/lib/postgresql/13/bin/initdb 40
-#ln -s /usr/lib/postgresql/13/bin/postgres /usr/bin/postgres
-#ln -s /usr/lib/postgresql/13/bin/initdb /usr/bin/initdb
+sudo update-alternatives --install /usr/bin/initdb initdb /usr/lib/postgresql/13/bin/initdb 30
+sudo update-alternatives --install /usr/bin/postgres postgres /usr/lib/postgresql/14/bin/postgres 40
+sudo update-alternatives --install /usr/bin/initdb initdb /usr/lib/postgresql/14/bin/initdb 40
+sudo update-alternatives --install /usr/bin/postgres postgres /usr/lib/postgresql/15/bin/postgres 50
+sudo update-alternatives --install /usr/bin/initdb initdb /usr/lib/postgresql/15/bin/initdb 50
 
 sudo locale-gen en_US.UTF-8
 sudo localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8

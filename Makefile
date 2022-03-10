@@ -16,7 +16,7 @@ apkbuild:
 	make build
 
 .PHONY: build_debian
-build: build_debian_latest build_debian_full build_debian_data build_debian_data_full 
+build_debian: build_debian_latest build_debian_full build_debian_data build_debian_data_full
 
 build_debian_squash:
 	cd ${PWD} ; \
