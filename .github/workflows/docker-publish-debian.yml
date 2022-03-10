@@ -10,7 +10,9 @@ on:
   release:
     types: [published, edited]
 
-concurrency: ci-debian-${{ github.ref }}
+concurrency:
+  group: ci-debian-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   # Use docker.io for Docker Hub if empty
