@@ -7,6 +7,7 @@ export PASSWORD=${PASSWORD:-${GVMD_PASSWORD:-adminpassword}}
 export PASSWORD_FILE=${PASSWORD_FILE:-${GVMD_PASSWORD_FILE:-none}}
 export TIMEOUT=${TIMEOUT:-15}
 export DEBUG=${DEBUG:-N}
+export NO_AUTO_UPDATE=${NO_AUTO_UPDATE:-NO}
 export RELAYHOST=${RELAYHOST:-smtp}
 export SMTPPORT=${SMTPPORT:-25}
 export AUTO_SYNC=${AUTO_SYNC:-true}
@@ -209,7 +210,9 @@ fi
 
 # Sync NVTs, CERT data, and SCAP data on container start
 # See this as a super fallback to have at least some data, even if it is then out of date.
-/opt/setup/scripts/sync-initial.sh
+if [[ "${AUTO_SYNC}" == "YES" ]]; then
+  /opt/setup/scripts/sync-initial.sh
+fi
 
 #############################
 # Remove leftover pid files #
