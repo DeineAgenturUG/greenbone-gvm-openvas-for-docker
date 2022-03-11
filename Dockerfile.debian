@@ -21,17 +21,17 @@ RUN chmod -R +x /opt/setup/scripts/*.sh
 # openvas-smb: v21.4.0
 # python-gvm: v21.6.0
 
-ARG postgresql_version="13"
-ARG gvm_libs_version="21.4.4"
-ARG openvas_scanner_version="21.4.4" 
-ARG pggvm_version="da7bef426089e63da80fe85b723ce01714810871" 
-ARG gvmd_version="21.4.5" 
-ARG gsa_version="21.4.4" 
-ARG gvm_tools_version="21.10.0" 
-ARG openvas_smb_version="21.4.0" 
-ARG open_scanner_protocol_daemon="21.4.4" 
-ARG ospd_openvas="21.4.4" 
-ARG python_gvm_version="21.11.0"
+ARG POSTGRESQL_VERSION="13"
+ARG GVM_LIBS_VERSION="21.4.4"
+ARG PGGVM_VERSION="da7bef426089e63da80fe85b723ce01714810871"
+ARG GVMD_VERSION="21.4.5"
+ARG GSA_VERSION="21.4.4"
+ARG GSAD_VERSION="21.4.4"
+ARG GVM_TOOLS_VERSION="21.10.0"
+ARG OPENVAS_SMB_VERSION="21.4.0"
+ARG OPENVAS_SCANNER_VERSION="21.4.4"
+ARG OSPD_OPENVAS_VERSION="21.4.4"
+ARG PYTHON_GVM_VERSION="21.11.0"
 
 ARG SUPVISD=supervisorctl
 ARG GVMD_USER
@@ -51,17 +51,17 @@ ARG TZ=Etc/UTC
 ARG SSHD=false
 ARG DB_PASSWORD=none
 
-ENV POSTGRESQL_VERSION=${postgresql_version} \
-    gvm_libs_version=${gvm_libs_version} \
-    openvas_scanner_version=${openvas_scanner_version} \
-    pggvm_version=${pggvm_version} \
-    gvmd_version=${gvmd_version} \
-    gsa_version=${gsa_version} \
-    gvm_tools_version=${gvm_tools_version} \
-    openvas_smb_version=${openvas_smb_version} \
-    open_scanner_protocol_daemon=${open_scanner_protocol_daemon} \
-    ospd_openvas=${ospd_openvas} \
-    python_gvm_version=${python_gvm_version} \
+ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
+    GVM_LIBS_VERSION=${GVM_LIBS_VERSION} \
+    PGGVM_VERSION=${PGGVM_VERSION} \
+    GVMD_VERSION=${GVMD_VERSION} \
+    GSA_VERSION=${GSA_VERSION} \
+    GSAD_VERSION=${GSAD_VERSION} \
+    GVM_TOOLS_VERSION=${GVM_TOOLS_VERSION} \
+    OPENVAS_SMB_VERSION=${OPENVAS_SMB_VERSION} \
+    OPENVAS_SCANNER_VERSION=${OPENVAS_SCANNER_VERSION} \
+    OSPD_OPENVAS_VERSION=${OSPD_OPENVAS_VERSION} \
+    PYTHON_GVM_VERSION=${PYTHON_GVM_VERSION} \
     SYSTEM_DIST=debian \
     SUPVISD=${SUPVISD:-supervisorctl} \
     USERNAME=${USERNAME:-${GVMD_USER:-admin}} \

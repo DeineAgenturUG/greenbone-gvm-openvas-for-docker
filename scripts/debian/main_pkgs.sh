@@ -60,22 +60,22 @@ sudo apt-get install -y --no-install-recommends \
     libradcli4
 
 # Download and install gvm-libs
-curl -sSL "https://github.com/greenbone/gvm-libs/archive/refs/tags/v${gvm_libs_version}.tar.gz" -o "${SOURCE_DIR}/gvm-libs-${gvm_libs_version}.tar.gz"
-curl -sSL "https://github.com/greenbone/gvm-libs/releases/download/v${gvm_libs_version}/gvm-libs-${gvm_libs_version}.tar.gz.asc" -o "${SOURCE_DIR}/gvm-libs-${gvm_libs_version}.tar.gz.asc"
+curl -sSL "https://github.com/greenbone/gvm-libs/archive/refs/tags/v${GVM_LIBS_VERSION}.tar.gz" -o "${SOURCE_DIR}/gvm-libs-${GVM_LIBS_VERSION}.tar.gz"
+curl -sSL "https://github.com/greenbone/gvm-libs/releases/download/v${GVM_LIBS_VERSION}/gvm-libs-${GVM_LIBS_VERSION}.tar.gz.asc" -o "${SOURCE_DIR}/gvm-libs-${GVM_LIBS_VERSION}.tar.gz.asc"
 
 ls -lahr "${SOURCE_DIR}"
 
 # Verify the signature of the gvm-libs tarball
-gpg --verify "${SOURCE_DIR}/gvm-libs-${gvm_libs_version}.tar.gz.asc" "${SOURCE_DIR}/gvm-libs-${gvm_libs_version}.tar.gz"
+gpg --verify "${SOURCE_DIR}/gvm-libs-${GVM_LIBS_VERSION}.tar.gz.asc" "${SOURCE_DIR}/gvm-libs-${GVM_LIBS_VERSION}.tar.gz"
 
 # Unpack the gvm-libs tarball
-tar -C "${SOURCE_DIR}" -xvzf "${SOURCE_DIR}/gvm-libs-${gvm_libs_version}.tar.gz"
+tar -C "${SOURCE_DIR}" -xvzf "${SOURCE_DIR}/gvm-libs-${GVM_LIBS_VERSION}.tar.gz"
 
 # Build and install gvm-libs
 
 mkdir -p "${BUILD_DIR}/gvm-libs" && cd "${BUILD_DIR}/gvm-libs"
 
-cmake "${SOURCE_DIR}/gvm-libs-${gvm_libs_version}" \
+cmake "${SOURCE_DIR}/gvm-libs-${GVM_LIBS_VERSION}" \
     -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
     -DCMAKE_BUILD_TYPE=Release \
     -DSYSCONFDIR=/etc \
@@ -121,16 +121,16 @@ sudo apt-get install -y --no-install-recommends \
     xml-twig-tools
 
 # Download and install gvmd
-curl -sSL https://github.com/greenbone/gvmd/archive/refs/tags/v${gvmd_version}.tar.gz -o ${SOURCE_DIR}/gvmd-${gvmd_version}.tar.gz
-curl -sSL https://github.com/greenbone/gvmd/releases/download/v${gvmd_version}/gvmd-${gvmd_version}.tar.gz.asc -o ${SOURCE_DIR}/gvmd-${gvmd_version}.tar.gz.asc
+curl -sSL https://github.com/greenbone/gvmd/archive/refs/tags/v${GVMD_VERSION}.tar.gz -o ${SOURCE_DIR}/gvmd-${GVMD_VERSION}.tar.gz
+curl -sSL https://github.com/greenbone/gvmd/releases/download/v${GVMD_VERSION}/gvmd-${GVMD_VERSION}.tar.gz.asc -o ${SOURCE_DIR}/gvmd-${GVMD_VERSION}.tar.gz.asc
 
-gpg --verify ${SOURCE_DIR}/gvmd-${gvmd_version}.tar.gz.asc ${SOURCE_DIR}/gvmd-${gvmd_version}.tar.gz
+gpg --verify ${SOURCE_DIR}/gvmd-${GVMD_VERSION}.tar.gz.asc ${SOURCE_DIR}/gvmd-${GVMD_VERSION}.tar.gz
 
-tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/gvmd-${gvmd_version}.tar.gz
+tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/gvmd-${GVMD_VERSION}.tar.gz
 
 mkdir -p ${BUILD_DIR}/gvmd && cd ${BUILD_DIR}/gvmd
 
-cmake ${SOURCE_DIR}/gvmd-${gvmd_version} \
+cmake ${SOURCE_DIR}/gvmd-${GVMD_VERSION} \
     -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
     -DCMAKE_BUILD_TYPE=Release \
     -DLOCALSTATEDIR=/var \
@@ -166,17 +166,17 @@ sudo apt-get install -y --no-install-recommends \
 yarnpkg install
 yarnpkg upgrade
 
-curl -sSL https://github.com/greenbone/gsa/archive/refs/tags/v${gsa_version}.tar.gz -o ${SOURCE_DIR}/gsa-${gsa_version}.tar.gz
-curl -sSL https://github.com/greenbone/gsa/releases/download/v${gsa_version}/gsa-${gsa_version}.tar.gz.asc -o ${SOURCE_DIR}/gsa-${gsa_version}.tar.gz.asc
-gpg --verify ${SOURCE_DIR}/gsa-${gsa_version}.tar.gz.asc ${SOURCE_DIR}/gsa-${gsa_version}.tar.gz
-tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/gsa-${gsa_version}.tar.gz
+curl -sSL https://github.com/greenbone/gsa/archive/refs/tags/v${GSA_VERSION}.tar.gz -o ${SOURCE_DIR}/gsa-${GSA_VERSION}.tar.gz
+curl -sSL https://github.com/greenbone/gsa/releases/download/v${GSA_VERSION}/gsa-${GSA_VERSION}.tar.gz.asc -o ${SOURCE_DIR}/gsa-${GSA_VERSION}.tar.gz.asc
+gpg --verify ${SOURCE_DIR}/gsa-${GSA_VERSION}.tar.gz.asc ${SOURCE_DIR}/gsa-${GSA_VERSION}.tar.gz
+tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/gsa-${GSA_VERSION}.tar.gz
 
-#curl -sSL https://github.com/greenbone/gsa/releases/download/v${gsa_version}/gsa-node-modules-${gsa_version}.tar.gz -o ${SOURCE_DIR}/gsa-node-modules-${gsa_version}.tar.gz
-#curl -sSL https://github.com/greenbone/gsa/releases/download/v${gsa_version}/gsa-node-modules-${gsa_version}.tar.gz.asc -o ${SOURCE_DIR}/gsa-node-modules-${gsa_version}.tar.gz.asc
-#gpg --verify ${SOURCE_DIR}/gsa-node-modules-${gsa_version}.tar.gz.asc ${SOURCE_DIR}/gsa-node-modules-${gsa_version}.tar.gz
-#tar -C ${SOURCE_DIR}/gsa-${gsa_version}/gsa -xvzf ${SOURCE_DIR}/gsa-node-modules-${gsa_version}.tar.gz
+#curl -sSL https://github.com/greenbone/gsa/releases/download/v${GSA_VERSION}/gsa-node-modules-${GSA_VERSION}.tar.gz -o ${SOURCE_DIR}/gsa-node-modules-${GSA_VERSION}.tar.gz
+#curl -sSL https://github.com/greenbone/gsa/releases/download/v${GSA_VERSION}/gsa-node-modules-${GSA_VERSION}.tar.gz.asc -o ${SOURCE_DIR}/gsa-node-modules-${GSA_VERSION}.tar.gz.asc
+#gpg --verify ${SOURCE_DIR}/gsa-node-modules-${GSA_VERSION}.tar.gz.asc ${SOURCE_DIR}/gsa-node-modules-${GSA_VERSION}.tar.gz
+#tar -C ${SOURCE_DIR}/gsa-${GSA_VERSION}/gsa -xvzf ${SOURCE_DIR}/gsa-node-modules-${GSA_VERSION}.tar.gz
 
-mkdir -p ${SOURCE_DIR}/gsa-${gsa_version} && cd $_
+mkdir -p ${SOURCE_DIR}/gsa-${GSA_VERSION} && cd $_
 
 yarnpkg
 yarnpkg build
@@ -187,14 +187,14 @@ cp -r build/* $INSTALL_PREFIX/share/gvm/gsad/web/
 
 # download gsad
 
-curl -sSL https://github.com/greenbone/gsad/archive/refs/tags/v${gsa_version}.tar.gz -o ${SOURCE_DIR}/gsad-${gsa_version}.tar.gz
-curl -sSL https://github.com/greenbone/gsad/releases/download/v${gsa_version}/gsad-${gsa_version}.tar.gz.asc -o ${SOURCE_DIR}/gsad-${gsa_version}.tar.gz.asc
-gpg --verify ${SOURCE_DIR}/gsad-${gsa_version}.tar.gz.asc ${SOURCE_DIR}/gsad-${gsa_version}.tar.gz
-tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/gsad-${gsa_version}.tar.gz
+curl -sSL https://github.com/greenbone/gsad/archive/refs/tags/v${GSAD_VERSION}.tar.gz -o ${SOURCE_DIR}/gsad-${GSAD_VERSION}.tar.gz
+curl -sSL https://github.com/greenbone/gsad/releases/download/v${GSAD_VERSION}/gsad-${GSAD_VERSION}.tar.gz.asc -o ${SOURCE_DIR}/gsad-${GSAD_VERSION}.tar.gz.asc
+gpg --verify ${SOURCE_DIR}/gsad-${GSAD_VERSION}.tar.gz.asc ${SOURCE_DIR}/gsad-${GSAD_VERSION}.tar.gz
+tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/gsad-${GSAD_VERSION}.tar.gz
 
 mkdir -p ${BUILD_DIR}/gsad && cd $_
 
-cmake ${SOURCE_DIR}/gsad-${gsa_version} \
+cmake ${SOURCE_DIR}/gsad-${GSAD_VERSION} \
     -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
     -DCMAKE_BUILD_TYPE=Release \
     -DSYSCONFDIR=/etc \
@@ -221,16 +221,16 @@ sudo apt-get install -y --no-install-recommends \
     libhdb9-heimdal \
     perl-base
 
-curl -sSL https://github.com/greenbone/openvas-smb/archive/refs/tags/v${openvas_smb_version}.tar.gz -o ${SOURCE_DIR}/openvas-smb-${openvas_smb_version}.tar.gz
-curl -sSL https://github.com/greenbone/openvas-smb/releases/download/v${openvas_smb_version}/openvas-smb-${openvas_smb_version}.tar.gz.asc -o ${SOURCE_DIR}/openvas-smb-${openvas_smb_version}.tar.gz.asc
+curl -sSL https://github.com/greenbone/openvas-smb/archive/refs/tags/v${OPENVAS_SMB_VERSION}.tar.gz -o ${SOURCE_DIR}/openvas-smb-${OPENVAS_SMB_VERSION}.tar.gz
+curl -sSL https://github.com/greenbone/openvas-smb/releases/download/v${OPENVAS_SMB_VERSION}/openvas-smb-${OPENVAS_SMB_VERSION}.tar.gz.asc -o ${SOURCE_DIR}/openvas-smb-${OPENVAS_SMB_VERSION}.tar.gz.asc
 
-gpg --verify ${SOURCE_DIR}/openvas-smb-${openvas_smb_version}.tar.gz.asc ${SOURCE_DIR}/openvas-smb-${openvas_smb_version}.tar.gz
+gpg --verify ${SOURCE_DIR}/openvas-smb-${OPENVAS_SMB_VERSION}.tar.gz.asc ${SOURCE_DIR}/openvas-smb-${OPENVAS_SMB_VERSION}.tar.gz
 
-tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/openvas-smb-${openvas_smb_version}.tar.gz
+tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/openvas-smb-${OPENVAS_SMB_VERSION}.tar.gz
 
 mkdir -p ${BUILD_DIR}/openvas-smb && cd ${BUILD_DIR}/openvas-smb
 
-cmake ${SOURCE_DIR}/openvas-smb-${openvas_smb_version} \
+cmake ${SOURCE_DIR}/openvas-smb-${OPENVAS_SMB_VERSION} \
     -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
     -DCMAKE_BUILD_TYPE=Release
 
@@ -256,15 +256,15 @@ sudo apt-get install -y \
     python-impacket \
     libsnmp-dev
 
-curl -sSL https://github.com/greenbone/openvas-scanner/archive/refs/tags/v${openvas_scanner_version}.tar.gz -o ${SOURCE_DIR}/openvas-scanner-${openvas_scanner_version}.tar.gz
-curl -sSL https://github.com/greenbone/openvas-scanner/releases/download/v${openvas_scanner_version}/openvas-scanner-${openvas_scanner_version}.tar.gz.asc -o ${SOURCE_DIR}/openvas-scanner-${openvas_scanner_version}.tar.gz.asc
-gpg --verify ${SOURCE_DIR}/openvas-scanner-${openvas_scanner_version}.tar.gz.asc ${SOURCE_DIR}/openvas-scanner-${openvas_scanner_version}.tar.gz
+curl -sSL https://github.com/greenbone/openvas-scanner/archive/refs/tags/v${OPENVAS_SCANNER_VERSION}.tar.gz -o ${SOURCE_DIR}/openvas-scanner-${OPENVAS_SCANNER_VERSION}.tar.gz
+curl -sSL https://github.com/greenbone/openvas-scanner/releases/download/v${OPENVAS_SCANNER_VERSION}/openvas-scanner-${OPENVAS_SCANNER_VERSION}.tar.gz.asc -o ${SOURCE_DIR}/openvas-scanner-${OPENVAS_SCANNER_VERSION}.tar.gz.asc
+gpg --verify ${SOURCE_DIR}/openvas-scanner-${OPENVAS_SCANNER_VERSION}.tar.gz.asc ${SOURCE_DIR}/openvas-scanner-${OPENVAS_SCANNER_VERSION}.tar.gz
 
-tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/openvas-scanner-${openvas_scanner_version}.tar.gz
+tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/openvas-scanner-${OPENVAS_SCANNER_VERSION}.tar.gz
 
 mkdir -p ${BUILD_DIR}/openvas-scanner && cd ${BUILD_DIR}/openvas-scanner
 
-cmake ${SOURCE_DIR}/openvas-scanner-${openvas_scanner_version} \
+cmake ${SOURCE_DIR}/openvas-scanner-${OPENVAS_SCANNER_VERSION} \
     -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
     -DCMAKE_BUILD_TYPE=Release \
     -DSYSCONFDIR=/etc \
@@ -300,13 +300,13 @@ sudo python3 -m pip install --upgrade setuptools
 
 # Download and install ospd-openvas
 
-curl -sSL https://github.com/greenbone/ospd-openvas/archive/refs/tags/v${ospd_openvas}.tar.gz -o ${SOURCE_DIR}/ospd-openvas-${ospd_openvas}.tar.gz
-curl -sSL https://github.com/greenbone/ospd-openvas/releases/download/v${ospd_openvas}/ospd-openvas-${ospd_openvas}.tar.gz.asc -o ${SOURCE_DIR}/ospd-openvas-${ospd_openvas}.tar.gz.asc
-gpg --verify ${SOURCE_DIR}/ospd-openvas-${ospd_openvas}.tar.gz.asc ${SOURCE_DIR}/ospd-openvas-${ospd_openvas}.tar.gz
+curl -sSL https://github.com/greenbone/ospd-openvas/archive/refs/tags/v${OSPD_OPENVAS_VERSION}.tar.gz -o ${SOURCE_DIR}/ospd-openvas-${OSPD_OPENVAS_VERSION}.tar.gz
+curl -sSL https://github.com/greenbone/ospd-openvas/releases/download/v${OSPD_OPENVAS_VERSION}/ospd-openvas-${OSPD_OPENVAS_VERSION}.tar.gz.asc -o ${SOURCE_DIR}/ospd-openvas-${OSPD_OPENVAS_VERSION}.tar.gz.asc
+gpg --verify ${SOURCE_DIR}/ospd-openvas-${OSPD_OPENVAS_VERSION}.tar.gz.asc ${SOURCE_DIR}/ospd-openvas-${OSPD_OPENVAS_VERSION}.tar.gz
 
-tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/ospd-openvas-${ospd_openvas}.tar.gz
+tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/ospd-openvas-${OSPD_OPENVAS_VERSION}.tar.gz
 
-cd ${SOURCE_DIR}/ospd-openvas-${ospd_openvas}
+cd ${SOURCE_DIR}/ospd-openvas-${OSPD_OPENVAS_VERSION}
 python3 -m pip install . --prefix=${INSTALL_PREFIX} --root=${INSTALL_DIR} --no-warn-script-location
 python3 -m pip install . --no-warn-script-location
 sudo cp -rv ${INSTALL_DIR}/* /
@@ -334,7 +334,7 @@ sudo cp -rv ${INSTALL_DIR}/* /
 # Install redis-server
 sudo apt-get install -y --no-install-recommends redis-server/buster-backports
 sudo mkdir -p /etc/redis
-sudo cp ${SOURCE_DIR}/openvas-scanner-${openvas_scanner_version}/config/redis-openvas.conf /etc/redis/redis-openvas.conf
+sudo cp ${SOURCE_DIR}/openvas-scanner-${OPENVAS_SCANNER_VERSION}/config/redis-openvas.conf /etc/redis/redis-openvas.conf
 sudo chown redis:redis /etc/redis/*.conf
 echo "db_address = /run/redis-openvas/redis.sock" | sudo tee -a /etc/openvas/openvas.conf
 
@@ -345,6 +345,7 @@ sudo chown -R gvm:gvm /var/lib/gvm
 sudo chown -R gvm:gvm /var/lib/openvas
 sudo chown -R gvm:gvm /var/log/gvm
 sudo chown -R gvm:gvm /run/gvm
+sudo chown -R gvm:gvm /run/gvmd
 
 sudo chmod -R g+srw /var/lib/gvm
 sudo chmod -R g+srw /var/lib/openvas
