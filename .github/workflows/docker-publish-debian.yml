@@ -72,8 +72,7 @@ jobs:
         if: always()
         with:
           image-ref: "${{ env.IMAGE_REPOSITORY_GHCR }}:${{ github.sha }}"
-          format: "template"
-          template: "@/contrib/sarif.tpl"
+          format: "sarif"
           output: "trivy-results.sarif"
           severity: "CRITICAL,HIGH"
           cache-dir: .trivy
