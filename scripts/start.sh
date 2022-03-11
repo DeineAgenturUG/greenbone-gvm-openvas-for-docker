@@ -228,12 +228,13 @@ if [ -S /tmp/ospd.sock ]; then
 	rm /tmp/ospd.sock
 fi
 
-if [ -S /var/run/ospd/ospd.sock ]; then
-	rm /var/run/ospd/ospd.sock
+if [ -S /run/ospd/ospd-openvas.sock ]; then
+	rm /run/ospd/ospd-openvas.sock
 fi
 
 if [ ! -d /var/run/ospd ]; then
 	mkdir -p /var/run/ospd
+	chown gvm:gvm /var/run/ospd
 fi
 
 echo "Starting Open Scanner Protocol daemon for OpenVAS..."
@@ -242,13 +243,13 @@ if [ "${DEBUG}" == "Y" ]; then
 	${SUPVISD} status ospd-openvas
 fi
 
-while [ ! -S /var/run/ospd/ospd.sock ]; do
+while [ ! -S /run/ospd/ospd-openvas.sock ]; do
 	sleep 1
 done
 
 # echo "Creating OSPd socket link from old location..."
 # rm -rfv /tmp/ospd.sock
-# ln -s /var/run/ospd/ospd.sock /tmp/ospd.sock
+# ln -s /run/ospd/ospd-openvas.sock /tmp/ospd.sock
 
 echo "Starting Greenbone Vulnerability Manager..."
 ${SUPVISD} start gvmd
@@ -275,7 +276,7 @@ if [ ! -f "/var/lib/gvm/.created_gvm_user" ]; then
 	echo "${ADDR[1]}"
 
 	su -c "gvmd --modify-setting 78eceaec-3385-11ea-b237-28d24461215b --value ${ADDR[1]}" gvm
-	su -c "gvmd --modify-scanner=08b69003-5fc2-4037-a479-93b440211c73 --scanner-host=/var/run/ospd/ospd.sock" gvm
+	su -c "gvmd --modify-scanner=08b69003-5fc2-4037-a479-93b440211c73 --scanner-host=/run/ospd/ospd-openvas.sock" gvm
 	su -c "gvmd --modify-scanner=08b69003-5fc2-4037-a479-93b440211c73 --value ${ADDR[1]}" gvm
 	touch /var/lib/gvm/.created_gvm_user
 fi
