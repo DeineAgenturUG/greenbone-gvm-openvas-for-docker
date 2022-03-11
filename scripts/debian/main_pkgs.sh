@@ -203,7 +203,7 @@ cmake ${SOURCE_DIR}/gsad-${GSAD_VERSION} \
 make DESTDIR=${INSTALL_DIR} install
 sudo cp -rv ${INSTALL_DIR}/* /
 #rm -rf ${INSTALL_DIR}/*
-yarnpkg cache clean --all
+yarnpkg cache clean
 
 sudo apt-get purge -y \
     nodejs \
