@@ -23,8 +23,12 @@ env:
   IMAGE_NAME_DOCKER: deineagentur/gvm
 
 permissions:
+  id-token: write
+  actions: read
   contents: read
   packages: write
+  pull-requests: read
+  security-events: write
 
 jobs:
   build_test_trivy:
