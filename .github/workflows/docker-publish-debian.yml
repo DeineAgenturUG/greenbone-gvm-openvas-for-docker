@@ -128,8 +128,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gvm-version-check-v2-
       - id: set-matrix
-        run: echo "::set-output name=matrix::$(node scripts/.github/build_matrix.js)"
-
+        run: |
+          echo "::set-output name=matrix::$(node scripts/.github/build_matrix.js)"
+      - run: |
+          echo ${{ steps.set-matrix.outputs.matrix }}
     # here, we save the result of this 1st phase to the "outputs"
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}

@@ -11,6 +11,7 @@ let latest_version
 
 try {
   latest_version = fs.readFileSync('./.checkupdates/latest_version', 'utf8');
+  latest_version = latest_version.replaceAll("=v","=")
 } catch (e) {
   process.exit(1)
 }
