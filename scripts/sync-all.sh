@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+if [[ "${AUTO_SYNC}" != "YES" ]]; then
+  exit 0
+fi
+
 exec_as_gvm(){
 	# if root
 	if [ "$EUID" -eq 0 ]; then
