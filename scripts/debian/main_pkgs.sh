@@ -184,7 +184,6 @@ yarnpkg build
 mkdir -p $INSTALL_PREFIX/share/gvm/gsad/web/
 cp -r build/* $INSTALL_PREFIX/share/gvm/gsad/web/
 
-
 # download gsad
 
 curl -sSL https://github.com/greenbone/gsad/archive/refs/tags/v${GSAD_VERSION}.tar.gz -o ${SOURCE_DIR}/gsad-${GSAD_VERSION}.tar.gz
@@ -204,6 +203,7 @@ cmake ${SOURCE_DIR}/gsad-${GSAD_VERSION} \
 make DESTDIR=${INSTALL_DIR} install
 sudo cp -rv ${INSTALL_DIR}/* /
 #rm -rf ${INSTALL_DIR}/*
+yarnpkg cache clean --all
 
 sudo apt-get purge -y \
     nodejs \
