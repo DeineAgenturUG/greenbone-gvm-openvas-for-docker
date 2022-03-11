@@ -11,7 +11,7 @@ on:
     types: [published, edited]
 
 concurrency:
-  group: ci-debian-${{ github.ref }}
+  group: ci-debian-${{ github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 
 env:
