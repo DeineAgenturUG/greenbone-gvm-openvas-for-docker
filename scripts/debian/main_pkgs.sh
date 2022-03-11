@@ -347,6 +347,7 @@ sudo chown -R gvm:gvm /var/lib/openvas
 sudo chown -R gvm:gvm /var/log/gvm
 sudo chown -R gvm:gvm /run/gvmd
 sudo chown -R gvm:gvm /run/gsad
+sudo mkdir -p /run/ospd
 sudo chown -R gvm:gvm /run/ospd
 
 sudo chmod -R g+srw /var/lib/gvm
