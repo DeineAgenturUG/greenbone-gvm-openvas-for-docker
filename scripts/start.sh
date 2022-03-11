@@ -210,8 +210,10 @@ fi
 
 # Sync NVTs, CERT data, and SCAP data on container start
 # See this as a super fallback to have at least some data, even if it is then out of date.
-if [[ "${AUTO_SYNC}" == "YES" ]]; then
-  /opt/setup/scripts/sync-initial.sh
+if [[ "${AUTO_SYNC_ON_START}" == "YES" ]]; then
+  if [[ "${AUTO_SYNC}" == "YES" ]]; then
+    /opt/setup/scripts/sync-initial.sh
+  fi
 fi
 
 #############################
