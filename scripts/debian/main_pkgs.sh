@@ -279,15 +279,15 @@ sudo cp -rv ${INSTALL_DIR}/* /
 
 # Install required dependencies for ospd-openvas
 sudo apt-get install -y --no-install-recommends \
-    python3 \
+    python3.9 \
     python3-pip \
     python3-setuptools \
     python3-packaging \
     python3-paho-mqtt \
     python3-wrapt \
     python3-cffi \
-    python3-psutil/buster-backports \
-    python3-deprecated/buster-backports \
+    python3-psutil \
+    python3-deprecated \
     python3-lxml \
     python3-defusedxml \
     python3-paramiko \
@@ -332,7 +332,7 @@ sudo cp -rv ${INSTALL_DIR}/* /
 #rm -rf ${INSTALL_DIR}/*
 
 # Install redis-server
-sudo apt-get install -y --no-install-recommends redis-server/buster-backports
+sudo apt-get install -y --no-install-recommends redis-server/bullseye-backports
 sudo mkdir -p /etc/redis
 sudo cp ${SOURCE_DIR}/openvas-scanner-${OPENVAS_SCANNER_VERSION}/config/redis-openvas.conf /etc/redis/redis-openvas.conf
 sudo chown redis:redis /etc/redis/*.conf

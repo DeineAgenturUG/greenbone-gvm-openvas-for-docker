@@ -3,7 +3,7 @@
 
 touch /opt/setup/.env
 
-echo 'deb http://deb.debian.org/debian buster-backports main' | tee /etc/apt/sources.list.d/backports.list
+echo 'deb http://deb.debian.org/debian bullseye-backports main' | tee /etc/apt/sources.list.d/backports.list
 echo "Acquire::http::Proxy \"${http_proxy}\";" | tee /etc/apt/apt.conf.d/30proxy
 echo "APT::Install-Recommends \"0\" ; APT::Install-Suggests \"0\" ;" | tee /etc/apt/apt.conf.d/10no-recommend-installs
 
