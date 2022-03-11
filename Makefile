@@ -1,9 +1,10 @@
 SHELL:=/bin/bash
 PWD ?= $(PWD)
-DOCKER_ORG:=securecompliance
+DOCKER_ORG:=deineagenturug
 PLATFORM:=linux/amd64,linux/arm64
 ADD_OPTIONS:=--load
 OPTIONS:=
+BUILDX:=
 
 
 .DEFAULT_GOAL := all
@@ -20,20 +21,20 @@ build_debian: build_debian_latest build_debian_full build_debian_data build_debi
 
 build_debian_squash:
 	cd ${PWD} ; \
-	docker build -f Dockerfile.debian --squash ${ADD_OPTIONS}  -t ${DOCKER_ORG}/gvm:debian . ; \
+	docker ${BUILDX} build -f Dockerfile.debian --squash ${ADD_OPTIONS} $(for i in `cat build-args.txt`; do out+="--build-arg $i " ; done; echo $out;out="") -t ${DOCKER_ORG}/gvm:debian . ; \
 	docker push ${DOCKER_ORG}/gvm:debian
 build_debian_latest: 
 	cd ${PWD} ; \
-	docker build --platform ${PLATFORM} ${ADD_OPTIONS} -f Dockerfile.debian -t ${DOCKER_ORG}/gvm:debian -t ${DOCKER_ORG}/gvm:debian-latest .
+	docker ${BUILDX} build --platform ${PLATFORM} ${ADD_OPTIONS} -f Dockerfile.debian $(for i in `cat build-args.txt`; do out+="--build-arg $i " ; done; echo $out;out="") -t ${DOCKER_ORG}/gvm:debian -t ${DOCKER_ORG}/gvm:debian-latest .
 build_debian_full: 
 	cd ${PWD} ; \
-	docker build --platform ${PLATFORM} ${ADD_OPTIONS} -f Dockerfile.debian --build-arg OPT_PDF=1  -t ${DOCKER_ORG}/gvm:debian-full .
+	docker ${BUILDX} build --platform ${PLATFORM} ${ADD_OPTIONS} -f Dockerfile.debian $(for i in `cat build-args.txt`; do out+="--build-arg $i " ; done; echo $out;out="") --build-arg OPT_PDF=1  -t ${DOCKER_ORG}/gvm:debian-full .
 build_debian_data: 
 	cd ${PWD} ; \
-	docker build --platform ${PLATFORM} ${ADD_OPTIONS} -f Dockerfile.debian --build-arg SETUP=1 -t ${DOCKER_ORG}/gvm:debian-data .
+	docker ${BUILDX} build --platform ${PLATFORM} ${ADD_OPTIONS} -f Dockerfile.debian $(for i in `cat build-args.txt`; do out+="--build-arg $i " ; done; echo $out;out="") --build-arg SETUP=1 -t ${DOCKER_ORG}/gvm:debian-data .
 build_debian_data_full: 
 	cd ${PWD} ; \
-	docker build --platform ${PLATFORM} ${ADD_OPTIONS} -f Dockerfile.debian --build-arg SETUP=1 --build-arg OPT_PDF=1 -t ${DOCKER_ORG}/gvm:debian-data-full .
+	docker ${BUILDX} build --platform ${PLATFORM} ${ADD_OPTIONS} -f Dockerfile.debian $(for i in `cat build-args.txt`; do out+="--build-arg $i " ; done; echo $out;out="") --build-arg SETUP=1 --build-arg OPT_PDF=1 -t ${DOCKER_ORG}/gvm:debian-data-full .
 
 
 .PHONY: build

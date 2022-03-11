@@ -82,16 +82,16 @@ ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
     DB_PASSWORD=${DB_PASSWORD:-none} \
     DB_PASSWORD_FILE=${DB_PASSWORD:-none}
 
-RUN apt-get update && apt-get install -y locales && \
-    sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
+RUN apt-get update && apt-get install -y locales
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
     locale-gen
 ENV LANG=en_US.UTF-8 \
     LANGUAGE=en_US.UTF-8 \
     LC_ALL=en_US.UTF-8
 
-RUN ls -lahR /opt/setup/ \
-    && /opt/setup/scripts/debian/prepare.sh \
-    && /opt/setup/scripts/debian/main_pkgs.sh
+RUN ls -lahR /opt/setup/
+RUN /opt/setup/scripts/debian/prepare.sh
+RUN /opt/setup/scripts/debian/main_pkgs.sh
 
 #COPY report_formats/* /report_formats/
 
@@ -105,18 +105,18 @@ ENV SETUP=${SETUP:-0} \
     OPT_PDF=${OPT_PDF:-0}
 
 RUN env \
-    && chmod -R +x /opt/setup/scripts/*.sh \
-    && if [ "${OPT_PDF}" = "1" ]; then \
-    sudo apt update ;\
-    sudo apt install -y --no-install-recommends texlive-latex-extra texlive-fonts-recommended ;\
-    unset OPT_PDF ;\
-    fi \
-    && if [ "${SETUP}" = "1" ]; then \
+    && chmod -R +x /opt/setup/scripts/*.sh
+RUN if [ "${SETUP}" = "1" ]; then \
     ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" >/etc/timezone \
     && /opt/setup/scripts/entrypoint.sh /usr/bin/supervisord -c /etc/supervisord.conf || true ; \
     unset SETUP ;\
-    fi \
-    && rm -rfv /var/lib/gvm/CA || true \
+    fi
+RUN if [ "${OPT_PDF}" = "1" ]; then \
+    sudo apt update ;\
+    sudo apt install -y --no-install-recommends texlive-latex-extra texlive-fonts-recommended ;\
+    unset OPT_PDF ;\
+    fi
+RUN rm -rfv /var/lib/gvm/CA || true \
     && rm -rfv /var/lib/gvm/private || true \
     && rm /etc/localtime || true\
     && echo "Etc/UTC" >/etc/timezone \
