@@ -1,8 +1,8 @@
 name: Docker Image Build and Release for Debian
 
 on:
+  workflow_dispatch:
   push:
-    branches: [master]
   pull_request:
     branches: [master]
   create:
@@ -121,6 +121,7 @@ jobs:
           sarif_file: ${{ steps.scan.outputs.sarif }}
 
   provide_matrix_json:
+    if: github.event_name == 'pull_request' || github.event_name == 'release' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
