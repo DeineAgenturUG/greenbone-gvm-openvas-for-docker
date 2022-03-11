@@ -79,8 +79,7 @@ cmake "${SOURCE_DIR}/gvm-libs-${GVM_LIBS_VERSION}" \
     -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
     -DCMAKE_BUILD_TYPE=Release \
     -DSYSCONFDIR=/etc \
-    -DLOCALSTATEDIR=/var \
-    -DGVM_PID_DIR=/run/gvm
+    -DLOCALSTATEDIR=/var
 
 make "-j$(nproc)"
 
@@ -136,7 +135,6 @@ cmake ${SOURCE_DIR}/gvmd-${GVMD_VERSION} \
     -DLOCALSTATEDIR=/var \
     -DSYSCONFDIR=/etc \
     -DGVM_DATA_DIR=/var \
-    -DGVM_RUN_DIR=/run/gvm \
     -DPostgreSQL_TYPE_INCLUDE_DIR=/usr/include/postgresql \
     -DOPENVAS_DEFAULT_SOCKET=/run/ospd/ospd-openvas.sock \
     -DGVM_FEED_LOCK_PATH=/var/lib/gvm/feed-update.lock \
@@ -198,7 +196,10 @@ cmake ${SOURCE_DIR}/gsad-${GSAD_VERSION} \
     -DCMAKE_BUILD_TYPE=Release \
     -DSYSCONFDIR=/etc \
     -DLOCALSTATEDIR=/var \
-    -DLOGROTATE_DIR=/etc/logrotate.d
+    -DLOGROTATE_DIR=/etc/logrotate.d \
+    -DGVMD_RUN_DIR=/run/gvmd \
+    -DGSAD_RUN_DIR=/run/gsad \
+    -DGSAD_PID_DIR=/run/gsad
 
 make DESTDIR=${INSTALL_DIR} install
 sudo cp -rv ${INSTALL_DIR}/* /
@@ -344,8 +345,9 @@ sudo usermod -aG redis gvm
 sudo chown -R gvm:gvm /var/lib/gvm
 sudo chown -R gvm:gvm /var/lib/openvas
 sudo chown -R gvm:gvm /var/log/gvm
-sudo chown -R gvm:gvm /run/gvm
 sudo chown -R gvm:gvm /run/gvmd
+sudo chown -R gvm:gvm /run/gsad
+sudo chown -R gvm:gvm /run/ospd
 
 sudo chmod -R g+srw /var/lib/gvm
 sudo chmod -R g+srw /var/lib/openvas
