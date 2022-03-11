@@ -241,7 +241,7 @@ jobs:
           build-args: ${{ matrix.BUILD_ARGS }}
 
       - name: Update changelog
-        if: matrix.BUILD_NAME == 'DEFAULT'
+        if: matrix.BUILD_NAME == 'DEFAULT' && github.event_name == 'release'
         uses: thomaseizinger/keep-a-changelog-new-release@1.1.0
         with:
           version: ${{ github.event.inputs.version }}
