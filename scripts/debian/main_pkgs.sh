@@ -39,7 +39,8 @@ gpg --import <GBCommunitySigningKey.asc
 # Install required dependencies for gvm-libs
 sudo apt-get install -y --no-install-recommends \
     libglib2.0-dev \
-    graphviz graphviz-dev \
+    graphviz \
+    graphviz-dev \
     libgpgme-dev \
     libgpgme11 \
     libgnutls28-dev \
@@ -342,7 +343,7 @@ sudo apt-get install -y --no-install-recommends redis-server/bullseye-backports
 sudo mkdir -p /etc/redis
 sudo cp ${SOURCE_DIR}/openvas-scanner-${OPENVAS_SCANNER_VERSION}/config/redis-openvas.conf /etc/redis/redis-openvas.conf
 sudo chown redis:redis /etc/redis/*.conf
-echo "db_address = /run/redis-openvas/redis.sock" | sudo tee -a /etc/openvas/openvas.conf
+echo "db_address = /run/redis/redis.sock" | sudo tee -a /etc/openvas/openvas.conf
 
 sudo usermod -aG redis gvm
 

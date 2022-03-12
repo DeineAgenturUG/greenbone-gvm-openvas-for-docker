@@ -62,16 +62,17 @@ if [ -S /run/redis/redis.sock ]; then
 	rm /run/redis/redis.sock
 fi
 
-if [ ! -d "/run/redis-openvas" ]; then
-	echo "create /run/redis-openvas"
-	mkdir -p /run/redis-openvas
+if [ ! -d "/run/redis" ]; then
+	echo "create /run/redis"
+	mkdir -p /run/redis
+	chown redis:gvm /run/redis
 fi
 
-if [ -S /run/redis-openvas/redis.sock ]; then
-	rm /run/redis-openvas/redis.sock
+if [ -S /run/redis/redis.sock ]; then
+	rm /run/redis/redis.sock
 fi
 
-sudo chown -R redis:redis /run/redis-openvas/
+sudo chown -R redis:gvm /run/redis/
 sudo chown -R redis:redis /etc/redis/
 
 ${SUPVISD} start redis
@@ -80,16 +81,16 @@ if [ "${DEBUG}" == "Y" ]; then
 fi
 
 echo "Wait for redis socket to be created..."
-while [ ! -S /run/redis-openvas/redis.sock ]; do
+while [ ! -S /run/redis/redis.sock ]; do
 	sleep 1
 done
 
 echo "Testing redis status..."
-X="$(redis-cli -s /run/redis-openvas/redis.sock ping)"
+X="$(redis-cli -s /run/redis/redis.sock ping)"
 while [ "${X}" != "PONG" ]; do
 	echo "Redis not yet ready..."
 	sleep 1
-	X="$(redis-cli -s /run/redis-openvas/redis.sock ping)"
+	X="$(redis-cli -s /run/redis/redis.sock ping)"
 done
 echo "Redis ready."
 
@@ -314,7 +315,7 @@ if [ "$SSHD" == "true" ]; then
 	rm -rfv /var/run/sshd
 	mkdir -p /var/run/sshd
 	if [ ! -f /etc/ssh/sshd_config ]; then
-		cp /opt/config/sshd_config /etc/ssh/sshd_config
+		cp /opt/setup/config/sshd_config /etc/ssh/sshd_config
 		chown root:root /etc/ssh/sshd_config
 	fi
 	${SUPVISD} start sshd

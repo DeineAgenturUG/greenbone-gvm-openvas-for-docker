@@ -1,0 +1,152 @@
+name: Docker Image Build and Release for Debian
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-debian-build-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+env:
+  # Use docker.io for Docker Hub if empty
+  REGISTRY: ghcr.io
+  # github.repository as <account>/<repo>
+  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME_GHCR: ghcr.io/${{ github.repository }}
+  IMAGE_NAME_DOCKER: deineagentur/gvm
+
+permissions:
+  id-token: write
+  actions: read
+  contents: read
+  packages: write
+  pull-requests: read
+  security-events: write
+
+jobs:
+  provide_matrix_json:
+    if: github.event_name == 'pull_request' || github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: .checkupdates
+          key: ${{ runner.os }}-gvm-version-check-v2-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-gvm-version-check-v2-
+      - id: set-matrix
+        run: |
+          echo "::set-output name=matrix::$(node scripts/.github/build_matrix2.js)"
+      - run: |
+          echo ${{ steps.set-matrix.outputs.matrix }}
+    # here, we save the result of this 1st phase to the "outputs"
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+
+  build_release:
+    needs: provide_matrix_json
+    name: Build and Release
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJson(needs.provide_matrix_json.outputs.matrix) }}
+
+    outputs:
+      labels: ${{ steps.meta.outputs.labels }}
+      tags: ${{ steps.meta.outputs.tags }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Setup Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+        with:
+          install: true
+
+      - name: Inspect builder
+        run: |
+          echo "Name        : ${{ steps.buildx.outputs.name }}"
+          echo "Endpoint    : ${{ steps.buildx.outputs.endpoint }}"
+          echo "Status      : ${{ steps.buildx.outputs.status }}"
+          echo "Flags       : ${{ steps.buildx.outputs.flags }}"
+          echo "Platforms   : ${{ steps.buildx.outputs.platforms }}"
+
+      # Login against a Docker registry except on PR
+      # https://github.com/docker/login-action
+      - name: Login to GitHub Container Registry ${{ env.REGISTRY }}
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Login to DockerHub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Relase Prepare for latest Tag
+        id: releasePreareLatestTag
+        shell: bash
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == "create" ]] && [[ "$GITHUB_REF" =~ ^refs/tags/v.* ]]; then
+            echo -n "::set-output name=latest::true"
+          else
+            echo -n "::set-output name=latest::false"
+          fi
+
+      - name: Relase Prepare
+        id: releasePreare
+        run: |
+          echo -n "::set-output name=images::"
+          if [ "${GITHUB_EVENT_NAME}" != "pull_request" ]; then
+            echo -n "${IMAGE_NAME_DOCKER}"
+            echo -n ","
+          fi
+          echo -n "${IMAGE_NAME_GHCR}"
+
+      # Extract metadata (tags, labels) for Docker
+      # https://github.com/docker/metadata-action
+      - name: Extract Docker metadata
+        id: meta2
+        uses: docker/metadata-action@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          images: ${{ steps.releasePreare.outputs.images }}
+          flavor: |
+            latest=${{ steps.releasePreareLatestTag.outputs.latest}}
+            prefix=debian-,onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
+            suffix=${{ matrix.BUILD_SUFFIX }},onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{raw}}
+            type=semver,pattern={{major}}.{{minor}}
+
+      # Build and push Docker image with Buildx (don't push on PR)
+      # https://github.com/docker/build-push-action
+      - name: Build and push Docker image ${{ matrix.BUILD_NAME }}
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          file: "./Dockerfile.debian"
+          tags: ${{ steps.meta2.outputs.tags }}
+          labels: ${{ steps.meta2.outputs.labels }}
+          build-args: ${{ matrix.BUILD_ARGS }}
+
+      - name: Update changelog
+        if: matrix.BUILD_NAME == 'DEFAULT' && github.event_name == 'release'
+        uses: thomaseizinger/keep-a-changelog-new-release@1.1.0
+        with:
+          version: ${{ github.event.inputs.version }}
