@@ -230,6 +230,8 @@ cd "${PWD}" || exit
     -t "${CACHE_IMAGE}:${TARGET}" .
 
 #done
+echo y | docker buildx prune --all
+
 TIMEEND=$(date +%y%m%d%H%M%S)
 echo "START: ${TIMESTART}"
 echo "END: ${TIMEEND}"
