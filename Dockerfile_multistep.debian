@@ -61,6 +61,7 @@ ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
 RUN apt-get update \
     && apt-get -yq upgrade \
     && apt-get install --no-install-recommends --assume-yes \
+        apt-utils \
         coreutils \
         build-essential \
         cmake \
@@ -421,6 +422,7 @@ RUN echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf && \
     chmod -R +x /opt/setup/scripts/*.sh && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
+        apt-utils \
         coreutils \
         ca-certificates \
         gnupg \
