@@ -131,9 +131,7 @@ RUN cmake "${SOURCE_DIR}/gvm-libs-${GVM_LIBS_VERSION}" \
     -DSYSCONFDIR=/etc \
     -DLOCALSTATEDIR=/var \
     && make "-j$(nproc)"\
-    && make DESTDIR="${INSTALL_DIR}" install \
-    && cd ${INSTALL_DIR} \
-    && tar -czf /build_artifacts.tar.gz -C ${DESTDIR} .
+    && make DESTDIR="${INSTALL_DIR}" install
 
 
 FROM base AS build_gvmd
@@ -166,12 +164,10 @@ RUN cmake ${SOURCE_DIR}/gvmd-${GVMD_VERSION} \
     -DDEFAULT_CONFIG_DIR=/etc/default \
     -DLOGROTATE_DIR=/etc/logrotate.d \
     && make -j$(nproc) \
-    && make DESTDIR=${INSTALL_DIR} install \
-    && cd ${INSTALL_DIR} \
-    && tar -czf /build_artifacts.tar.gz -C ${DESTDIR} .
+    && make DESTDIR=${INSTALL_DIR} install
 
 
-FROM node:14-alpine AS build_gsa
+FROM --platform=$BUILDPLATFORM node:14-alpine AS build_gsa
 ARG GSA_VERSION="21.4.4"
 ENV GSA_VERSION=${GSA_VERSION} \
     INSTALL_PREFIX=/usr \
@@ -203,9 +199,7 @@ RUN tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/gsa-${GSA_VERSION}.tar.gz \
     && yarn \
     && yarn build \
     && mkdir -p ${DESTDIR}${INSTALL_PREFIX}/share/gvm/gsad/web/ \
-    && cp -r build/* ${DESTDIR}${INSTALL_PREFIX}/share/gvm/gsad/web/ \
-    && cd ${DESTDIR} \
-    && tar -czf /build_artifacts.tar.gz -C ${DESTDIR} .
+    && cp -r build/* ${DESTDIR}${INSTALL_PREFIX}/share/gvm/gsad/web/
 
 FROM base AS build_gsad
 ARG GSAD_VERSION="21.4.4"
@@ -226,9 +220,7 @@ RUN tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/gsad-${GSAD_VERSION}.tar.gz \
     -DGVMD_RUN_DIR=/run/gvmd \
     -DGSAD_RUN_DIR=/run/gsad \
     -DGSAD_PID_DIR=/run/gsad \
-    && make DESTDIR=${INSTALL_DIR} install \
-    && cd ${INSTALL_DIR} \
-    && tar -czf /build_artifacts.tar.gz -C ${DESTDIR} .
+    && make DESTDIR=${INSTALL_DIR} install
 
 FROM base AS build_openvas_smb
 ARG OPENVAS_SMB_VERSION="21.4.0"
@@ -244,9 +236,7 @@ RUN tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/openvas-smb-${OPENVAS_SMB_VERSION}.
       -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
       -DCMAKE_BUILD_TYPE=Release \
     && make -j$(nproc) \
-    && make DESTDIR=${INSTALL_DIR} install \
-    && cd ${INSTALL_DIR} \
-    && tar -czf /build_artifacts.tar.gz -C ${DESTDIR} .
+    && make DESTDIR=${INSTALL_DIR} install
 
 
 FROM base AS build_openvas_scanner
@@ -268,9 +258,7 @@ RUN tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/openvas-scanner-${OPENVAS_SCANNER_V
     -DOPENVAS_FEED_LOCK_PATH=/var/lib/openvas/feed-update.lock \
     -DOPENVAS_RUN_DIR=/run/ospd \
     && make -j$(nproc) \
-    && make DESTDIR=${INSTALL_DIR} install \
-    && cd ${INSTALL_DIR} \
-    && tar -czf /build_artifacts.tar.gz -C ${DESTDIR} .
+    && make DESTDIR=${INSTALL_DIR} install
 
 FROM base AS build_ospd_openvas
 ARG OSPD_OPENVAS_VERSION="21.4.4"
@@ -284,9 +272,7 @@ RUN curl -sSL https://github.com/greenbone/ospd-openvas/archive/refs/tags/v${OSP
 
 RUN tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/ospd-openvas-${OSPD_OPENVAS_VERSION}.tar.gz \
     && cd ${SOURCE_DIR}/ospd-openvas-${OSPD_OPENVAS_VERSION} \
-    && python3 -m pip install . --prefix=${INSTALL_PREFIX} --root=${INSTALL_DIR} --no-warn-script-location \
-    && cd ${INSTALL_DIR} \
-    && tar -czf /build_artifacts.tar.gz -C ${DESTDIR} .
+    && python3 -m pip install . --prefix=${INSTALL_PREFIX} --root=${INSTALL_DIR} --no-warn-script-location
 # maybe also:    && python3 -m pip install . --no-warn-script-location
 
 FROM debian:11-slim
