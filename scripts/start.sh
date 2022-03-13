@@ -26,8 +26,8 @@ if [ "${OPT_PDF}" == "1" ] && [ "${SYSTEM_DIST}" == "alpine" ]; then
 	apk add --no-cache --allow-untrusted texlive texmf-dist-latexextra texmf-dist-fontsextra
 elif [ "${OPT_PDF}" == "1" ] && [ "${SYSTEM_DIST}" == "debian" ]; then
 	# Install optional dependencies for gvmd
-	sudo apt update
-	sudo apt install -y --no-install-recommends \
+	sudo apt-get update
+	sudo apt-get install -y --no-install-recommends \
 		texlive-latex-extra \
 		texlive-fonts-recommended
 	sudo rm -rf /var/lib/apt/lists/*

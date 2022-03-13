@@ -466,8 +466,8 @@ ENV SETUP=${SETUP:-0} \
     OPT_PDF=${OPT_PDF:-0}
 
 RUN if [ "${OPT_PDF}" = "1" ]; then \
-    sudo apt update && \
-    sudo apt install -y --no-install-recommends \
+    sudo apt-get update && \
+    sudo apt-get install -y --no-install-recommends \
         texlive-fonts-recommended \
         texlive-latex-extra ; \
     unset OPT_PDF ;\
