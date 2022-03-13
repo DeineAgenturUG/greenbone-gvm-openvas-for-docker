@@ -358,6 +358,6 @@ if [ "${SETUP}" == "1" ]; then
 		echo "Wait for full sync!"
 	done
 	rm /tmp/gvm_action.xml
-	sleep 120
+	sleep 60
 	${SUPVISD} shutdown || true
 fi
