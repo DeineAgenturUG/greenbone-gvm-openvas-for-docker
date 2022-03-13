@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+set -Eeuxo pipefail
 if [ ! -f "/var/lib/gvm/.firstsync" ] && [ -f "/opt/gvm-sync-data.tar.xz" ]; then
 	mkdir /tmp/data
 

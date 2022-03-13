@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
+chmod o+w /dev/stdout
 
 export SUPVISD=${SUPVISD:-supervisorctl}
 export USERNAME=${USERNAME:-${GVMD_USER:-admin}}
@@ -341,7 +342,7 @@ echo "-----------------------------------------------------------"
 echo "+        Find logs at: /var/log/supervisor/               +"
 echo "+              and at: /var/log/gvm/                      +"
 echo "==========================================================="
-
+echo "${SETUP}"
 if [ "${SETUP}" == "1" ]; then
 	echo "==========================================================="
 	echo "==================  WebUI Password  ======================="
@@ -355,7 +356,7 @@ if [ "${SETUP}" == "1" ]; then
 	sleep 30
 	echo "<get_feeds/>" >/tmp/gvm_action.xml
 	until [ "$(su -c "gvm-cli --gmp-username ${USERNAME} --gmp-password ${PASSWORD} --protocol GMP tls /tmp/gvm_action.xml | grep -o -i 'currently_syncing' | wc -l " gvm)" == "0" ]; do
-		sleep 60
+		sleep 120
 		date '+%Y-%m-%d %H:%M:%S'
 		echo "Wait for full sync!"
 	done

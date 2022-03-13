@@ -30,9 +30,29 @@ ARG SSHD=false
 ARG DB_PASSWORD=none
 
 FROM debian:11-slim as base
-ENV DEBIAN_FRONTEND=noninteractive \
+ARG POSTGRESQL_VERSION
+ARG GSAD_VERSION
+ARG GSA_VERSION
+ARG GVM_LIBS_VERSION
+ARG GVMD_VERSION
+ARG OPENVAS_SCANNER_VERSION
+ARG OPENVAS_SMB_VERSION
+ARG PYTHON_GVM_VERSION
+ARG OSPD_OPENVAS_VERSION
+ARG GVM_TOOLS_VERSION
+
+ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
+    GSAD_VERSION=${GSAD_VERSION} \
+    GSA_VERSION=${GSA_VERSION} \
+    GVM_LIBS_VERSION=${GVM_LIBS_VERSION} \
+    GVMD_VERSION=${GVMD_VERSION} \
+    OPENVAS_SCANNER_VERSION=${OPENVAS_SCANNER_VERSION} \
+    OPENVAS_SMB_VERSION=${OPENVAS_SMB_VERSION} \
+    PYTHON_GVM_VERSION=${PYTHON_GVM_VERSION} \
+    OSPD_OPENVAS_VERSION=${OSPD_OPENVAS_VERSION} \
+    GVM_TOOLS_VERSION=${GVM_TOOLS_VERSION} \
+    DEBIAN_FRONTEND=noninteractive \
     LANG=C.UTF-8 \
-    POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
     INSTALL_PREFIX=/usr \
     SOURCE_DIR=/source\
     BUILD_DIR=/build \
@@ -64,17 +84,23 @@ RUN apt-get update \
     && mkdir -p "${INSTALL_DIR}" \
     && python3 -m pip install --upgrade pip \
     && curl -O https://www.greenbone.net/GBCommunitySigningKey.asc \
-    && gpg --import <GBCommunitySigningKey.asc \
-    && ( \
-        echo 5 \
-        && echo y \
-        && echo save \
-    ) | gpg --command-fd 0 --no-tty --no-greeting -q --edit-key "$(gpg --list-packets <GBCommunitySigningKey.asc | awk '$1=="keyid:"{print$2;exit}')" trust \
-    && wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - \
+       && gpg --import <GBCommunitySigningKey.asc \
+       && ( \
+           echo 5 \
+           && echo y \
+           && echo save \
+       ) | gpg --command-fd 0 --no-tty --no-greeting -q --edit-key "$(gpg --list-packets <GBCommunitySigningKey.asc | awk '$1=="keyid:"{print$2;exit}')" trust \
+    && curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null \
     && echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |sudo tee  /etc/apt/sources.list.d/pgdg.list \
     && apt-get update \
     && apt-get -yq upgrade \
-    && apt-get -yq install "postgresql-server-dev-${POSTGRESQL_VERSION:-all}"
+    && apt-get -yq install \
+      postgresql-${POSTGRESQL_VERSION} \
+      postgresql-server-dev-${POSTGRESQL_VERSION} \
+      postgresql-client-${POSTGRESQL_VERSION} \
+      postgresql-common \
+      postgresql-client-common
+
 
 # Install required dependencies for gvm-libs
 RUN apt-get install -y --no-install-recommends \
@@ -111,7 +137,6 @@ RUN apt-get install -y --no-install-recommends \
     nsis \
     openssh-client \
     perl-base \
-    postgresql-server-dev-${POSTGRESQL_VERSION:-all} \
     python3 \
     python3-cffi \
     python3-defusedxml \
@@ -318,6 +343,9 @@ ARG PYTHON_GVM_VERSION
 ARG OSPD_OPENVAS_VERSION
 ARG GVM_TOOLS_VERSION
 
+ARG SETUP=0
+ARG OPT_PDF=0
+
 ARG SUPVISD=supervisorctl
 ARG GVMD_USER
 ARG GVMD_PASSWORD
@@ -366,7 +394,9 @@ ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
     DB_PASSWORD=${DB_PASSWORD:-none} \
     DB_PASSWORD_FILE=${DB_PASSWORD:-none} \
     DEBIAN_FRONTEND=noninteractive \
-    LANG=C.UTF-8
+    LANG=C.UTF-8 \
+    SETUP=${SETUP} \
+    OPT_PDF=${OPT_PDF}
 
 COPY --from=build_gsa /install/ /
 COPY --from=build_gsad /install/ /
@@ -385,7 +415,7 @@ COPY config /opt/setup/config/
 COPY scripts /opt/setup/scripts/
 
 RUN echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf && \
-    echo 'PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"'>>/etc/environment && \
+    echo 'export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"'>>/etc/environment && \
     sed -i '7c\ \ PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"' /etc/profile && \
     ldconfig && \
     chmod -R +x /opt/setup/scripts/*.sh && \
@@ -394,10 +424,13 @@ RUN echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf && \
         coreutils \
         ca-certificates \
         gnupg \
+        sudo \
         wget \
         lsb-release \
         curl && \
-    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
+    echo "Acquire::http::Proxy \"${http_proxy}\";" | tee /etc/apt/apt.conf.d/30proxy && \
+    echo "APT::Install-Recommends \"0\" ; APT::Install-Suggests \"0\" ;" | tee /etc/apt/apt.conf.d/10no-recommend-installs && \
+    curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null && \
     echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee  /etc/apt/sources.list.d/pgdg.list && \
     echo "deb http://deb.debian.org/debian `lsb_release -cs`-backports main" | tee /etc/apt/sources.list.d/backports.list && \
     apt-get update && \
@@ -426,8 +459,6 @@ RUN echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf && \
         libxml2 \
         openssh-client \
         postfix \
-        postgresql-client-${POSTGRESQL_VERSION:-all} \
-        postgresql-client-common \
         python3 \
         python3-cffi \
         python3-defusedxml \
@@ -453,10 +484,12 @@ RUN echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf && \
         xml-twig-tools \
         xmlstarlet \
         xsltproc \
-        zip && \
-    apt-get -yq upgrade && \
-    apt-get -yq install "postgresql-${POSTGRESQL_VERSION:-all}" \
-        "postgresql-client-${POSTGRESQL_VERSION:-all}" locales && \
+        zip  \
+        cron openssh-server nano \
+        xz-utils \
+        "postgresql-${POSTGRESQL_VERSION}" \
+        "postgresql-common" \
+        "postgresql-client-${POSTGRESQL_VERSION}" locales && \
     sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
     locale-gen && \
     python3 -m pip install --upgrade "ospd_openvas==${OSPD_OPENVAS_VERSION}" && \
@@ -480,21 +513,13 @@ RUN echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf && \
     mkdir -p /var/log/gvm && \
     chown -R gvm:gvm /run/gsad && \
     chown -R gvm:gvm /var/log/gvm && \
-    apt-get purge --auto-remove -yq *-dev *-dev-"${POSTGRESQL_VERSION:-all}" && \
+    apt-get purge --auto-remove -yq *-dev *-dev-all *-dev-"${POSTGRESQL_VERSION}" && \
     apt-get clean all && \
     apt-get -yq autoremove && \
     rm -rf /var/lib/apt/lists/* && \
     (rm /etc/apt/apt.conf.d/30proxy || true)
-RUN (update-alternatives --install /usr/bin/postgres postgres /usr/lib/postgresql/11/bin/postgres 10 || true) && \
-    (update-alternatives --install /usr/bin/initdb initdb /usr/lib/postgresql/11/bin/initdb 10 || true) && \
-    (update-alternatives --install /usr/bin/postgres postgres /usr/lib/postgresql/12/bin/postgres 20 || true) && \
-    (update-alternatives --install /usr/bin/initdb initdb /usr/lib/postgresql/12/bin/initdb 20 || true) && \
-    (update-alternatives --install /usr/bin/postgres postgres /usr/lib/postgresql/13/bin/postgres 30 || true) && \
-    (update-alternatives --install /usr/bin/initdb initdb /usr/lib/postgresql/13/bin/initdb 30 || true) && \
-    (update-alternatives --install /usr/bin/postgres postgres /usr/lib/postgresql/14/bin/postgres 40 || true) && \
-    (update-alternatives --install /usr/bin/initdb initdb /usr/lib/postgresql/14/bin/initdb 40 || true) && \
-    (update-alternatives --install /usr/bin/postgres postgres /usr/lib/postgresql/15/bin/postgres 50 || true) && \
-    (update-alternatives --install /usr/bin/initdb initdb /usr/lib/postgresql/15/bin/initdb 50 || true)
+RUN update-alternatives --install /usr/bin/postgres postgres /usr/lib/postgresql/${POSTGRESQL_VERSION}/bin/postgres 100 && \
+    update-alternatives --install /usr/bin/initdb initdb /usr/lib/postgresql/${POSTGRESQL_VERSION}/bin/initdb 100
 ENV LANG=en_US.UTF-8 \
     LANGUAGE=en_US.UTF-8 \
     LC_ALL=en_US.UTF-8
@@ -522,6 +547,9 @@ ARG OPENVAS_SMB_VERSION
 ARG PYTHON_GVM_VERSION
 ARG OSPD_OPENVAS_VERSION
 ARG GVM_TOOLS_VERSION
+
+ARG SETUP=0
+ARG OPT_PDF=1
 
 ARG SUPVISD=supervisorctl
 ARG GVMD_USER
@@ -571,7 +599,9 @@ ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
     DB_PASSWORD=${DB_PASSWORD:-none} \
     DB_PASSWORD_FILE=${DB_PASSWORD:-none} \
     DEBIAN_FRONTEND=noninteractive \
-    LANG=C.UTF-8
+    LANG=C.UTF-8 \
+    SETUP=${SETUP} \
+    OPT_PDF=${OPT_PDF}
 
 ENTRYPOINT [ "/opt/setup/scripts/entrypoint.sh" ]
 CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
@@ -608,6 +638,9 @@ ARG PYTHON_GVM_VERSION
 ARG OSPD_OPENVAS_VERSION
 ARG GVM_TOOLS_VERSION
 
+ARG SETUP=1
+ARG OPT_PDF=0
+
 ARG SUPVISD=supervisorctl
 ARG GVMD_USER
 ARG GVMD_PASSWORD
@@ -656,7 +689,9 @@ ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
     DB_PASSWORD=${DB_PASSWORD:-none} \
     DB_PASSWORD_FILE=${DB_PASSWORD:-none} \
     DEBIAN_FRONTEND=noninteractive \
-    LANG=C.UTF-8
+    LANG=C.UTF-8 \
+    SETUP=${SETUP} \
+    OPT_PDF=${OPT_PDF}
 
 ENTRYPOINT [ "/opt/setup/scripts/entrypoint.sh" ]
 CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
@@ -668,6 +703,8 @@ ENV LANG=en_US.UTF-8 \
 RUN ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime &&  \
     echo "$TZ" >/etc/timezone && \
     /opt/setup/scripts/entrypoint.sh /usr/bin/supervisord -c /etc/supervisord.conf
+
+ENV SETUP=0
 
 RUN set -eu; \
     rm -rfv /var/lib/gvm/CA || true \
@@ -691,6 +728,9 @@ ARG PYTHON_GVM_VERSION
 ARG OSPD_OPENVAS_VERSION
 ARG GVM_TOOLS_VERSION
 
+ARG SETUP=1
+ARG OPT_PDF=1
+
 ARG SUPVISD=supervisorctl
 ARG GVMD_USER
 ARG GVMD_PASSWORD
@@ -739,7 +779,9 @@ ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
     DB_PASSWORD=${DB_PASSWORD:-none} \
     DB_PASSWORD_FILE=${DB_PASSWORD:-none} \
     DEBIAN_FRONTEND=noninteractive \
-    LANG=C.UTF-8
+    LANG=C.UTF-8 \
+    SETUP=${SETUP} \
+    OPT_PDF=${OPT_PDF}
 
 ENTRYPOINT [ "/opt/setup/scripts/entrypoint.sh" ]
 CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
@@ -752,8 +794,7 @@ RUN sudo apt-get update && \
     sudo apt-get install -y --no-install-recommends \
         texlive-fonts-recommended \
         texlive-latex-extra ; \
-    unset OPT_PDF ;\
-    fi
+    unset OPT_PDF
 
 RUN set -eu; \
     rm -rfv /var/lib/gvm/CA || true \

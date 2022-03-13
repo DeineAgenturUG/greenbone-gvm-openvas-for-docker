@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+set -Eeuxo pipefail
 if [[ "${AUTO_SYNC}" != "YES" ]]; then
   exit 0
 fi
@@ -49,6 +49,7 @@ if [ ! -f "/var/lib/gvm/.firstsync" ]; then
 	rm -r /tmp/data
 fi
 
+chmod o+w /dev/stdout
 echo "Updating NVTs..."
 #su -c "rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/nvt-feed /var/lib/openvas/plugins" gvm
 exec_as_gvm "greenbone-nvt-sync"
