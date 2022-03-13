@@ -415,7 +415,7 @@ RUN echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf && \
         zip && \
     apt-get -yq upgrade && \
     apt-get -yq install "postgresql-${POSTGRESQL_VERSION:-all}" \
-        "postgresql-client-${POSTGRESQL_VERSION:-all}" "postgresql-server-dev-${POSTGRESQL_VERSION:-all}" locales && \
+        "postgresql-client-${POSTGRESQL_VERSION:-all}" locales && \
     sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
     locale-gen && \
     python3 -m pip install --upgrade "ospd_openvas==${OSPD_OPENVAS_VERSION}" && \
