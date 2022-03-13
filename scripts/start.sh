@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
-chmod o+w /dev/stdout
 
 export SUPVISD=${SUPVISD:-supervisorctl}
 export USERNAME=${USERNAME:-${GVMD_USER:-admin}}

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
-chmod o+w /dev/stdout
+
 touch /opt/setup/.env
 set -o allexport
 # shellcheck disable=SC1091
