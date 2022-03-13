@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -Eeuo pipefail
 touch /opt/setup/.env
 set -o allexport
 # shellcheck disable=SC1091
@@ -37,8 +37,9 @@ if [ "$1" == "/usr/bin/supervisord" ]; then
     echo "Starting Postfix for report delivery by email"
     #sed -i "s/^relayhost.*$/relayhost = ${RELAYHOST}:${SMTPPORT}/" /etc/postfix/main.cf
     postconf -e "relayhost = ${RELAYHOST}:${SMTPPORT}"
+    set +e
     /usr/sbin/postfix -c /etc/postfix start
-
+    set -e
     #  exec /start.sh
     echo "GVM Started but with > supervisor <"
     if [ ! -f "/firstrun" ]; then

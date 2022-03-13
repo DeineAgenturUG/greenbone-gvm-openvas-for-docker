@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -Eeuxo pipefail
+set -Eeuo pipefail
 
 export SUPVISD=${SUPVISD:-supervisorctl}
 export USERNAME=${USERNAME:-${GVMD_USER:-admin}}
@@ -349,12 +349,14 @@ if [ "${SETUP}" == "1" ]; then
 	echo "================  Postgres Password  ======================"
 	echo "================== ${DB_PASSWORD} =================="
 	echo "==========================================================="
-
+  ${SUPVISD} stop gsad-https-owncert
+  ${SUPVISD} stop gsad-https
+  ${SUPVISD} stop gsad
 	sleep 30
 	echo "<get_feeds/>" >/tmp/gvm_action.xml
-	su -c "gvm-cli --gmp-username ${USERNAME} --gmp-password ${PASSWORD} --protocol GMP tls /tmp/gvm_action.xml | grep -o -i 'currently_syncing' | wc -l " gvm
 	until [ "$(su -c "gvm-cli --gmp-username ${USERNAME} --gmp-password ${PASSWORD} --protocol GMP tls /tmp/gvm_action.xml | grep -o -i 'currently_syncing' | wc -l " gvm)" == "0" ]; do
 		sleep 60
+		date '+%Y-%m-%d %H:%M:%S'
 		echo "Wait for full sync!"
 	done
 	rm /tmp/gvm_action.xml

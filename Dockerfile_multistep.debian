@@ -1,5 +1,35 @@
-FROM debian:11-slim as base
 ARG POSTGRESQL_VERSION="13"
+ARG GSAD_VERSION="21.4.4"
+ARG GSA_VERSION="21.4.4"
+ARG GVM_LIBS_VERSION="21.4.4"
+ARG GVMD_VERSION="21.4.5"
+ARG OPENVAS_SCANNER_VERSION="21.4.4"
+ARG OPENVAS_SCANNER_VERSION="21.4.4"
+ARG OPENVAS_SMB_VERSION="21.4.0"
+ARG PYTHON_GVM_VERSION="21.11.0"
+ARG OSPD_OPENVAS_VERSION="21.4.4"
+ARG GVM_TOOLS_VERSION="21.10.0"
+
+ARG SUPVISD=supervisorctl
+ARG GVMD_USER
+ARG GVMD_PASSWORD
+ARG USERNAME=admin
+ARG PASSWORD=adminpassword
+ARG PASSWORD_FILE=none
+ARG TIMEOUT=15
+ARG DEBUG=N
+ARG RELAYHOST=smtp
+ARG SMTPPORT=25
+ARG AUTO_SYNC=YES
+ARG AUTO_SYNC_ON_START=YES
+ARG CERTIFICATE=none
+ARG CERTIFICATE_KEY=none
+ARG HTTPS=true
+ARG TZ=Etc/UTC
+ARG SSHD=false
+ARG DB_PASSWORD=none
+
+FROM debian:11-slim as base
 ENV DEBIAN_FRONTEND=noninteractive \
     LANG=C.UTF-8 \
     POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
@@ -112,7 +142,7 @@ RUN apt-get install -y --no-install-recommends \
 
 
 FROM base AS build_gvm_libs
-ARG GVM_LIBS_VERSION="21.4.4"
+ARG GVM_LIBS_VERSION
 ENV GVM_LIBS_VERSION=${GVM_LIBS_VERSION}
 
 # Download and install gvm-libs
@@ -135,8 +165,8 @@ RUN cmake "${SOURCE_DIR}/gvm-libs-${GVM_LIBS_VERSION}" \
 
 
 FROM base AS build_gvmd
-ARG GVMD_VERSION="21.4.5"
-ARG POSTGRESQL_VERSION="13"
+ARG GVMD_VERSION
+ARG POSTGRESQL_VERSION
 ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
     GVMD_VERSION=${GVMD_VERSION}
 
@@ -168,7 +198,7 @@ RUN cmake ${SOURCE_DIR}/gvmd-${GVMD_VERSION} \
 
 
 FROM --platform=$BUILDPLATFORM node:14-alpine AS build_gsa
-ARG GSA_VERSION="21.4.4"
+ARG GSA_VERSION
 ENV GSA_VERSION=${GSA_VERSION} \
     INSTALL_PREFIX=/usr \
     SOURCE_DIR=/source\
@@ -202,7 +232,7 @@ RUN tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/gsa-${GSA_VERSION}.tar.gz \
     && cp -r build/* ${DESTDIR}${INSTALL_PREFIX}/share/gvm/gsad/web/
 
 FROM base AS build_gsad
-ARG GSAD_VERSION="21.4.4"
+ARG GSAD_VERSION
 ENV GSAD_VERSION=${GSAD_VERSION}
 COPY --from=build_gvm_libs /install/ /
 RUN echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf && ldconfig
@@ -223,7 +253,7 @@ RUN tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/gsad-${GSAD_VERSION}.tar.gz \
     && make DESTDIR=${INSTALL_DIR} install
 
 FROM base AS build_openvas_smb
-ARG OPENVAS_SMB_VERSION="21.4.0"
+ARG OPENVAS_SMB_VERSION
 ENV OPENVAS_SMB_VERSION=${OPENVAS_SMB_VERSION}
 COPY --from=build_gvm_libs /install/ /
 RUN echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf && ldconfig
@@ -240,7 +270,7 @@ RUN tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/openvas-smb-${OPENVAS_SMB_VERSION}.
 
 
 FROM base AS build_openvas_scanner
-ARG OPENVAS_SCANNER_VERSION="21.4.4"
+ARG OPENVAS_SCANNER_VERSION
 ENV OPENVAS_SCANNER_VERSION=${OPENVAS_SCANNER_VERSION}
 COPY --from=build_gvm_libs /install/ /
 RUN echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf && ldconfig
@@ -261,7 +291,7 @@ RUN tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/openvas-scanner-${OPENVAS_SCANNER_V
     && make DESTDIR=${INSTALL_DIR} install
 
 FROM base AS build_ospd_openvas
-ARG OSPD_OPENVAS_VERSION="21.4.4"
+ARG OSPD_OPENVAS_VERSION
 ENV OSPD_OPENVAS_VERSION=${OSPD_OPENVAS_VERSION}
 COPY --from=build_gvm_libs /install/ /
 RUN echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf && ldconfig
@@ -275,12 +305,18 @@ RUN tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/ospd-openvas-${OSPD_OPENVAS_VERSION
     && python3 -m pip install . --prefix=${INSTALL_PREFIX} --root=${INSTALL_DIR} --no-warn-script-location
 # maybe also:    && python3 -m pip install . --no-warn-script-location
 
-FROM debian:11-slim
-ARG POSTGRESQL_VERSION="13"
-ARG GVM_TOOLS_VERSION="21.10.0"
-ARG PYTHON_GVM_VERSION="21.11.0"
-ARG OPENVAS_SCANNER_VERSION="21.4.4"
-ARG OSPD_OPENVAS_VERSION="21.4.4"
+
+FROM debian:11-slim AS latest
+ARG POSTGRESQL_VERSION
+ARG GSAD_VERSION
+ARG GSA_VERSION
+ARG GVM_LIBS_VERSION
+ARG GVMD_VERSION
+ARG OPENVAS_SCANNER_VERSION
+ARG OPENVAS_SMB_VERSION
+ARG PYTHON_GVM_VERSION
+ARG OSPD_OPENVAS_VERSION
+ARG GVM_TOOLS_VERSION
 
 ARG SUPVISD=supervisorctl
 ARG GVMD_USER
@@ -302,10 +338,15 @@ ARG SSHD=false
 ARG DB_PASSWORD=none
 
 ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
-    GVM_TOOLS_VERSION=${GVM_TOOLS_VERSION} \
-    PYTHON_GVM_VERSION=${PYTHON_GVM_VERSION} \
+    GSAD_VERSION=${GSAD_VERSION} \
+    GSA_VERSION=${GSA_VERSION} \
+    GVM_LIBS_VERSION=${GVM_LIBS_VERSION} \
+    GVMD_VERSION=${GVMD_VERSION} \
     OPENVAS_SCANNER_VERSION=${OPENVAS_SCANNER_VERSION} \
+    OPENVAS_SMB_VERSION=${OPENVAS_SMB_VERSION} \
+    PYTHON_GVM_VERSION=${PYTHON_GVM_VERSION} \
     OSPD_OPENVAS_VERSION=${OSPD_OPENVAS_VERSION} \
+    GVM_TOOLS_VERSION=${GVM_TOOLS_VERSION} \
     SYSTEM_DIST=debian \
     SUPVISD=${SUPVISD:-supervisorctl} \
     USERNAME=${USERNAME:-${GVMD_USER:-admin}} \
@@ -458,35 +499,268 @@ ENV LANG=en_US.UTF-8 \
     LANGUAGE=en_US.UTF-8 \
     LC_ALL=en_US.UTF-8
 
-RUN ls -lahR /opt/setup/
-
-ARG SETUP=0
-ARG OPT_PDF=0
-ENV SETUP=${SETUP:-0} \
-    OPT_PDF=${OPT_PDF:-0}
-
-RUN if [ "${OPT_PDF}" = "1" ]; then \
-    sudo apt-get update && \
-    sudo apt-get install -y --no-install-recommends \
-        texlive-fonts-recommended \
-        texlive-latex-extra ; \
-    unset OPT_PDF ;\
-    fi
-
-RUN if [ "${SETUP}" = "1" ]; then \
-    ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime &&  \
-    echo "$TZ" >/etc/timezone && \
-    /opt/setup/scripts/entrypoint.sh /usr/bin/supervisord -c /etc/supervisord.conf && \
-    unset SETUP ;\
-    fi
-ENV SETUP=0
-
-RUN rm -rfv /var/lib/gvm/CA || true \
+RUN set -eu; \
+    rm -rfv /var/lib/gvm/CA || true \
     && rm -rfv /var/lib/gvm/private || true \
     && rm /etc/localtime || true\
     && echo "Etc/UTC" >/etc/timezone \
     && rm -rfv /tmp/* /var/cache/apk/* /var/lib/apt/lists/* \
     && echo "!!! FINISH Setup !!!"
 
+VOLUME [ "/opt/database", "/var/lib/openvas/plugins", "/var/lib/gvm", "/etc/ssh" ]
+
+
+
+FROM latest AS latest-full
+ARG POSTGRESQL_VERSION
+ARG GSAD_VERSION
+ARG GSA_VERSION
+ARG GVM_LIBS_VERSION
+ARG GVMD_VERSION
+ARG OPENVAS_SCANNER_VERSION
+ARG OPENVAS_SMB_VERSION
+ARG PYTHON_GVM_VERSION
+ARG OSPD_OPENVAS_VERSION
+ARG GVM_TOOLS_VERSION
+
+ARG SUPVISD=supervisorctl
+ARG GVMD_USER
+ARG GVMD_PASSWORD
+ARG USERNAME=admin
+ARG PASSWORD=adminpassword
+ARG PASSWORD_FILE=none
+ARG TIMEOUT=15
+ARG DEBUG=N
+ARG RELAYHOST=smtp
+ARG SMTPPORT=25
+ARG AUTO_SYNC=YES
+ARG AUTO_SYNC_ON_START=YES
+ARG CERTIFICATE=none
+ARG CERTIFICATE_KEY=none
+ARG HTTPS=true
+ARG TZ=Etc/UTC
+ARG SSHD=false
+ARG DB_PASSWORD=none
+
+ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
+    GSAD_VERSION=${GSAD_VERSION} \
+    GSA_VERSION=${GSA_VERSION} \
+    GVM_LIBS_VERSION=${GVM_LIBS_VERSION} \
+    GVMD_VERSION=${GVMD_VERSION} \
+    OPENVAS_SCANNER_VERSION=${OPENVAS_SCANNER_VERSION} \
+    OPENVAS_SMB_VERSION=${OPENVAS_SMB_VERSION} \
+    PYTHON_GVM_VERSION=${PYTHON_GVM_VERSION} \
+    OSPD_OPENVAS_VERSION=${OSPD_OPENVAS_VERSION} \
+    GVM_TOOLS_VERSION=${GVM_TOOLS_VERSION} \
+    SYSTEM_DIST=debian \
+    SUPVISD=${SUPVISD:-supervisorctl} \
+    USERNAME=${USERNAME:-${GVMD_USER:-admin}} \
+    PASSWORD=${PASSWORD:-${GVMD_PASSWORD:-admin}} \
+    PASSWORD_FILE=${PASSWORD_FILE:-${GVMD_PASSWORD_FILE:-none}} \
+    TIMEOUT=${TIMEOUT:-15} \
+    DEBUG=${DEBUG:-N} \
+    RELAYHOST=${RELAYHOST:-smtp} \
+    SMTPPORT=${SMTPPORT:-25} \
+    AUTO_SYNC=${AUTO_SYNC:-YES} \
+    AUTO_SYNC_ON_START=${AUTO_SYNC_ON_START:-YES} \
+    HTTPS=${HTTPS:-true} \
+    CERTIFICATE=${CERTIFICATE:-none} \
+    CERTIFICATE_KEY=${CERTIFICATE_KEY:-none} \
+    TZ=${TZ:-Etc/UTC} \
+    SSHD=${SSHD:-false} \
+    DB_PASSWORD=${DB_PASSWORD:-none} \
+    DB_PASSWORD_FILE=${DB_PASSWORD:-none} \
+    DEBIAN_FRONTEND=noninteractive \
+    LANG=C.UTF-8
+
+ENTRYPOINT [ "/opt/setup/scripts/entrypoint.sh" ]
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
+
+ENV LANG=en_US.UTF-8 \
+    LANGUAGE=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8
+
+RUN sudo apt-get update && \
+    sudo apt-get install -y --no-install-recommends \
+        texlive-fonts-recommended \
+        texlive-latex-extra
+
+RUN set -eu; \
+    rm -rfv /var/lib/gvm/CA || true \
+    && rm -rfv /var/lib/gvm/private || true \
+    && rm /etc/localtime || true\
+    && echo "Etc/UTC" >/etc/timezone \
+    && rm -rfv /tmp/* /var/cache/apk/* /var/lib/apt/lists/* \
+    && echo "!!! FINISH Setup !!!"
+
+VOLUME [ "/opt/database", "/var/lib/openvas/plugins", "/var/lib/gvm", "/etc/ssh" ]
+
+
+FROM latest AS latest-data
+ARG POSTGRESQL_VERSION
+ARG GSAD_VERSION
+ARG GSA_VERSION
+ARG GVM_LIBS_VERSION
+ARG GVMD_VERSION
+ARG OPENVAS_SCANNER_VERSION
+ARG OPENVAS_SMB_VERSION
+ARG PYTHON_GVM_VERSION
+ARG OSPD_OPENVAS_VERSION
+ARG GVM_TOOLS_VERSION
+
+ARG SUPVISD=supervisorctl
+ARG GVMD_USER
+ARG GVMD_PASSWORD
+ARG USERNAME=admin
+ARG PASSWORD=adminpassword
+ARG PASSWORD_FILE=none
+ARG TIMEOUT=15
+ARG DEBUG=N
+ARG RELAYHOST=smtp
+ARG SMTPPORT=25
+ARG AUTO_SYNC=YES
+ARG AUTO_SYNC_ON_START=YES
+ARG CERTIFICATE=none
+ARG CERTIFICATE_KEY=none
+ARG HTTPS=true
+ARG TZ=Etc/UTC
+ARG SSHD=false
+ARG DB_PASSWORD=none
+
+ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
+    GSAD_VERSION=${GSAD_VERSION} \
+    GSA_VERSION=${GSA_VERSION} \
+    GVM_LIBS_VERSION=${GVM_LIBS_VERSION} \
+    GVMD_VERSION=${GVMD_VERSION} \
+    OPENVAS_SCANNER_VERSION=${OPENVAS_SCANNER_VERSION} \
+    OPENVAS_SMB_VERSION=${OPENVAS_SMB_VERSION} \
+    PYTHON_GVM_VERSION=${PYTHON_GVM_VERSION} \
+    OSPD_OPENVAS_VERSION=${OSPD_OPENVAS_VERSION} \
+    GVM_TOOLS_VERSION=${GVM_TOOLS_VERSION} \
+    SYSTEM_DIST=debian \
+    SUPVISD=${SUPVISD:-supervisorctl} \
+    USERNAME=${USERNAME:-${GVMD_USER:-admin}} \
+    PASSWORD=${PASSWORD:-${GVMD_PASSWORD:-admin}} \
+    PASSWORD_FILE=${PASSWORD_FILE:-${GVMD_PASSWORD_FILE:-none}} \
+    TIMEOUT=${TIMEOUT:-15} \
+    DEBUG=${DEBUG:-N} \
+    RELAYHOST=${RELAYHOST:-smtp} \
+    SMTPPORT=${SMTPPORT:-25} \
+    AUTO_SYNC=${AUTO_SYNC:-YES} \
+    AUTO_SYNC_ON_START=${AUTO_SYNC_ON_START:-YES} \
+    HTTPS=${HTTPS:-true} \
+    CERTIFICATE=${CERTIFICATE:-none} \
+    CERTIFICATE_KEY=${CERTIFICATE_KEY:-none} \
+    TZ=${TZ:-Etc/UTC} \
+    SSHD=${SSHD:-false} \
+    DB_PASSWORD=${DB_PASSWORD:-none} \
+    DB_PASSWORD_FILE=${DB_PASSWORD:-none} \
+    DEBIAN_FRONTEND=noninteractive \
+    LANG=C.UTF-8
+
+ENTRYPOINT [ "/opt/setup/scripts/entrypoint.sh" ]
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
+
+ENV LANG=en_US.UTF-8 \
+    LANGUAGE=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8
+
+RUN ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime &&  \
+    echo "$TZ" >/etc/timezone && \
+    /opt/setup/scripts/entrypoint.sh /usr/bin/supervisord -c /etc/supervisord.conf
+
+RUN set -eu; \
+    rm -rfv /var/lib/gvm/CA || true \
+    && rm -rfv /var/lib/gvm/private || true \
+    && rm /etc/localtime || true\
+    && echo "Etc/UTC" >/etc/timezone \
+    && rm -rfv /tmp/* /var/cache/apk/* /var/lib/apt/lists/* \
+    && echo "!!! FINISH Setup !!!"
+
+VOLUME [ "/opt/database", "/var/lib/openvas/plugins", "/var/lib/gvm", "/etc/ssh" ]
+
+FROM latest-data AS latest-data-full
+ARG POSTGRESQL_VERSION
+ARG GSAD_VERSION
+ARG GSA_VERSION
+ARG GVM_LIBS_VERSION
+ARG GVMD_VERSION
+ARG OPENVAS_SCANNER_VERSION
+ARG OPENVAS_SMB_VERSION
+ARG PYTHON_GVM_VERSION
+ARG OSPD_OPENVAS_VERSION
+ARG GVM_TOOLS_VERSION
+
+ARG SUPVISD=supervisorctl
+ARG GVMD_USER
+ARG GVMD_PASSWORD
+ARG USERNAME=admin
+ARG PASSWORD=adminpassword
+ARG PASSWORD_FILE=none
+ARG TIMEOUT=15
+ARG DEBUG=N
+ARG RELAYHOST=smtp
+ARG SMTPPORT=25
+ARG AUTO_SYNC=YES
+ARG AUTO_SYNC_ON_START=YES
+ARG CERTIFICATE=none
+ARG CERTIFICATE_KEY=none
+ARG HTTPS=true
+ARG TZ=Etc/UTC
+ARG SSHD=false
+ARG DB_PASSWORD=none
+
+ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
+    GSAD_VERSION=${GSAD_VERSION} \
+    GSA_VERSION=${GSA_VERSION} \
+    GVM_LIBS_VERSION=${GVM_LIBS_VERSION} \
+    GVMD_VERSION=${GVMD_VERSION} \
+    OPENVAS_SCANNER_VERSION=${OPENVAS_SCANNER_VERSION} \
+    OPENVAS_SMB_VERSION=${OPENVAS_SMB_VERSION} \
+    PYTHON_GVM_VERSION=${PYTHON_GVM_VERSION} \
+    OSPD_OPENVAS_VERSION=${OSPD_OPENVAS_VERSION} \
+    GVM_TOOLS_VERSION=${GVM_TOOLS_VERSION} \
+    SYSTEM_DIST=debian \
+    SUPVISD=${SUPVISD:-supervisorctl} \
+    USERNAME=${USERNAME:-${GVMD_USER:-admin}} \
+    PASSWORD=${PASSWORD:-${GVMD_PASSWORD:-admin}} \
+    PASSWORD_FILE=${PASSWORD_FILE:-${GVMD_PASSWORD_FILE:-none}} \
+    TIMEOUT=${TIMEOUT:-15} \
+    DEBUG=${DEBUG:-N} \
+    RELAYHOST=${RELAYHOST:-smtp} \
+    SMTPPORT=${SMTPPORT:-25} \
+    AUTO_SYNC=${AUTO_SYNC:-YES} \
+    AUTO_SYNC_ON_START=${AUTO_SYNC_ON_START:-YES} \
+    HTTPS=${HTTPS:-true} \
+    CERTIFICATE=${CERTIFICATE:-none} \
+    CERTIFICATE_KEY=${CERTIFICATE_KEY:-none} \
+    TZ=${TZ:-Etc/UTC} \
+    SSHD=${SSHD:-false} \
+    DB_PASSWORD=${DB_PASSWORD:-none} \
+    DB_PASSWORD_FILE=${DB_PASSWORD:-none} \
+    DEBIAN_FRONTEND=noninteractive \
+    LANG=C.UTF-8
+
+ENTRYPOINT [ "/opt/setup/scripts/entrypoint.sh" ]
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
+
+ENV LANG=en_US.UTF-8 \
+    LANGUAGE=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8
+
+RUN sudo apt-get update && \
+    sudo apt-get install -y --no-install-recommends \
+        texlive-fonts-recommended \
+        texlive-latex-extra ; \
+    unset OPT_PDF ;\
+    fi
+
+RUN set -eu; \
+    rm -rfv /var/lib/gvm/CA || true \
+    && rm -rfv /var/lib/gvm/private || true \
+    && rm /etc/localtime || true\
+    && echo "Etc/UTC" >/etc/timezone \
+    && rm -rfv /tmp/* /var/cache/apk/* /var/lib/apt/lists/* \
+    && echo "!!! FINISH Setup !!!"
 
 VOLUME [ "/opt/database", "/var/lib/openvas/plugins", "/var/lib/gvm", "/etc/ssh" ]
