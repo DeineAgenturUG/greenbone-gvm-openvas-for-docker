@@ -1,7 +1,23 @@
 # To work around the problem about the already used PORTS in parallel builds, it needs a CNI in the buildx driver
 # SEE: https://github.com/docker/buildx/issues/678
-# docker build -f BuildKit.Dockerfile -t local/buildkit:latest .
-# docker buildx create --name "GVM_CNI_BUILDER" --driver-opt image=local/buildkit:latest --buildkitd-flags '--oci-worker-net=cni --oci-worker-gc-keepstorage 200000' --use
+# > docker run --privileged --rm tonistiigi/binfmt --install all
+# > docker buildx create --use
+# > docker build -f BuildKit.Dockerfile -t deineagenturug/buildkit:latest .
+# > docker buildx create --name "GVM_CNI_BUILDER" --driver-opt image=deineagenturug/buildkit:latest --buildkitd-flags '--oci-worker-net=cni --oci-worker-gc-keepstorage 200000' --use
+# > docker buildx create --name "GVM_CNI_BUILDER" --append --node <name-for-the-node> <ssh://user@host>
+# > docker buildx create --name "GVM_CNI_BUILDER2" --leave --node <name-for-the-node>
+#
+# on remote systems you should run:
+#
+# > sudo groupadd docker
+# > sudo usermod -aG docker $USER
+# > newgrp docker
+# > sudo chown "$USER":"$USER" /home/"$USER"/.docker -R
+# > sudo chmod g+rwx "$HOME/.docker" -R
+# > sudo apt install net-tools
+# > docker run --privileged --rm tonistiigi/binfmt --install all
+# > docker buildx create --use
+# > docker buildx build --platform "linux/arm64,linux/arm/v7" -f buildkit.Dockerfile -t deineagenturug/buildkit:latest .
 ARG BUILDKIT_TAG=latest
 ARG CNI_VERSION=v1.1.1
 ARG TARGETOS=linux
