@@ -16,7 +16,7 @@ PLATFORMS=("linux/amd64" "linux/arm64")
 BUILDX="${BUILDX:-}"
 #ADD_OPTIONS=${ADD_OPTIONS:-"--cache-from type=local,mode=max,src=/tmp/docker --load"}
 #ADD_OPTIONS=${ADD_OPTIONS:-"--push"}
-ADD_OPTIONS=${ADD_OPTIONS:-"--push --progress=plain"}
+ADD_OPTIONS=${ADD_OPTIONS:-"--pull --push --progress=plain"}
 
 cd "${PWD}" || exit
 
