@@ -43,10 +43,10 @@ jobs:
           if [ ! -e ./.checkupdates/latest_version.sum ]; then
             touch ./.checkupdates/latest_version.sum
           fi
-          chmod +x ./scripts/.github/get_releases.sh
+          chmod +x ./helper/scripts/get_releases.sh
           echo "${{github.token}}" | gh auth login --with-token 
           echo 'NEWRELEASES<<EOF' >> $GITHUB_ENV
-          ./scripts/.github/get_releases.sh >> $GITHUB_ENV
+          ./helper/scripts/get_releases.sh >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
 
       - name: Check for updates - Step 1

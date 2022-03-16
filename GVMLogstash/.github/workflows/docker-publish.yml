@@ -51,11 +51,11 @@ jobs:
         run: docker build . --file Dockerfile --tag $IMAGE_NAME
 
       - name: Log into GitHub Container Registry
-        run: echo "${{ secrets.CR_PAT }}" | docker login https://docker.pkg.github.com -u pixelsquared --password-stdin
+        run: echo "${{ secrets.CR_PAT }}" | docker login https://ghcr.io -u dexus --password-stdin
 
       - name: Push image to GitHub Container Registry
         run: |
-          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+          IMAGE_ID=ghcr.io/${{ github.repository }}/$IMAGE_NAME
 
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
