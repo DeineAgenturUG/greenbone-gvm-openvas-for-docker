@@ -1,0 +1,69 @@
+version: "3"
+services:
+    database:
+        image: securecompliance/gvm-postgres
+        env_file: .env
+        stop_grace_period: 1m
+        restart: always
+        volumes:
+            - database:/var/lib/postgresql/data
+        networks:
+            - gvm
+    gvm-data-sync:
+        image: securecompliance/gvm-data-sync
+        restart: always
+        volumes:
+            - gvm:/gvm/var/lib/gvm
+    gvmd:
+        image: securecompliance/gvmd
+        env_file: .env
+        restart: always
+        depends_on:
+            - database
+            - openvas
+        volumes:
+            - gvm:/gvm/var/lib/gvm
+            - openvas:/gvm/var/lib/openvas/plugins
+            - gvm-sockets:/gvm/var/run
+            - openvas-sockets:/var/run/ospd
+        networks:
+            - gvm
+    gsa:
+        image: securecompliance/gsa
+        restart: always
+        depends_on:
+            - database
+            - gvmd
+        volumes:
+            - gvm:/gvm/var/lib/gvm
+            - gvm-sockets:/gvm/var/run
+        ports:
+            - 9392:9392
+        networks:
+            - gvm
+    openvas:
+        image: securecompliance/openvas
+        restart: always
+        depends_on:
+            - openvas-redis
+        network_mode: "host"
+        volumes:
+            - openvas:/gvm/var/lib/openvas/plugins
+            - openvas-sockets:/var/run/ospd
+            - redis-sockets:/run/redis
+    openvas-redis:
+        image: securecompliance/openvas-redis
+        restart: always
+        volumes:
+            - redis-sockets:/run/redis
+
+networks:
+    gvm:
+
+volumes:
+    database:
+    gvm:
+    openvas:
+    gvm-sockets:
+    openvas-sockets:
+    redis-sockets:
