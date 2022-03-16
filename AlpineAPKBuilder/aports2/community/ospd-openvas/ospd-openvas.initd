@@ -1,0 +1,23 @@
+#!/sbin/openrc-run
+
+name="Remotely control an OpenVAS Scanner"
+command="/usr/bin/ospd-openvas"
+pidfile="/run/ospd/${RC_SVCNAME}.pid"
+
+: ${OSPD_OPENVAS_UNIX_SOCKET:=$(dirname $pidfile)/ospd.sock}
+: ${OSPD_OPENVAS_SOCKET_MODE:=0o777}
+
+command_args="${OSPD_OPENVAS_OPTIONS} \
+	--unix-socket=${OSPD_OPENVAS_UNIX_SOCKET} \
+	--socket-mode=${OSPD_OPENVAS_SOCKET_MODE} \
+	--pid-file ${pidfile} \
+	--config /etc/openvas/ospd.conf"
+
+depend() {
+	after firewall
+	need redis
+}
+
+start_pre() {
+	checkpath --directory "${pidfile%/*}" /var/log/gvm
+}

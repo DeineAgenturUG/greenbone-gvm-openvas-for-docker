@@ -1,0 +1,66 @@
+# Contributor: Francesco Colista <fcolista@alpinelinux.org>
+# Maintainer: Francesco Colista <fcolista@alpinelinux.org>
+pkgname=greenbone-security-assistant
+_pkgname=gsad
+pkgver=21.4.2
+pkgrel=11
+pkgdesc="Greenbone Security Assistant (gsa) - OpenVAS web frontend"
+url="https://www.openvas.org/"
+arch="all !mips !mips64 !riscv64" # no nodejs on riscv64
+license="GPL-2.0-or-later"
+depends="wget gcompat"
+makedepends="cmake doxygen xmltoman graphviz gvm-libs-dev
+	libxslt-dev libmicrohttpd-dev py3-polib libgcrypt-dev
+	nodejs-current npm yarn clang-dev glib-dev gcompat"
+checkdepends="cppcheck"
+subpackages="$pkgname-doc $pkgname-openrc"
+source="$pkgname-$pkgver.tar.gz::https://github.com/greenbone/gsa/archive/v$pkgver.tar.gz
+	$_pkgname.initd
+	$_pkgname.logrotate
+	gsad-sbin.patch
+	musl-stack-size.patch
+	remove-husky-git-hook.patch
+	timeout.patch
+	glib_full.patch
+	"
+builddir="$srcdir/gsa-$pkgver"
+
+case "$CARCH" in
+# cppcheck not available
+aarch64 | s390x) options="!check" ;;
+esac
+
+build() {
+	cmake -B build \
+		-DCMAKE_BUILD_TYPE=None \
+		-DCMAKE_INSTALL_PREFIX=/usr \
+		-DSYSCONFDIR=/etc \
+		-DSBINDIR=/usr/sbin \
+		-DLOCALSTATEDIR=/var \
+		-DDEFAULT_CONFIG_DIR=/etc/default \
+		-DLOGROTATE_DIR=/etc/logrotate.d
+
+	make -C build
+}
+
+check() {
+	make -C build check
+}
+
+package() {
+	make -C build DESTDIR="$pkgdir" install
+	install -Dm644 "$srcdir"/$_pkgname.logrotate "$pkgdir"/etc/logrotate.d/$_pkgname
+	install -Dm755 "$srcdir"/$_pkgname.initd "$pkgdir"/etc/init.d/$_pkgname
+	rm -rf "$pkgdir"/usr/lib/systemd
+}
+
+sha512sums="
+8916290f880187c190bc51ba454b66858a9a9f3513091c07752313a53a650e88352e1d875f7bb84f35781df91f7e7bbee053f6739492d2fef15c7000618672a1  greenbone-security-assistant-21.4.2.tar.gz
+1f46b6b62f0f397ad6a6889442979a8a7a53368e6fa9fb6ecb3e56e5719df466d4c6b4452992c558189e272ec423202afafba96cc8ebda79e988953e66f2292f  gsad.initd
+ab43f8c54cf72e2a800bdcf4daebeabfa18a7ef49f098d65e70f97ccab3d36606c353b82b8fd6b4f2cecd289d36f48f805a5c34cba86f8e8c61bf074b0afe695  gsad.logrotate
+3afa191863e1056182f8abf7f6d9a65cbd5d3fd69a522c5e414e19fcf2dd6d02eb8b5b2867383eaa659ce913f169c0739a4bc1209996879337b60ccd80d0bcfa  gsad-sbin.patch
+ad78cce9f4f21157d679e227698896364c33eac9c5af4228552b61c0f9bde0e3b2743ae6717766acde38d5445d08e60832b2b0418456cdb8a77a91b3c440735b  musl-stack-size.patch
+e37be1d0c487a0647bf1fdc4b40f6220e92ef057d2196562075626a40c8e798a3b5a503f4cb46c04c45af7ffa9ddaefc40c996908048323ead5b15ddb5cea405  remove-husky-git-hook.patch
+46b1ca8f1fad33dc5a43923197774f0044e0d12cec8bdda757c6e2b79c42e771932d8f6b73d45a9d182e3ab9f1fad03bf4f5dd3537e9985ebfc6af64a77dc082  timeout.patch
+79711a9892dcd9f87548a5cfe2656067619efa41d504ddaa8f141f8bd3771e381af2e4511f20c86c12eee847caa6722d7962908b0a9082c4de6c17f60ce97985  glib_full.patch
+"

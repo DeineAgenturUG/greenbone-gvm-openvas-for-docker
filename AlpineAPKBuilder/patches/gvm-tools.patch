@@ -1,0 +1,12 @@
+diff -ruN aports2/community/gvm-tools/APKBUILD aports/community/gvm-tools/APKBUILD
+--- aports2/community/gvm-tools/APKBUILD	2021-07-01 15:30:12.284673219 +0200
++++ aports/community/gvm-tools/APKBUILD	2021-06-28 21:19:03.920045864 +0200
+@@ -2,7 +2,7 @@
+ # Maintainer: Francesco Colista <fcolista@alpinelinux.org>
+ pkgname=gvm-tools
+ pkgver=21.6.1
+-pkgrel=10
++pkgrel=0
+ pkgdesc="Collection of tools for remote controlling a OpenVAS / Greenbone"
+ url="https://github.com/greenbone/gvm-tools"
+ arch="noarch"

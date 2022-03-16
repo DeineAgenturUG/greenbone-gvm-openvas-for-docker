@@ -1,0 +1,12 @@
+diff -ruN aports2/community/ospd-openvas/APKBUILD aports/community/ospd-openvas/APKBUILD
+--- aports2/community/ospd-openvas/APKBUILD	2021-07-01 15:30:22.700641030 +0200
++++ aports/community/ospd-openvas/APKBUILD	2021-07-05 16:45:36.110073773 +0200
+@@ -3,7 +3,7 @@
+ # Maintainer: Francesco Colista <fcolista@alpinelinux.org>
+ pkgname=ospd-openvas
+ pkgver=21.4.1
+-pkgrel=10
++pkgrel=0
+ pkgdesc="ospd-openvas is an OSP server implementation to allow GVM to remotely control an OpenVAS Scanner"
+ url="https://github.com/greenbone/ospd-openvas"
+ arch="noarch"

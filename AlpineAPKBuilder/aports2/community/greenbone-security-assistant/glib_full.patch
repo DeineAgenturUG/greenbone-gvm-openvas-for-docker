@@ -1,0 +1,273 @@
+diff --git a/gsad/src/gsad.c b/gsad/src/gsad.c
+index 423b5b7f3..4f4eb9b73 100644
+--- a/gsad/src/gsad.c
++++ b/gsad/src/gsad.c
+@@ -47,7 +47,7 @@
+ #include <assert.h>
+ #include <errno.h>
+ #include <gcrypt.h>
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <gnutls/gnutls.h>
+ #include <grp.h> /* for setgroups */
+ #include <netinet/in.h>
+diff --git a/gsad/src/gsad_base.c b/gsad/src/gsad_base.c
+index 76bdc8f9c..841e1a55c 100644
+--- a/gsad/src/gsad_base.c
++++ b/gsad/src/gsad_base.c
+@@ -25,7 +25,7 @@
+ 
+ #include "gsad_params.h"
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <libxml/parser.h> /* for xmlHasFeature() */
+ #include <string.h>        /* for strlen() */
+ #include <sys/param.h>
+diff --git a/gsad/src/gsad_base.h b/gsad/src/gsad_base.h
+index d01c46cb4..bbd9d5ccd 100644
+--- a/gsad/src/gsad_base.h
++++ b/gsad/src/gsad_base.h
+@@ -27,7 +27,7 @@
+ #include "gsad_cmd.h"  /* for cmd_response_data_t */
+ #include "gsad_user.h" /* for credentials_t */
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <sys/time.h>
+ 
+ int
+diff --git a/gsad/src/gsad_cmd.h b/gsad/src/gsad_cmd.h
+index 68519f0b7..e9b39bce2 100644
+--- a/gsad/src/gsad_cmd.h
++++ b/gsad/src/gsad_cmd.h
+@@ -26,7 +26,7 @@
+ 
+ #include "gsad_content_type.h" /* for content_type_t */
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ typedef struct cmd_response_data cmd_response_data_t;
+ 
+diff --git a/gsad/src/gsad_credentials.c b/gsad/src/gsad_credentials.c
+index c0cdb2bc3..5c44f4171 100644
+--- a/gsad/src/gsad_credentials.c
++++ b/gsad/src/gsad_credentials.c
+@@ -25,7 +25,7 @@
+ 
+ #include "gsad_user.h"
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ /**
+  *  @brief Structure of credential related information.
+diff --git a/gsad/src/gsad_credentials.h b/gsad/src/gsad_credentials.h
+index 0f60e025f..88c5c1e7a 100644
+--- a/gsad/src/gsad_credentials.h
++++ b/gsad/src/gsad_credentials.h
+@@ -26,7 +26,7 @@
+ 
+ #include "gsad_user.h"
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ typedef struct credentials credentials_t;
+ 
+diff --git a/gsad/src/gsad_gmp.c b/gsad/src/gsad_gmp.c
+index d95b42987..96b096e45 100644
+--- a/gsad/src/gsad_gmp.c
++++ b/gsad/src/gsad_gmp.c
+@@ -41,7 +41,7 @@
+ #include <assert.h>
+ #include <errno.h>
+ #include <fcntl.h>
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <gvm/base/cvss.h>
+ #include <gvm/gmp/gmp.h>
+ #include <gvm/util/fileutils.h>
+diff --git a/gsad/src/gsad_gmp.h b/gsad/src/gsad_gmp.h
+index 2889eb483..3eb6f0fe5 100644
+--- a/gsad/src/gsad_gmp.h
++++ b/gsad/src/gsad_gmp.h
+@@ -29,7 +29,7 @@
+ #include "gsad_http.h"         /* for http_connection_t */
+ #include "gsad_user.h"         /* for credentials_t */
+ 
+-#include <glib.h>                 /* for gboolean */
++#include <glib-2.0/glib.h>                 /* for gboolean */
+ #include <gvm/util/serverutils.h> /* for gvm_connection_t */
+ 
+ void
+diff --git a/gsad/src/gsad_gmp_arguments.h b/gsad/src/gsad_gmp_arguments.h
+index e70afb223..87284cbab 100644
+--- a/gsad/src/gsad_gmp_arguments.h
++++ b/gsad/src/gsad_gmp_arguments.h
+@@ -18,7 +18,7 @@
+ #ifndef _GSAD_GMP_ARGUMENTS_H
+ #define _GSAD_GMP_ARGUMENTS_H
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ typedef GHashTable gmp_arguments_t;
+ 
+diff --git a/gsad/src/gsad_gmp_auth.h b/gsad/src/gsad_gmp_auth.h
+index 1985590ae..2be4c3d2c 100644
+--- a/gsad/src/gsad_gmp_auth.h
++++ b/gsad/src/gsad_gmp_auth.h
+@@ -24,7 +24,7 @@
+ #ifndef _GSAD_GMP_AUTH_H
+ #define _GSAD_GMP_AUTH_H
+ 
+-#include <glib.h> /* for gchar */
++#include <glib-2.0/glib.h> /* for gchar */
+ 
+ int
+ authenticate_gmp (const gchar *, const gchar *, gchar **, gchar **, gchar **,
+diff --git a/gsad/src/gsad_gmp_request.h b/gsad/src/gsad_gmp_request.h
+index 730304fc7..c9b11d5c9 100644
+--- a/gsad/src/gsad_gmp_request.h
++++ b/gsad/src/gsad_gmp_request.h
+@@ -21,7 +21,7 @@
+ 
+ #include "gsad_gmp_arguments.h" /* for gmp_arguments_t */
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <gvm/util/serverutils.h> /* for gvm_connection_t */
+ 
+ int
+diff --git a/gsad/src/gsad_http.h b/gsad/src/gsad_http.h
+index 27b44f4c6..1ba6c12a0 100644
+--- a/gsad/src/gsad_http.h
++++ b/gsad/src/gsad_http.h
+@@ -29,7 +29,7 @@
+ #include "gsad_credentials.h"  /* for credentials_t */
+ #include "gsad_user.h"         /* for user_t */
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <microhttpd.h>
+ 
+ /**
+diff --git a/gsad/src/gsad_http_handler.c b/gsad/src/gsad_http_handler.c
+index f3529ad57..c94ac07af 100644
+--- a/gsad/src/gsad_http_handler.c
++++ b/gsad/src/gsad_http_handler.c
+@@ -33,7 +33,7 @@
+ #include "validator.h"        /* for gvm_validate */
+ 
+ #include <assert.h>              /* for assert */
+-#include <glib.h>                /* for g_file_test */
++#include <glib-2.0/glib.h>                /* for g_file_test */
+ #include <gvm/base/networking.h> /* for INET6_ADDRSTRLEN */
+ #include <gvm/util/xmlutils.h>   /* for find_element_in_xml_file */
+ #include <stdlib.h>              /* for abort */
+diff --git a/gsad/src/gsad_i18n.c b/gsad/src/gsad_i18n.c
+index 4b21cc5a8..a459ebdcd 100644
+--- a/gsad/src/gsad_i18n.c
++++ b/gsad/src/gsad_i18n.c
+@@ -30,7 +30,7 @@
+ #include <assert.h>
+ #include <dirent.h>
+ #include <errno.h>
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <libintl.h>
+ #include <libxml/xpath.h>
+ #include <libxml/xpathInternals.h>
+diff --git a/gsad/src/gsad_i18n.h b/gsad/src/gsad_i18n.h
+index e98a0c65b..ab0f1fb72 100644
+--- a/gsad/src/gsad_i18n.h
++++ b/gsad/src/gsad_i18n.h
+@@ -24,7 +24,7 @@
+ #ifndef _GSAD_I18N_H
+ #define _GSAD_I18N_H
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ /**
+  * @brief Default language code, used when Accept-Language header is missing.
+diff --git a/gsad/src/gsad_params.h b/gsad/src/gsad_params.h
+index 84991de22..a29a9c457 100644
+--- a/gsad/src/gsad_params.h
++++ b/gsad/src/gsad_params.h
+@@ -24,7 +24,7 @@
+ #ifndef _GSAD_PARAMS_H
+ #define _GSAD_PARAMS_H
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <microhttpd.h>
+ 
+ #define params_t GHashTable
+diff --git a/gsad/src/gsad_session.h b/gsad/src/gsad_session.h
+index c7748326b..e6cd5ed3f 100644
+--- a/gsad/src/gsad_session.h
++++ b/gsad/src/gsad_session.h
+@@ -26,7 +26,7 @@
+ 
+ #include "gsad_user.h"
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ void
+ session_add_user (const gchar *id, user_t *user);
+diff --git a/gsad/src/gsad_settings.h b/gsad/src/gsad_settings.h
+index 5cd00593a..9a26ad470 100644
+--- a/gsad/src/gsad_settings.h
++++ b/gsad/src/gsad_settings.h
+@@ -24,7 +24,7 @@
+ #ifndef _GSAD_SETTINGS_H
+ #define _GSAD_SETTINGS_H
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ void
+ vendor_version_set (const gchar *);
+diff --git a/gsad/src/gsad_user.h b/gsad/src/gsad_user.h
+index 742b0b9cc..2c1416567 100644
+--- a/gsad/src/gsad_user.h
++++ b/gsad/src/gsad_user.h
+@@ -26,7 +26,7 @@
+ 
+ #include "gsad_params.h"
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ #define USER_OK 0
+ #define USER_BAD_TOKEN 1
+diff --git a/gsad/src/utils.h b/gsad/src/utils.h
+index 2d1655f4c..2845e8299 100644
+--- a/gsad/src/utils.h
++++ b/gsad/src/utils.h
+@@ -24,7 +24,7 @@
+ #ifndef _GSAD_UTILS_H
+ #define _GSAD_UTILS_H
+ 
+-#include <glib.h> // for gboolean, gchar
++#include <glib-2.0/glib.h> // for gboolean, gchar
+ 
+ gboolean
+ str_equal (const gchar *, const gchar *);
+diff --git a/gsad/src/validator.h b/gsad/src/validator.h
+index 6dc136e03..996e3fc7b 100644
+--- a/gsad/src/validator.h
++++ b/gsad/src/validator.h
+@@ -24,7 +24,7 @@
+ #ifndef _VALIDATOR_H
+ #define _VALIDATOR_H
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ /**
+  * @brief A set of name rule pairs.

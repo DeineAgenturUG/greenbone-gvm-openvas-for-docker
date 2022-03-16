@@ -1,0 +1,130 @@
+diff -ruN aports2/community/greenbone-security-assistant/APKBUILD aports/community/greenbone-security-assistant/APKBUILD
+--- aports2/community/greenbone-security-assistant/APKBUILD	2021-07-01 15:30:35.104603431 +0200
++++ aports/community/greenbone-security-assistant/APKBUILD	2021-07-05 16:45:36.106073865 +0200
+@@ -3,10 +3,10 @@
+ pkgname=greenbone-security-assistant
+ _pkgname=gsad
+ pkgver=21.4.1
+-pkgrel=10
++pkgrel=0
+ pkgdesc="Greenbone Security Assistant (gsa) - OpenVAS web frontend"
+ url="https://www.openvas.org/"
+-arch="all !mips !mips64"
++arch="all !mips !mips64 !riscv64" # no nodejs on riscv64
+ license="GPL-2.0-or-later"
+ depends="wget"
+ makedepends="cmake doxygen xmltoman graphviz gvm-libs-dev
+@@ -21,13 +21,12 @@
+ 	gsad-sbin.patch
+ 	musl-stack-size.patch
+ 	remove-husky-git-hook.patch
+-	timeout.patch
+ 	"
+ builddir="$srcdir/gsa-$pkgver"
+ 
+ case "$CARCH" in
+-# cppcheck not available
+-aarch64 | s390x) options="!check" ;;
++	# cppcheck not available
++	aarch64|s390x) options="!check";;
+ esac
+ 
+ build() {
+@@ -61,6 +60,5 @@
+ e2bfaa69a0723a778f40bc98bd7c561ee888f90a3da9a13b3da193381d5be796e644a0d4c09f85464c233fa2d1ff4a1663494acb4490f0e8e3a5f2728c4e8d81  gsa-pid.patch
+ 3afa191863e1056182f8abf7f6d9a65cbd5d3fd69a522c5e414e19fcf2dd6d02eb8b5b2867383eaa659ce913f169c0739a4bc1209996879337b60ccd80d0bcfa  gsad-sbin.patch
+ ad78cce9f4f21157d679e227698896364c33eac9c5af4228552b61c0f9bde0e3b2743ae6717766acde38d5445d08e60832b2b0418456cdb8a77a91b3c440735b  musl-stack-size.patch
+-07ef8974f0411dd7c189fdb5d1244428e06b1c558c8a4969ddaa72ddcfe3fbbef870bdd2c39ce2991a1256c981655aa7f8d81e6238dbbfbc6a146050ab58e8ff  remove-husky-git-hook.patch
+-46b1ca8f1fad33dc5a43923197774f0044e0d12cec8bdda757c6e2b79c42e771932d8f6b73d45a9d182e3ab9f1fad03bf4f5dd3537e9985ebfc6af64a77dc082  timeout.patch
++e37be1d0c487a0647bf1fdc4b40f6220e92ef057d2196562075626a40c8e798a3b5a503f4cb46c04c45af7ffa9ddaefc40c996908048323ead5b15ddb5cea405  remove-husky-git-hook.patch
+ "
+diff -ruN aports2/community/greenbone-security-assistant/remove-husky-git-hook.patch aports/community/greenbone-security-assistant/remove-husky-git-hook.patch
+--- aports2/community/greenbone-security-assistant/remove-husky-git-hook.patch	2021-06-28 21:13:09.937362094 +0200
++++ aports/community/greenbone-security-assistant/remove-husky-git-hook.patch	2021-06-28 21:19:03.916045835 +0200
+@@ -1,16 +1,16 @@
+ diff --git a/gsa/package.json b/gsa/package.json
+-index 854cd0b..de22257 100644
++index a4c7309..3076a51 100644
+ --- a/gsa/package.json
+ +++ b/gsa/package.json
+-@@ -86,7 +86,6 @@
+-     "@types/jest": "^26.0.22",
++@@ -87,7 +87,6 @@
++     "@types/jest": "^26.0.23",
+      "babel-plugin-i18next-extract": "^0.8.3",
+-     "eslint-config-prettier": "^8.1.0",
++     "eslint-config-prettier": "^8.3.0",
+ -    "husky": "^2.7.0",
+-     "jest-environment-jsdom-sixteen": "^1.0.3",
++     "jest-environment-jsdom-sixteen": "^2.0.0",
+      "jest-junit": "^12.0.0",
+      "jest-styled-components": "^6.3.4",
+-@@ -112,11 +111,6 @@
++@@ -113,11 +112,6 @@
+      "not op_mini all",
+      "ff ESR"
+    ],
+diff -ruN aports2/community/greenbone-security-assistant/timeout.patch aports/community/greenbone-security-assistant/timeout.patch
+--- aports2/community/greenbone-security-assistant/timeout.patch	2021-06-28 21:13:09.937362094 +0200
++++ aports/community/greenbone-security-assistant/timeout.patch	1970-01-01 01:00:00.000000000 +0100
+@@ -1,60 +0,0 @@
+-diff -Naur origin/gsa/src/gmp/gmpsettings.js patch/gsa/src/gmp/gmpsettings.js
+---- origin/gsa/src/gmp/gmpsettings.js	2021-04-16 11:27:51.000000000 +0200
+-+++ patch/gsa/src/gmp/gmpsettings.js	2021-06-28 10:08:42.787815562 +0200
+-@@ -26,7 +26,7 @@
+-   'https://docs.greenbone.net/API/GMP/gmp-20.08.html';
+- export const DEFAULT_REPORT_RESULTS_THRESHOLD = 25000;
+- export const DEFAULT_LOG_LEVEL = 'warn';
+--export const DEFAULT_TIMEOUT = 300000; // 5 minutes
+-+export const DEFAULT_TIMEOUT = 90000000; // 5 minutes
+- 
+- const set = (storage, name, value) => {
+-   if (isDefined(value)) {
+-diff -Naur origin/gsa/src/gmp/__tests__/gmpsettings.js patch/gsa/src/gmp/__tests__/gmpsettings.js
+---- origin/gsa/src/gmp/__tests__/gmpsettings.js	2021-04-16 11:27:51.000000000 +0200
+-+++ patch/gsa/src/gmp/__tests__/gmpsettings.js	2021-06-28 10:08:27.144046612 +0200
+-@@ -94,7 +94,7 @@
+-       reloadIntervalInactive: 60,
+-       reportResultsThreshold: 10000,
+-       token: 'atoken',
+--      timeout: 30000,
+-+      timeout: 9000000,
+-       timezone: 'cet',
+-       username: 'foo',
+-       vendorVersion: 'foo',
+-@@ -118,7 +118,7 @@
+-     expect(settings.reloadIntervalInactive).toEqual(60);
+-     expect(settings.reportResultsThreshold).toEqual(10000);
+-     expect(settings.token).toBeUndefined();
+--    expect(settings.timeout).toEqual(30000);
+-+    expect(settings.timeout).toEqual(9000000);
+-     expect(settings.timezone).toBeUndefined();
+-     expect(settings.username).toBeUndefined();
+-     expect(settings.vendorVersion).toEqual('foo');
+-@@ -214,7 +214,7 @@
+-       reloadIntervalInactive: 60,
+-       reportResultsThreshold: 10000,
+-       token: 'atoken',
+--      timeout: 30000,
+-+      timeout: 9000000,
+-       timezone: 'cet',
+-       username: 'foo',
+-       vendorVersion: 'bar',
+-@@ -234,7 +234,7 @@
+-     expect(settings.reloadIntervalInactive).toEqual(60);
+-     expect(settings.reportResultsThreshold).toEqual(10000);
+-     expect(settings.token).toEqual('btoken');
+--    expect(settings.timeout).toEqual(30000);
+-+    expect(settings.timeout).toEqual(9000000);
+-     expect(settings.timezone).toEqual('cest');
+-     expect(settings.username).toEqual('bar');
+-     expect(settings.vendorVersion).toEqual('bar');
+-@@ -306,7 +306,7 @@
+-       protocolDocUrl: 'http://protocol',
+-       reloadInterval: 10,
+-       token: 'atoken',
+--      timeout: 30000,
+-+      timeout: 9000000,
+-       timezone: 'cet',
+-       username: 'foo',
+-       vendorVersion: 'foobar',

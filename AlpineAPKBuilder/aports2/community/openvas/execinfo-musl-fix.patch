@@ -1,0 +1,40 @@
+diff --git a/src/sighand.c b/src/sighand.c
+index 38205ec4..72b2e056 100644
+--- a/src/sighand.c
++++ b/src/sighand.c
+@@ -22,8 +22,9 @@
+  * @file sighand.c
+  * @brief Provides signal handling functions.
+  */
+-
++#ifdef HAVE_EXECINFO_H
+ #include <execinfo.h> /* for backtrace() */
++#endif
+ #include <glib.h>     /* for G_LOG_DOMAIN, for g_critical() */
+ #include <signal.h>   /* for kill() */
+ #include <sys/wait.h> /* for waitpid() */
+@@ -105,7 +106,7 @@ sighand_chld (int sig)
+   (void) sig;
+   waitpid (-1, NULL, WNOHANG);
+ }
+-
++#ifdef HAVE_EXECINFO_H
+ static void
+ print_trace (void)
+ {
+@@ -124,12 +125,15 @@ print_trace (void)
+ 
+   g_free (strings);
+ }
++#endif
+ 
+ void
+ sighand_segv (int given_signal)
+ {
+   signal (SIGSEGV, _exit);
++#ifdef HAVE_EXECINFO_H
+   print_trace ();
++#endif
+   make_em_die (SIGTERM);
+   /* Raise signal again, to exit with the correct return value,
+    * and to enable core dumping. */

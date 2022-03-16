@@ -1,0 +1,461 @@
+diff --git a/src/gmp.c b/src/gmp.c
+index 9a5b6789a..170298097 100644
+--- a/src/gmp.c
++++ b/src/gmp.c
+@@ -102,7 +102,7 @@
+ #include <assert.h>
+ #include <errno.h>
+ #include <fcntl.h>
+-#include <glib/gstdio.h>
++#include <glib-2.0/glib/gstdio.h>
+ #include <math.h>
+ #include <netinet/in.h>
+ #include <string.h>
+diff --git a/src/gmp.h b/src/gmp.h
+index 113bbdde7..fd39fab50 100644
+--- a/src/gmp.h
++++ b/src/gmp.h
+@@ -27,7 +27,7 @@
+ #include "manage.h"
+ #include "types.h"
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <gnutls/gnutls.h>
+ #include <gvm/util/serverutils.h>
+ #include <sys/types.h>
+diff --git a/src/gmp_base.h b/src/gmp_base.h
+index 38a4bbfec..fdcc5bcb4 100644
+--- a/src/gmp_base.h
++++ b/src/gmp_base.h
+@@ -19,7 +19,7 @@
+ #ifndef _GVMD_GMP_BASE_H
+ #define _GVMD_GMP_BASE_H
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ /**
+  * @brief A handle on a GMP parser.
+diff --git a/src/gmp_configs.c b/src/gmp_configs.c
+index a02956cc9..e912dcd62 100644
+--- a/src/gmp_configs.c
++++ b/src/gmp_configs.c
+@@ -30,7 +30,7 @@
+ #include "manage_configs.h"
+ 
+ #include <assert.h>
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <stdlib.h>
+ #include <string.h>
+ 
+diff --git a/src/gmp_delete.h b/src/gmp_delete.h
+index b9bf35d62..3675a8156 100644
+--- a/src/gmp_delete.h
++++ b/src/gmp_delete.h
+@@ -21,7 +21,7 @@
+ 
+ #include "gmp_base.h"
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ void
+ delete_start (const gchar *, const gchar *, const gchar **, const gchar **);
+diff --git a/src/gmp_tickets.c b/src/gmp_tickets.c
+index 3b60d92dd..50e1211eb 100644
+--- a/src/gmp_tickets.c
++++ b/src/gmp_tickets.c
+@@ -28,7 +28,7 @@
+ #include "gmp_get.h"
+ #include "manage_tickets.h"
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <stdlib.h>
+ #include <string.h>
+ 
+diff --git a/src/gmp_tls_certificates.c b/src/gmp_tls_certificates.c
+index c5b8a893f..939cbd644 100644
+--- a/src/gmp_tls_certificates.c
++++ b/src/gmp_tls_certificates.c
+@@ -29,7 +29,7 @@
+ #include "gmp_get.h"
+ #include "manage_tls_certificates.h"
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <stdlib.h>
+ #include <string.h>
+ 
+diff --git a/src/gmpd.h b/src/gmpd.h
+index 3bf2bca58..262d1ed75 100644
+--- a/src/gmpd.h
++++ b/src/gmpd.h
+@@ -27,7 +27,7 @@
+ #include "manage.h"
+ #include "types.h"
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <gnutls/gnutls.h>
+ #include <gvm/util/serverutils.h>
+ #include <netinet/in.h>
+diff --git a/src/gvmd.c b/src/gvmd.c
+index a549446d3..8c4059655 100644
+--- a/src/gvmd.c
++++ b/src/gvmd.c
+@@ -72,8 +72,8 @@
+ #include <assert.h>
+ #include <errno.h>
+ #include <fcntl.h>
+-#include <glib.h>
+-#include <glib/gstdio.h>
++#include <glib-2.0/glib.h>
++#include <glib-2.0/glib/gstdio.h>
+ #include <gnutls/gnutls.h>
+ #include <grp.h>
+ #include <netdb.h>
+@@ -90,7 +90,7 @@
+ #include <sys/types.h>
+ #include <sys/wait.h>
+ #include <unistd.h>
+-#include <glib/gmessages.h>
++#include <glib-2.0/glib/gmessages.h>
+ 
+ #include <gvm/base/pidfile.h>
+ #include <gvm/base/pwpolicy.h>
+diff --git a/src/iterator.h b/src/iterator.h
+index c9d0b4e8e..97bf8c182 100644
+--- a/src/iterator.h
++++ b/src/iterator.h
+@@ -29,7 +29,7 @@
+ 
+ #include "lsc_crypt.h"
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ /* Types. */
+ 
+diff --git a/src/lsc_crypt.c b/src/lsc_crypt.c
+index 0c1b35235..e568661ed 100644
+--- a/src/lsc_crypt.c
++++ b/src/lsc_crypt.c
+@@ -23,8 +23,8 @@
+  * This file provides support for encrypting LSC credentials.
+  */
+ 
+-#include <glib.h>
+-#include <glib/gstdio.h>
++#include <glib-2.0/glib.h>
++#include <glib-2.0/glib/gstdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <stdarg.h>
+diff --git a/src/lsc_crypt.h b/src/lsc_crypt.h
+index 74cb2e306..802eedf6a 100644
+--- a/src/lsc_crypt.h
++++ b/src/lsc_crypt.h
+@@ -24,7 +24,7 @@
+ #ifndef _GVMD_LSC_CRYPT_H
+ #define _GVMD_LSC_CRYPT_H
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ /* (Defined in gvmd.c) */
+ extern int disable_encrypted_credentials;
+diff --git a/src/lsc_user.c b/src/lsc_user.c
+index f56b77301..f17d9847b 100644
+--- a/src/lsc_user.c
++++ b/src/lsc_user.c
+@@ -23,8 +23,8 @@
+  * This file provides support for generating packages for LSC credentials.
+  */
+ 
+-#include <glib.h>
+-#include <glib/gstdio.h>
++#include <glib-2.0/glib.h>
++#include <glib-2.0/glib/gstdio.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+diff --git a/src/lsc_user.h b/src/lsc_user.h
+index 941a86212..2faa20997 100644
+--- a/src/lsc_user.h
++++ b/src/lsc_user.h
+@@ -24,7 +24,7 @@
+ #ifndef _GVMD_LSC_USER_H
+ #define _GVMD_LSC_USER_H
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ int
+ lsc_user_keys_create (const gchar *, gchar **);
+diff --git a/src/manage.c b/src/manage.c
+index da2a19fea..446edf7b4 100644
+--- a/src/manage.c
++++ b/src/manage.c
+@@ -64,7 +64,7 @@
+ #include <errno.h>
+ #include <dirent.h>
+ #include <fcntl.h>
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <gnutls/x509.h> /* for gnutls_x509_crt_... */
+ #include <math.h>
+ #include <locale.h>
+diff --git a/src/manage.h b/src/manage.h
+index 8b4223007..de2f5077d 100644
+--- a/src/manage.h
++++ b/src/manage.h
+@@ -30,7 +30,7 @@
+ #include "utils.h"
+ 
+ #include <stdio.h>
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <gnutls/gnutls.h>
+ 
+ #include <gvm/base/array.h>
+diff --git a/src/manage_acl.h b/src/manage_acl.h
+index 58b0ec1f0..fe941c2c0 100644
+--- a/src/manage_acl.h
++++ b/src/manage_acl.h
+@@ -25,7 +25,7 @@
+ #define _GVMD_MANAGE_ACL_H
+ 
+ #include "manage_sql.h"
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ /**
+  * @brief Generate SQL for user permission check.
+diff --git a/src/manage_configs.c b/src/manage_configs.c
+index 520305a72..0c55228e1 100644
+--- a/src/manage_configs.c
++++ b/src/manage_configs.c
+@@ -30,7 +30,7 @@
+ #include "utils.h"
+ 
+ #include <errno.h>
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <gvm/util/fileutils.h>
+ #include <stdlib.h>
+ #include <string.h>
+diff --git a/src/manage_get.h b/src/manage_get.h
+index aad04cde8..201954beb 100644
+--- a/src/manage_get.h
++++ b/src/manage_get.h
+@@ -26,7 +26,7 @@
+ 
+ #include "iterator.h"
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ /**
+  * @brief Command data for a get command.
+diff --git a/src/manage_migrators.c b/src/manage_migrators.c
+index d665a5eb4..851c8d416 100644
+--- a/src/manage_migrators.c
++++ b/src/manage_migrators.c
+@@ -117,7 +117,7 @@
+ 
+ #include <assert.h>
+ #include <errno.h>
+-#include <glib/gstdio.h>
++#include <glib-2.0/glib/gstdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <sys/param.h>
+diff --git a/src/manage_port_lists.h b/src/manage_port_lists.h
+index 9cbf222ff..7852e0187 100644
+--- a/src/manage_port_lists.h
++++ b/src/manage_port_lists.h
+@@ -21,7 +21,7 @@
+ 
+ #include "manage.h"
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ gboolean
+ find_port_list (const char*, port_list_t*);
+diff --git a/src/manage_report_formats.c b/src/manage_report_formats.c
+index acfa13ea4..5f927a6ef 100644
+--- a/src/manage_report_formats.c
++++ b/src/manage_report_formats.c
+@@ -32,7 +32,7 @@
+ 
+ #include <assert.h>
+ #include <errno.h>
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <gvm/util/fileutils.h>
+ #include <locale.h>
+ #include <stdlib.h>
+diff --git a/src/manage_report_formats.h b/src/manage_report_formats.h
+index 2e0e2dde7..a9ca4e69c 100644
+--- a/src/manage_report_formats.h
++++ b/src/manage_report_formats.h
+@@ -21,7 +21,7 @@
+ 
+ #include "manage.h"
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ gboolean
+ find_report_format_with_permission (const char*, report_format_t*,
+diff --git a/src/manage_sql.c b/src/manage_sql.c
+index d20717317..10ea21bab 100644
+--- a/src/manage_sql.c
++++ b/src/manage_sql.c
+@@ -51,7 +51,7 @@
+ #include <ctype.h>
+ #include <dirent.h>
+ #include <errno.h>
+-#include <glib/gstdio.h>
++#include <glib-2.0/glib/gstdio.h>
+ #include <gnutls/x509.h>
+ #include <malloc.h>
+ #include <pwd.h>
+diff --git a/src/manage_sql_configs.c b/src/manage_sql_configs.c
+index fc4fa34b4..5f3528386 100644
+--- a/src/manage_sql_configs.c
++++ b/src/manage_sql_configs.c
+@@ -32,7 +32,7 @@
+ 
+ #include <assert.h>
+ #include <errno.h>
+-#include <glib/gstdio.h>
++#include <glib-2.0/glib/gstdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+ 
+diff --git a/src/manage_sql_port_lists.c b/src/manage_sql_port_lists.c
+index a9083afd0..360b19a47 100644
+--- a/src/manage_sql_port_lists.c
++++ b/src/manage_sql_port_lists.c
+@@ -29,8 +29,8 @@
+ #include "sql.h"
+ 
+ #include <errno.h>
+-#include <glib.h>
+-#include <glib/gstdio.h>
++#include <glib-2.0/glib.h>
++#include <glib-2.0/glib/gstdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <strings.h>
+diff --git a/src/manage_sql_report_formats.c b/src/manage_sql_report_formats.c
+index 98f2a4e56..2c7e72e1f 100644
+--- a/src/manage_sql_report_formats.c
++++ b/src/manage_sql_report_formats.c
+@@ -30,8 +30,8 @@
+ #include "utils.h"
+ 
+ #include <errno.h>
+-#include <glib.h>
+-#include <glib/gstdio.h>
++#include <glib-2.0/glib.h>
++#include <glib-2.0/glib/gstdio.h>
+ #include <grp.h>
+ #include <libgen.h>
+ #include <limits.h>
+diff --git a/src/manage_sql_report_formats.h b/src/manage_sql_report_formats.h
+index 2e3fe0de2..59ba267ce 100644
+--- a/src/manage_sql_report_formats.h
++++ b/src/manage_sql_report_formats.h
+@@ -22,7 +22,7 @@
+ #include "manage.h"
+ #include "manage_sql.h"
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ gboolean
+ lookup_report_format (const char*, report_format_t*);
+diff --git a/src/manage_sql_secinfo.c b/src/manage_sql_secinfo.c
+index f8cc192b2..02e7d68b1 100644
+--- a/src/manage_sql_secinfo.c
++++ b/src/manage_sql_secinfo.c
+@@ -38,7 +38,7 @@
+ #include <fcntl.h>
+ #include <fnmatch.h>
+ #include <ftw.h>
+-#include <glib/gstdio.h>
++#include <glib-2.0/glib/gstdio.h>
+ #include <math.h>
+ #include <stdlib.h>
+ #include <string.h>
+diff --git a/src/manage_sql_secinfo.h b/src/manage_sql_secinfo.h
+index 688dc30df..3df082035 100644
+--- a/src/manage_sql_secinfo.h
++++ b/src/manage_sql_secinfo.h
+@@ -21,7 +21,7 @@
+  * @brief Manager Manage library: SQL backend headers.
+  */
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #ifndef _GVMD_MANAGE_SQL_SECINFO_H
+ #define _GVMD_MANAGE_SQL_SECINFO_H
+ 
+diff --git a/src/manage_utils.h b/src/manage_utils.h
+index d5947542b..28db6eb73 100644
+--- a/src/manage_utils.h
++++ b/src/manage_utils.h
+@@ -27,7 +27,7 @@
+ /* For strptime in time.h. */
+ #undef _XOPEN_SOURCE
+ #define _XOPEN_SOURCE
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <libical/ical.h>
+ #include <time.h>
+ 
+diff --git a/src/sql.h b/src/sql.h
+index 1a635e3bb..5575b7880 100644
+--- a/src/sql.h
++++ b/src/sql.h
+@@ -27,7 +27,7 @@
+ #include "iterator.h"
+ #include "manage.h"
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ 
+ /* Helpers. */
+ 
+diff --git a/src/sql_pg.c b/src/sql_pg.c
+index 435b09224..926370d7e 100644
+--- a/src/sql_pg.c
++++ b/src/sql_pg.c
+@@ -29,7 +29,7 @@
+ #include <endian.h>
+ #include <errno.h>
+ #include <arpa/inet.h>
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <inttypes.h>
+ #include <netinet/in.h>
+ #include <libpq-fe.h>
+diff --git a/src/utils.h b/src/utils.h
+index 7b951ba75..4a2ac9424 100644
+--- a/src/utils.h
++++ b/src/utils.h
+@@ -24,7 +24,7 @@
+ #ifndef _GVMD_UTILS_H
+ #define _GVMD_UTILS_H
+ 
+-#include <glib.h>
++#include <glib-2.0/glib.h>
+ #include <gvm/util/xmlutils.h>
+ #include <time.h>
+ 
