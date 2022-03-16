@@ -1,0 +1,40 @@
+name: Sync Data
+
+on:
+  schedule:
+  - cron: "0 0 * * *"
+
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Download Data
+        run: bash ./download.sh
+
+      - name: Create data TAR
+        uses: ihiroky/archive-action@v1
+        with:
+          root_dir: ./data
+          file_path: data.tar.xz
+      
+      - name: Create NVT Feed TAR
+        uses: ihiroky/archive-action@v1
+        with:
+          root_dir: ./data/nvt-feed
+          file_path: nvt-feed.tar.xz
+      
+      - uses: wilsonzlin/setup-b2@v3
+      
+      - name: Authorize Backblaze Account
+        run: b2 authorize-account ${{ secrets.BACKBLAZE_KEYID }} ${{ secrets.BACKBLAZE_APPKEY }}
+      
+      - name: Upload data TAR to Backblaze
+        run: b2 upload-file --noProgress VulnData data.tar.xz data.tar.xz
+        
+      - name: Upload NVT Feed TAR to Backblaze
+        run: b2 upload-file --noProgress VulnData nvt-feed.tar.xz nvt-feed.tar.xz
