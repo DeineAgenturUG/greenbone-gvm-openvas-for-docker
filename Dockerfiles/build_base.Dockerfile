@@ -4,7 +4,6 @@ ARG GSA_VERSION="21.4.4"
 ARG GVM_LIBS_VERSION="21.4.4"
 ARG GVMD_VERSION="21.4.5"
 ARG OPENVAS_SCANNER_VERSION="21.4.4"
-ARG OPENVAS_SCANNER_VERSION="21.4.4"
 ARG OPENVAS_SMB_VERSION="21.4.0"
 ARG PYTHON_GVM_VERSION="21.11.0"
 ARG OSPD_OPENVAS_VERSION="21.4.4"
@@ -29,7 +28,25 @@ ARG TZ=Etc/UTC
 ARG SSHD=false
 ARG DB_PASSWORD=none
 
+ARG INSTALL_PREFIX=/usr
+ARG SOURCE_DIR=/source
+ARG BUILD_DIR=/build
+ARG INSTALL_DIR=/install
+ARG DESTDIR=/install
+
 FROM debian:11-slim as base
+
+ARG INSTALL_PREFIX
+ARG SOURCE_DIR
+ARG BUILD_DIR
+ARG INSTALL_DIR
+ARG DESTDIR
+ENV INSTALL_PREFIX=${INSTALL_PREFIX} \
+    SOURCE_DIR=${SOURCE_DIR} \
+    BUILD_DIR=${BUILD_DIR} \
+    INSTALL_DIR=${INSTALL_DIR} \
+    DESTDIR=${DESTDIR}
+
 ARG POSTGRESQL_VERSION
 ARG GSAD_VERSION
 ARG GSA_VERSION
@@ -52,15 +69,13 @@ ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
     OSPD_OPENVAS_VERSION=${OSPD_OPENVAS_VERSION} \
     GVM_TOOLS_VERSION=${GVM_TOOLS_VERSION} \
     DEBIAN_FRONTEND=noninteractive \
-    LANG=C.UTF-8 \
-    INSTALL_PREFIX=/usr \
-    SOURCE_DIR=/source\
-    BUILD_DIR=/build \
-    INSTALL_DIR=/install \
-    DESTDIR=/install
+    LANG=C.UTF-8
+
+RUN echo ${PATH}
+
 RUN apt-get update \
     && apt-get -yq upgrade \
-    && apt-get install --no-install-recommends --assume-yes \
+    && apt-get install -yq \
         apt-utils \
         coreutils \
         build-essential \
@@ -91,8 +106,8 @@ RUN apt-get update \
            && echo y \
            && echo save \
        ) | gpg --command-fd 0 --no-tty --no-greeting -q --edit-key "$(gpg --list-packets <GBCommunitySigningKey.asc | awk '$1=="keyid:"{print$2;exit}')" trust \
-    && curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null \
-    && echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |sudo tee  /etc/apt/sources.list.d/pgdg.list \
+    && curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null \
+    && echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee  /etc/apt/sources.list.d/pgdg.list \
     && apt-get update \
     && apt-get -yq upgrade \
     && apt-get -yq install \
@@ -104,7 +119,7 @@ RUN apt-get update \
 
 
 # Install required dependencies for gvm-libs
-RUN apt-get install -y --no-install-recommends \
+RUN apt-get install -yq \
     bison \
     dpkg \
     fakeroot \

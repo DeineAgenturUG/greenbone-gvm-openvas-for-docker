@@ -1,6 +1,7 @@
 
-FROM latest AS latest-full
-ARG SETUP=0
+FROM deineagenturug/gvm:latest-data AS latest-data-full
+
+ARG SETUP=1
 ARG OPT_PDF=1
 
 ENV LANG=en_US.UTF-8 \
@@ -12,7 +13,10 @@ ENV LANG=en_US.UTF-8 \
 RUN sudo apt-get update && \
     sudo apt-get install -y --no-install-recommends \
         texlive-fonts-recommended \
-        texlive-latex-extra
+        texlive-latex-extra ; \
+    unset OPT_PDF
+
+ENV SETUP=0
 
 RUN set -eu; \
     rm -rfv /var/lib/gvm/CA || true \
@@ -21,3 +25,5 @@ RUN set -eu; \
     && echo "Etc/UTC" >/etc/timezone \
     && rm -rfv /tmp/* /var/cache/apk/* /var/lib/apt/lists/* \
     && echo "!!! FINISH Setup !!!"
+
+VOLUME [ "/opt/database", "/var/lib/openvas/plugins", "/var/lib/gvm", "/etc/ssh" ]

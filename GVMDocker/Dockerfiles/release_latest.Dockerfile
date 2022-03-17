@@ -1,3 +1,14 @@
+ARG POSTGRESQL_VERSION="13"
+ARG GSAD_VERSION="21.4.4"
+ARG GSA_VERSION="21.4.4"
+ARG GVM_LIBS_VERSION="21.4.4"
+ARG GVMD_VERSION="21.4.5"
+ARG OPENVAS_SCANNER_VERSION="21.4.4"
+ARG OPENVAS_SMB_VERSION="21.4.0"
+ARG PYTHON_GVM_VERSION="21.11.0"
+ARG OSPD_OPENVAS_VERSION="21.4.4"
+ARG GVM_TOOLS_VERSION="21.10.0"
+
 
 FROM debian:11-slim AS latest
 ARG POSTGRESQL_VERSION
@@ -66,15 +77,12 @@ ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
     SETUP=${SETUP} \
     OPT_PDF=${OPT_PDF}
 
-COPY --from=build_gsa /install/ /
-COPY --from=build_gsad /install/ /
-COPY --from=build_gvm_libs /install/ /
-COPY --from=build_gvmd /install/ /
-COPY --from=build_openvas_smb /install/ /
-COPY --from=build_openvas_scanner /install/ /
-COPY --from=build_ospd_openvas /install/ /
-COPY --from=build_openvas_scanner /source/openvas-scanner-${OPENVAS_SCANNER_VERSION}/config/redis-openvas.conf /etc/redis/redis-openvas.conf
-COPY --from=build_openvas_scanner /source/openvas-scanner-${OPENVAS_SCANNER_VERSION}/config/redis-openvas.conf /opt/setup/redis-openvas.conf.openvas_scanner_source
+COPY --from=deineagenturug/gvm-build:build_gsa / /
+COPY --from=deineagenturug/gvm-build:build_gsad / /
+COPY --from=deineagenturug/gvm-build:build_gvm_libs / /
+COPY --from=deineagenturug/gvm-build:build_gvmd / /
+COPY --from=deineagenturug/gvm-build:build_openvas_smb / /
+COPY --from=deineagenturug/gvm-build:build_openvas_scanner / /
 
 ENTRYPOINT [ "/opt/setup/scripts/entrypoint.sh" ]
 CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]

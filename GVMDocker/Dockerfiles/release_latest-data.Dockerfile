@@ -1,8 +1,7 @@
 
-FROM latest-data AS latest-data-full
-
+FROM deineagenturug/gvm:latest AS latest-data
 ARG SETUP=1
-ARG OPT_PDF=1
+ARG OPT_PDF=0
 
 ENV LANG=en_US.UTF-8 \
     LANGUAGE=en_US.UTF-8 \
@@ -10,11 +9,11 @@ ENV LANG=en_US.UTF-8 \
     SETUP=${SETUP} \
     OPT_PDF=${OPT_PDF}
 
-RUN sudo apt-get update && \
-    sudo apt-get install -y --no-install-recommends \
-        texlive-fonts-recommended \
-        texlive-latex-extra ; \
-    unset OPT_PDF
+RUN ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime &&  \
+    echo "$TZ" >/etc/timezone && \
+    /opt/setup/scripts/entrypoint.sh /usr/bin/supervisord -c /etc/supervisord.conf
+
+ENV SETUP=0
 
 RUN set -eu; \
     rm -rfv /var/lib/gvm/CA || true \

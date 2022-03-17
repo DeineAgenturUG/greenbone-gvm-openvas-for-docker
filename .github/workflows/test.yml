@@ -1,0 +1,70 @@
+name: Test Build Base Images
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-test-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+env:
+  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME_GHCR: ghcr.io/${{ github.repository }}
+  IMAGE_NAME_DOCKER: deineagenturug/gvm
+  IMAGE_NAME_OCIR: fra.ocir.io/fraj3sqdynbw/gvm
+
+
+permissions:
+  id-token: write
+  actions: read
+  contents: read
+  packages: write
+  pull-requests: read
+  security-events: write
+
+jobs:
+
+
+  build_prepare:
+    name: Image latest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: ./.checkupdates/
+          key: ${{ runner.os }}-gvm-version-check-v2-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-gvm-version-check-v2-
+      - run: |
+          chmod +x ./helper/scripts/get_releases.sh
+          echo "${{github.token}}" | gh auth login --with-token
+          mkdir -p ./.checkupdates/
+          if [ ! -e ./.checkupdates/latest_version ]; then
+            ./helper/scripts/get_releases.sh > ./.checkupdates/latest_version
+            sha1sum ./.checkupdates/latest_version > ./.checkupdates/latest_version.sum
+          fi
+          echo "BUILD_VERSION=$(date '+%F.%H%M')" > ./.checkupdates/build_time
+
+  build_base:
+    name: Building Base Images
+    needs: build_prepare
+    uses: DeineAgenturUG/greenbone-gvm-openvas-for-docker/.github/workflows/build_base_images.yml@main
+    with:
+      POSTGRESQL_VERSION: 13
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build_relese:
+    name: Building Release Images
+    needs: build_base
+    uses: DeineAgenturUG/greenbone-gvm-openvas-for-docker/.github/workflows/build_release_images.yml@main
+    with:
+      POSTGRESQL_VERSION: 13
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
