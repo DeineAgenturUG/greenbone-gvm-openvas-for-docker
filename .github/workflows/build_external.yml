@@ -1,0 +1,113 @@
+name: Test external Build System
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-build-external
+  cancel-in-progress: false
+
+env:
+  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME_GHCR: ghcr.io/${{ github.repository }}
+  IMAGE_NAME_DOCKER: deineagenturug/gvm
+  IMAGE_NAME_OCIR: fra.ocir.io/fraj3sqdynbw/gvm
+  OCIR_TOKEN: ${{ secrets.OCIR_TOKEN }}
+  OCIR_USER: ${{ secrets.OCIR_USER }}
+  OCI_API_KEY: ${{ secrets.OCI_API_KEY }}
+  OCI_COMPARTMENT: ${{ secrets.OCI_COMPARTMENT }}
+  OCI_FINGERPRINT: ${{ secrets.OCI_FINGERPRINT }}
+  OCI_REGION: ${{ secrets.OCI_REGION }}
+  OCI_TENANCY: ${{ secrets.OCI_TENANCY }}
+  OCI_USER: ${{ secrets.OCI_USER }}
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+permissions:
+  id-token: write
+  repository-projects: write
+  actions: read
+  contents: read
+  packages: write
+  pull-requests: read
+  security-events: write
+
+jobs:
+  build_prepare:
+    name: Start Server
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          path: './.setup/'
+          repository: 'DeineAgenturUG/setup-files'
+          token: ${{ secrets.GH_TOKEN }}
+          ref: 'main'
+      - uses: actions/cache@v2
+        with:
+          path: './.checkupdates/'
+          key: ${{ runner.os }}-gvm-version-check-v2-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-gvm-version-check-v2-
+      - name: Setup Build Informations
+        run: |
+          set -e
+          chmod +x ./helper/scripts/get_releases.sh
+          echo "${{github.token}}" | gh auth login --with-token
+          mkdir -p ./.checkupdates/
+          if [ ! -e ./.checkupdates/latest_version ]; then
+            exit 1
+          fi
+          echo 'GREENBONE_RELEASES<<EOF' >> $GITHUB_ENV
+          cat ./.checkupdates/latest_version | sed 's/=v/=/g' >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+          echo "BUILD_VERSION=$(date '+%F.%H%M')" > ./.checkupdates/build_time
+      - uses: ./.setup/actions/poetry-setup
+        with:
+          python_version: 3.9
+      - name: Start Instances
+        working-directory: ./.setup/oracle-cloud/dockerBuilder/scripts/
+        run: |
+          ./start_instances.sh
+      - name: Check if Instances are ready
+        continue-on-error: true
+        uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 15
+          max_attempts: 10
+          retry_wait_seconds: 60
+          shell: bash
+          retry_on: error
+          command: cd ./.setup/oracle-cloud/dockerBuilder/scripts/ ; ./check_instances.sh
+          
+  build_packages:
+    name: Build Packages
+    needs: [build_prepare]
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "here comes the build"
+
+  build_postprocessing:
+    name: Stop Server
+    if: ${{ always() }}
+    needs: [build_prepare, build_packages]
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          path: './.setup/'
+          repository: 'DeineAgenturUG/setup-files'
+          token: ${{ secrets.GH_TOKEN }}
+          ref: 'main'
+      - uses: ./.setup/actions/poetry-setup
+        with:
+          python_version: 3.9
+      - name: Stop Instances
+        working-directory: ./.setup/oracle-cloud/dockerBuilder/scripts/
+        run: |
+          ./stop_instances.sh
