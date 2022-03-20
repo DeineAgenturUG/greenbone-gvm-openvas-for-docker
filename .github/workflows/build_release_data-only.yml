@@ -1,0 +1,91 @@
+name: Release data-only Images
+
+on:
+  workflow_dispatch:
+  schedule:
+    # * is a special character in YAML, so you have to quote this string
+    - cron: '0 8,20 * * *'
+
+concurrency:
+  group: ci-build-data-only-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+env:
+  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME_GHCR: ghcr.io/${{ github.repository }}
+  IMAGE_NAME_DOCKER: deineagenturug/gvm
+  IMAGE_NAME_OCIR: fra.ocir.io/fraj3sqdynbw/gvm
+  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+  POSTGRESQL_VERSION: ${{ inputs.POSTGRESQL_VERSION }}
+
+permissions:
+  id-token: write
+  actions: read
+  contents: read
+  packages: write
+  pull-requests: read
+  security-events: write
+
+jobs:
+
+  building_data:
+    name: Image data-only
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          ref: main
+
+      - uses: actions/cache@v2
+        with:
+          path: ./.checkupdates/
+          key: ${{ runner.os }}-gvm-version-check-v2-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-gvm-version-check-v2-
+
+      - name: Setup Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+        with:
+          install: true
+          driver-opts: |
+            image=deineagenturug/buildkit:latest
+
+      - name: Inspect builder
+        run: |
+          echo "Name        : ${{ steps.buildx.outputs.name }}"
+          echo "Endpoint    : ${{ steps.buildx.outputs.endpoint }}"
+          echo "Status      : ${{ steps.buildx.outputs.status }}"
+          echo "Flags       : ${{ steps.buildx.outputs.flags }}"
+          echo "Platforms   : ${{ steps.buildx.outputs.platforms }}"
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Get Latest Versions
+        run: |
+          echo 'GREENBONE_RELEASES<<EOF' >> $GITHUB_ENV
+          cat ./.checkupdates/latest_version | sed 's/=v/=/g' >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+          cat ./.checkupdates/build_time >> $GITHUB_ENV
+
+      - name: Build and push Docker image data-only
+        uses: docker/build-push-action@v2
+        with:
+          context: ./GVMDocker/
+          platforms: linux/amd64
+          push: true
+          file: ./GVMDocker/Dockerfiles/release_data-only.Dockerfile
+          tags: |
+            ${{ env.IMAGE_NAME_DOCKER }}:data-only
+            ${{ env.IMAGE_NAME_DOCKER }}:data-only-${{ env.BUILD_VERSION }}
+          labels: |
+            ${{ env.GREENBONE_RELEASES }}
+            POSTGRESQL_VERSION=${{ env.POSTGRESQL_VERSION }}
+          build-args: |
+            ${{ env.GREENBONE_RELEASES }}
+            POSTGRESQL_VERSION=${{ env.POSTGRESQL_VERSION }}

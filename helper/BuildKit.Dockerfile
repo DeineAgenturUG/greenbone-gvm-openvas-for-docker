@@ -20,9 +20,6 @@
 # > docker buildx build --platform "linux/arm64,linux/arm/v7" -f buildkit.Dockerfile -t deineagenturug/buildkit:latest .
 ARG BUILDKIT_TAG=latest
 ARG CNI_VERSION=v1.1.1
-ARG TARGETOS=linux
-ARG TARGETARCH=amd64
-
 FROM moby/buildkit:${BUILDKIT_TAG} AS buildkit_upstream_tag
 
 FROM buildkit_upstream_tag
