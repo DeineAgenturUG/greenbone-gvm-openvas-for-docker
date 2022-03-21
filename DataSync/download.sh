@@ -5,29 +5,31 @@ FEED_VENDOR="Greenbone Networks GmbH"
 
 write_feed_xml () {
 
-  if [ ! -f $FEED_DIR/timestamp ]; then
+  if [ ! -f "${FEED_DIR}/timestamp" ]; then
     echo "timestamp file not found!"
     exit 1
   fi
 
-  FEED_VERSION=`cat $FEED_DIR/timestamp`
+  FEED_VERSION=$(cat "${FEED_DIR}/timestamp")
 
-  mkdir -p $FEED_DIR
-  echo '<feed id="6315d194-4b6a-11e7-a570-28d24461215b">' > $FEED_DIR/feed.xml
-  echo "<type>$FEED_TYPE</type>" >> $FEED_DIR/feed.xml
-  echo "<name>$FEED_NAME</name>" >> $FEED_DIR/feed.xml
-  echo "<version>$FEED_VERSION</version>" >> $FEED_DIR/feed.xml
-  echo "<vendor>$FEED_VENDOR</vendor>" >> $FEED_DIR/feed.xml
-  echo "<home>$FEED_HOME</home>" >> $FEED_DIR/feed.xml
-  echo "<description>" >> $FEED_DIR/feed.xml
-  echo "This script synchronizes a $FEED_TYPE collection with the '$FEED_NAME'." >> $FEED_DIR/feed.xml
-  echo "The '$FEED_NAME' is provided by '$FEED_VENDOR'." >> $FEED_DIR/feed.xml
-  echo "Online information about this feed: '$FEED_HOME'." >> $FEED_DIR/feed.xml
-  echo "</description>" >> $FEED_DIR/feed.xml
-  echo "</feed>" >> $FEED_DIR/feed.xml
+  mkdir -p "${FEED_DIR}"
+  {
+  echo '<feed id="6315d194-4b6a-11e7-a570-28d24461215b">'
+  echo "<type>${FEED_TYPE}</type>"
+  echo "<name>${FEED_NAME}</name>"
+  echo "<version>${FEED_VERSION}</version>"
+  echo "<vendor>${FEED_VENDOR}</vendor>"
+  echo "<home>${FEED_HOME}</home>"
+  echo "<description>"
+  echo "This script synchronizes a ${FEED_TYPE} collection with the '${FEED_NAME}'."
+  echo "The '${FEED_NAME}' is provided by '${FEED_VENDOR}'."
+  echo "Online information about this feed: '${FEED_HOME}'."
+  echo "</description>"
+  echo "</feed>"
+  } > "${FEED_DIR}/feed.xml"
 }
 
-mkdir data
+mkdir -p data
 
 echo "RSYNC: NVT-Feed..."
 
@@ -45,7 +47,7 @@ FEED_NAME="Greenbone Community gvmd Data Feed"
 
 echo "RSYNC: Data-Objects GVMD..."
 
-while ! rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/data-objects/gvmd/ $FEED_DIR
+while ! rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/data-objects/gvmd/ "${FEED_DIR}"
 do
   echo "Retrying..."
   sleep 10
@@ -61,7 +63,7 @@ FEED_NAME="Greenbone Community CERT Feed"
 
 echo "RSYNC: Cert-Data..."
 
-while ! rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/cert-data $FEED_DIR
+while ! rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/cert-data "${FEED_DIR}"
 do
   echo "Retrying..."
   sleep 10
@@ -77,7 +79,7 @@ FEED_NAME="Greenbone Community SCAP Feed"
 
 echo "RSYNC: Scap-Data..."
 
-while ! rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/scap-data $FEED_DIR
+while ! rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/scap-data "${FEED_DIR}"
 do
   echo "Retrying..."
   sleep 10
