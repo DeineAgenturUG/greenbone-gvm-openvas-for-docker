@@ -47,10 +47,10 @@ find /var/lib/gvm \( ! -user gvm -o ! -group gvm \)  -exec chown gvm:gvm {} +
 mkdir -p /run/ospd/
 chown gvm:gvm /run/ospd
 chmod 2775 /var/run/ospd/
-su -c "touch /run/ospd/feed-update.lock" gvm
 mkdir -p /var/lib/openvas/plugins/
-chown gvm:gvm /var/lib/openvas/plugins/
-find /var/lib/openvas/plugins \( ! -user gvm -o ! -group gvm \)  -exec chown gvm:gvm {} +
+su -c "touch /var/lib/openvas/feed-update.lock" gvm
+chown gvm:gvm /var/lib/openvas/
+find /var/lib/openvas/ \( ! -user gvm -o ! -group gvm \)  -exec chown gvm:gvm {} +
 
 ## This need on HyperVisor for GVM
 #echo 'never' >/sys/kernel/mm/transparent_hugepage/enabled
