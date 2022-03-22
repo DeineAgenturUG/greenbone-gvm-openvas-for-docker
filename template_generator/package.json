@@ -1,0 +1,12 @@
+{
+  "name": "greenbone-gvm-openvas-for-docker",
+  "version": "1.0.0",
+  "description": "Template Generator",
+  "main": "index.js",
+  "repository": "git@github.com:DeineAgenturUG/greenbone-gvm-openvas-for-docker.git",
+  "author": "Josef Fröhle <github@josef-froehle.de>",
+  "license": "MIT",
+  "devDependencies": {
+    "@11ty/eleventy": "^1.0.0"
+  }
+}
