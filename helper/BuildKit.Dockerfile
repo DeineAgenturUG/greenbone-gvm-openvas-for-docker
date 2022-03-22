@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.4
+
 # To work around the problem about the already used PORTS in parallel builds, it needs a CNI in the buildx driver
 # SEE: https://github.com/docker/buildx/issues/678
 # > docker run --privileged --rm tonistiigi/binfmt --install all
