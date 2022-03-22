@@ -7,11 +7,10 @@ if [ ! -f "/var/lib/gvm/.firstsync" ]; then
 	mkdir -p /tmp/data
 
 	echo "Extracting internal data TAR..."
-	tar --extract --file=/opt/gvm-sync-data.tar.xz --directory=/tmp/data
+	tar --extract --file=/opt/setup/nvt-feed.tar.xz --directory=/tmp/data
 
 	chown gvm:gvm -R /tmp/data
-
-	cp -a /tmp/data/nvt-feed/* /var/lib/openvas/plugins
+	cp -a /tmp/data/. /var/lib/openvas/plugins/
 	chown gvm:gvm -R /var/lib/openvas
 
 	find /var/lib/openvas/ -type d -exec chmod 755 {} +

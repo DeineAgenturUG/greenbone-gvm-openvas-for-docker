@@ -2,6 +2,7 @@
 set -Eeuo pipefail
 
 MASTER_PORT=${MASTER_PORT:-22}
+DEBUG=${DEBUG:-NO}
 
 if [ -z "${MASTER_ADDRESS}" ]; then
 	echo "ERROR: The environment variable \"MASTER_ADDRESS\" is not set"
@@ -33,29 +34,25 @@ if [ -S /run/redis/redis.sock ]; then
 	rm /run/redis/redis.sock
 fi
 
-if [ ! -d "/run/redis-openvas" ]; then
-	echo "create /run/redis-openvas"
-	mkdir -p /run/redis-openvas
-fi
 
-if [ -S /run/redis-openvas/redis.sock ]; then
-	rm /run/redis-openvas/redis.sock
+if [ -S /run/redis/redis.sock ]; then
+	rm /run/redis/redis.sock
 fi
 
 ${SUPVISD} start redis
 ${SUPVISD} status redis
 
 echo "Wait for redis socket to be created..."
-while [ ! -S /run/redis-openvas/redis.sock ]; do
+while [ ! -S /run/redis/redis.sock ]; do
 	sleep 1
 done
 
 echo "Testing redis status..."
-X="$(redis-cli -s /run/redis-openvas/redis.sock ping)"
+X="$(redis-cli -s /run/redis/redis.sock ping)"
 while [ "${X}" != "PONG" ]; do
 	echo "Redis not yet ready..."
 	sleep 1
-	X="$(redis-cli -s /run/redis-openvas/redis.sock ping)"
+	X="$(redis-cli -s /run/redis/redis.sock ping)"
 done
 echo "Redis ready."
 
@@ -63,7 +60,7 @@ echo "+++++++++++++++++++++++++++++++++++"
 echo "+ Enabling Automating NVT updates +"
 echo "+++++++++++++++++++++++++++++++++++"
 ${SUPVISD} start GVMUpdate
-if [ "${DEBUG}" == "Y" ]; then
+if [ "x${DEBUG}" == "xYES" ]; then
 	${SUPVISD} status GVMUpdate
 fi
 sleep 5
@@ -90,7 +87,7 @@ fi
 
 echo "Starting Open Scanner Protocol daemon for OpenVAS..."
 ${SUPVISD} start ospd-openvas
-if [ "${DEBUG}" == "Y" ]; then
+if [ "x${DEBUG}" == "xYES" ]; then
 	${SUPVISD} status ospd-openvas
 fi
 
@@ -115,7 +112,7 @@ echo "-------------------------------------------------------"
 touch /var/lib/gvm/.firststart
 if [ -f /var/lib/gvm/.secondstart ]; then
 	${SUPVISD} start autossh
-	if [ "${DEBUG}" == "Y" ]; then
+	if [ "x${DEBUG}" == "xYES" ]; then
 		${SUPVISD} status autossh
 	fi
 fi

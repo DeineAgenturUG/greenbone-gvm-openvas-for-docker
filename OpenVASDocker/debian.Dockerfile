@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.4
-FROM debian:10-slim
+FROM debian:11-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG=C.UTF-8
