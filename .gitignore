@@ -71,9 +71,9 @@ $RECYCLE.BIN/
 # Docker Build Local
 /apk-build/
 /storage/
+/build_data/
 # For github.com/nektos/act local workflow testing
 .env
 .secrets
 /secrets/
-
 /GVMDocker/gvm-sync-data/
