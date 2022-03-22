@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -Eeuxo pipefail
+set -Eeuo pipefail
 if [[ "${AUTO_SYNC}" != "YES" ]]; then
   exit 0
 fi
@@ -20,24 +20,18 @@ exec_as_gvm(){
 }
 
 if [ ! -f "/var/lib/gvm/.firstsync" ]; then
-	echo "Downloading data TAR to speed up first sync..."
-	curl -o /tmp/data.tar.xz https://vulndata.securecompliance.solutions/file/VulnData/data.tar.xz # This file is updated at 0:00 UTC every day
-	mkdir /tmp/data
 
-	echo "Extracting data TAR..."
-	tar --extract --file=/tmp/data.tar.xz --directory=/tmp/data
+  mkdir -p /var/lib/gvm/data-objects/gvmd
+  chown gvm:gvm /var/lib/gvm
+  find /var/lib/gvm \( ! -user gvm -o ! -group gvm \)  -exec chown gvm:gvm {} +
 
-	chown gvm:gvm -R /tmp/data
-	#	ls -lahR /tmp/data
+  mkdir -p /var/lib/openvas/plugins
+  chown gvm:gvm /var/lib/openvas
+  find /var/lib/openvas \( ! -user gvm -o ! -group gvm \)  -exec chown gvm:gvm {} +
 
-	cp -a /tmp/data/nvt-feed/* /var/lib/openvas/plugins
-	cp -a /tmp/data/gvmd-data/* /var/lib/gvm/data-objects/gvmd
-	cp -a /tmp/data/scap-data/* /var/lib/gvm/scap-data
-	cp -a /tmp/data/cert-data/* /var/lib/gvm/cert-data
-
-	chown gvm:gvm -R /var/lib/gvm
-	chown gvm:gvm -R /var/lib/openvas
-	chown gvm:gvm -R /var/log/gvm
+  mkdir -p /var/log/gvm
+  chown gvm:gvm /var/log/gvm
+  find /var/log/gvm \( ! -user gvm -o ! -group gvm \)  -exec chown gvm:gvm {} +
 
 	find /var/lib/openvas/ -type d -exec chmod 755 {} +
 	find /var/lib/gvm/ -type d -exec chmod 755 {} +
@@ -45,8 +39,7 @@ if [ ! -f "/var/lib/gvm/.firstsync" ]; then
 	find /var/lib/gvm/ -type f -exec chmod 644 {} +
 	find /var/lib/gvm/gvmd/report_formats -type f -name "generate" -exec chmod +x {} \;
 
-	rm /tmp/data.tar.xz
-	rm -r /tmp/data
+
 fi
 
 set +Eeuo pipefail
@@ -66,4 +59,5 @@ sleep 5
 echo "Updating CERT data..."
 exec_as_gvm "greenbone-feed-sync --type CERT"
 
+sleep 5
 true

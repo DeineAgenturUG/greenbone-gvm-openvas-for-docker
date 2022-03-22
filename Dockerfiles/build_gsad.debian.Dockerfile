@@ -1,3 +1,7 @@
+# syntax=docker/dockerfile:1.4
+ARG CACHE_IMAGE=deineagenturug/gvm
+ARG CACHE_BUILD_IMAGE=deineagenturug/gvm-build
+
 ARG POSTGRESQL_VERSION="13"
 ARG GSAD_VERSION="21.4.4"
 ARG GSA_VERSION="21.4.4"
@@ -34,8 +38,14 @@ ARG BUILD_DIR=/build
 ARG INSTALL_DIR=/install
 ARG DESTDIR=/install
 
-FROM deineagenturug/gvm-build:build_base AS build
+FROM ${CACHE_BUILD_IMAGE}:build_gsa AS build_gsa
 
+FROM ${CACHE_BUILD_IMAGE}:build_gvm_libs AS build_gvm_libs
+
+FROM ${CACHE_BUILD_IMAGE}:build_base AS build
+
+ARG CACHE_IMAGE
+ARG CACHE_BUILD_IMAGE
 ARG INSTALL_PREFIX
 ARG SOURCE_DIR
 ARG BUILD_DIR
@@ -49,7 +59,7 @@ ENV INSTALL_PREFIX=${INSTALL_PREFIX} \
 
 ARG GSAD_VERSION
 ENV GSAD_VERSION=${GSAD_VERSION}
-COPY --from=deineagenturug/gvm-build:build_gvm_libs / /
+COPY --from=build_gvm_libs / /
 RUN echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf && ldconfig
 RUN curl -sSL https://github.com/greenbone/gsad/archive/refs/tags/v${GSAD_VERSION}.tar.gz -o ${SOURCE_DIR}/gsad-${GSAD_VERSION}.tar.gz \
     && curl -sSL https://github.com/greenbone/gsad/releases/download/v${GSAD_VERSION}/gsad-${GSAD_VERSION}.tar.gz.asc -o ${SOURCE_DIR}/gsad-${GSAD_VERSION}.tar.gz.asc \
@@ -70,11 +80,12 @@ RUN tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/gsad-${GSAD_VERSION}.tar.gz \
 
 
 FROM scratch
-
+ARG CACHE_IMAGE
+ARG CACHE_BUILD_IMAGE
 ARG INSTALL_PREFIX
 ARG SOURCE_DIR
 ARG BUILD_DIR
 ARG INSTALL_DIR
 ARG DESTDIR
-COPY --from=deineagenturug/gvm-build:build_gsa / /
+COPY --from=build_gsa / /
 COPY --from=build ${INSTALL_DIR}/ /

@@ -15,7 +15,7 @@ env:
   OCIR_TOKEN: ${{ secrets.OCIR_TOKEN }}
   OCIR_USER: ${{ secrets.OCIR_USER }}
   OCI_API_KEY: ${{ secrets.OCI_API_KEY }}
-  OCI_COMPARTMENT: ${{ secrets.OCI_COMPARTMENT }}
+  OCI_COMPARTMENT_ID: ${{ secrets.OCI_COMPARTMENT }}
   OCI_FINGERPRINT: ${{ secrets.OCI_FINGERPRINT }}
   OCI_REGION: ${{ secrets.OCI_REGION }}
   OCI_TENANCY: ${{ secrets.OCI_TENANCY }}
@@ -35,6 +35,9 @@ jobs:
   build_prepare:
     name: Start Server
     runs-on: ubuntu-latest
+    outputs:
+      INSTANCE_ARM_SSH: ${{ steps.start_instances.outputs.INSTANCE_ARM_SSH }}
+      INSTANCE_X64_SSH: ${{ steps.start_instances.outputs.INSTANCE_X64_SSH }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -69,11 +72,15 @@ jobs:
           python_version: 3.9
       - name: Start Instances
         working-directory: ./.setup/oracle-cloud/dockerBuilder/scripts/
+        id: start_instances
         run: |
           ./start_instances.sh
       - name: Check if Instances are ready
         continue-on-error: true
         uses: nick-invision/retry@v2
+        env:
+          INSTANCE_ARM_SSH: ${{ steps.start_instances.outputs.INSTANCE_ARM_SSH }}
+          INSTANCE_X64_SSH: ${{ steps.start_instances.outputs.INSTANCE_X64_SSH }}
         with:
           timeout_minutes: 15
           max_attempts: 10
@@ -81,6 +88,12 @@ jobs:
           shell: bash
           retry_on: error
           command: cd ./.setup/oracle-cloud/dockerBuilder/scripts/ ; ./check_instances.sh
+      - uses: actions/upload-artifact@v3
+        with:
+          name: config
+          path: |
+            ./.setup/oracle-cloud/dockerBuilder/config_arm.json.enc
+            ./.setup/oracle-cloud/dockerBuilder/config_x64.json.enc
           
   build_packages:
     name: Build Packages
@@ -89,6 +102,8 @@ jobs:
     steps:
       - run: |
           echo "here comes the build"
+          docker buildx create --name "test" --driver-opt image=deineagenturug/buildkit:latest --buildkitd-flags '--oci-worker-net=cni --oci-worker-gc-keepstorage 200000' --platform "linux/arm64,linux/mips64le,linux/mips64,linux/arm/v7,linux/arm/v6" --node arm ssh://ubuntu@141.147.6.86
+          docker buildx create --name "test" --driver-opt image=deineagenturug/buildkit:latest --buildkitd-flags '--oci-worker-net=cni --oci-worker-gc-keepstorage 200000' --platform "linux/amd64,linux/amd64/v2,linux/amd64/v3,linux/riscv64,linux/ppc64le,linux/s390x,linux/386,linux/mips64le,linux/mips64" --node x64 ssh://ubuntu@130.61.116.96
 
   build_postprocessing:
     name: Stop Server
@@ -107,6 +122,10 @@ jobs:
       - uses: ./.setup/actions/poetry-setup
         with:
           python_version: 3.9
+      - uses: actions/download-artifact@v3
+        with:
+          name: config
+          path: ./.setup/oracle-cloud/dockerBuilder/
       - name: Stop Instances
         working-directory: ./.setup/oracle-cloud/dockerBuilder/scripts/
         run: |

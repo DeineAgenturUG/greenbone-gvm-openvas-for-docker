@@ -20,7 +20,8 @@ env:
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
   IMAGE_NAME_GHCR: ghcr.io/${{ github.repository }}
-  IMAGE_NAME_DOCKER: deineagentur/gvm
+  IMAGE_NAME_DOCKER: deineagenturug/gvm
+  IMAGE_NAME_OCIR: fra.ocir.io/fraj3sqdynbw/gvm
 
 permissions:
   id-token: write

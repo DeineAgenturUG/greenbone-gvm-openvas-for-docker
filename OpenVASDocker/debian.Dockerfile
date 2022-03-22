@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.4
 FROM debian:10-slim
 
 ENV DEBIAN_FRONTEND=noninteractive

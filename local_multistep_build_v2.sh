@@ -1,22 +1,33 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-TIMESTART=$(date '+%Y%m%d%H%M%S')
+TIMESTART="$(date '+%Y%m%d%H%M%S')"
 
-BUILD_BASE=${BUILD_BASE:-NO}
-BUILD_RELEASE_BASE=${BUILD_RELEASE_BASE:-NO}
+DL_DATA="${DL_DATA:-NO}"
+
+DIST="${DIST:-debian}"
+DIST_FILE="${DIST}."
+
+RELEASE="${RELEASE:-NO}"
+
+BUILD_BASE="${BUILD_BASE:-NO}"
+BUILD_RELEASE_BASE="${BUILD_RELEASE_BASE:-NO}"
 
 PWD="$(pwd)"
 DOCKER_ORG="${DOCKER_ORG:-deineagenturug}"
 CACHE_IMAGE="${DOCKER_ORG}/gvm"
 CACHE_BUILD_IMAGE="${DOCKER_ORG}/gvm-build"
+if [ "x${RELEASE}" != "xYES" ]; then
+  CACHE_IMAGE="${CACHE_IMAGE}-develop"
+  CACHE_BUILD_IMAGE="${CACHE_BUILD_IMAGE}-develop"
+fi
 declare -a PLATFORMS
 PLATFORMS=("linux/amd64" "linux/arm64")
-PLATFORM=${PLATFORM:-linux/amd64}
+PLATFORM="${PLATFORM:-linux/amd64}"
 BUILDX="${BUILDX:-}"
 #ADD_OPTIONS=${ADD_OPTIONS:-"--cache-from type=local,mode=max,src=/tmp/docker --load"}
 #ADD_OPTIONS=${ADD_OPTIONS:-"--push"}
-ADD_OPTIONS=${ADD_OPTIONS:-"--pull --push --progress=auto"}
+ADD_OPTIONS=${ADD_OPTIONS:-"--pull --push --progress=plain"}
 
 if [ ! -f "build-args.txt" ]; then
   echo "build-args.txt not found"
@@ -26,11 +37,11 @@ fi
 cd "${PWD}" || exit
 
 #for PLATFORM in "${PLATFORMS[@]}"; do
-  if [[ "x${BUILD_BASE}" != "xNO" ]]; then
+  if [[ "x${BUILD_BASE}" == "xYES" ]]; then
 
     TARGET="build_base"
     # shellcheck disable=SC2046,SC2086,SC2013,SC2031
-    docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./Dockerfiles/${TARGET}.Dockerfile \
+    docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./Dockerfiles/${TARGET}.${DIST_FILE}Dockerfile \
       $(
         # shellcheck disable=SC2030
         for i in $(cat build-args.txt); do out+="--build-arg $i "; done
@@ -38,12 +49,14 @@ cd "${PWD}" || exit
         out=""
       ) \
       --build-arg BUILDKIT_INLINE_CACHE=1 \
+      --build-arg "CACHE_IMAGE=${CACHE_IMAGE}" \
+      --build-arg "CACHE_BUILD_IMAGE=${CACHE_BUILD_IMAGE}" \
       --cache-from "${CACHE_BUILD_IMAGE}:${TARGET}" \
       -t "${CACHE_BUILD_IMAGE}:${TARGET}" .
 
     TARGET="build_gvm_libs"
     # shellcheck disable=SC2046,SC2086,SC2013,SC2031
-    docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./Dockerfiles/${TARGET}.Dockerfile \
+    docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./Dockerfiles/${TARGET}.${DIST_FILE}Dockerfile \
       $(
         # shellcheck disable=SC2030
         for i in $(cat build-args.txt); do out+="--build-arg $i "; done
@@ -51,13 +64,15 @@ cd "${PWD}" || exit
         out=""
       ) \
       --build-arg BUILDKIT_INLINE_CACHE=1 \
+      --build-arg "CACHE_IMAGE=${CACHE_IMAGE}" \
+      --build-arg "CACHE_BUILD_IMAGE=${CACHE_BUILD_IMAGE}" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_base" \
       --cache-from "${CACHE_BUILD_IMAGE}:${TARGET}" \
       -t "${CACHE_BUILD_IMAGE}:${TARGET}" .
 
     TARGET="build_gsa"
     # shellcheck disable=SC2046,SC2086,SC2013,SC2031
-    docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./Dockerfiles/${TARGET}.Dockerfile \
+    docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./Dockerfiles/${TARGET}.${DIST_FILE}Dockerfile \
       $(
         # shellcheck disable=SC2030
         for i in $(cat build-args.txt); do out+="--build-arg $i "; done
@@ -65,6 +80,8 @@ cd "${PWD}" || exit
         out=""
       ) \
       --build-arg BUILDKIT_INLINE_CACHE=1 \
+      --build-arg "CACHE_IMAGE=${CACHE_IMAGE}" \
+      --build-arg "CACHE_BUILD_IMAGE=${CACHE_BUILD_IMAGE}" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_base" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_gvm_libs" \
       --cache-from "${CACHE_BUILD_IMAGE}:${TARGET}" \
@@ -72,7 +89,7 @@ cd "${PWD}" || exit
 
     TARGET="build_gsad"
     # shellcheck disable=SC2046,SC2086,SC2013,SC2031
-    docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./Dockerfiles/${TARGET}.Dockerfile \
+    docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./Dockerfiles/${TARGET}.${DIST_FILE}Dockerfile \
       $(
         # shellcheck disable=SC2030
         for i in $(cat build-args.txt); do out+="--build-arg $i "; done
@@ -80,6 +97,8 @@ cd "${PWD}" || exit
         out=""
       ) \
       --build-arg BUILDKIT_INLINE_CACHE=1 \
+      --build-arg "CACHE_IMAGE=${CACHE_IMAGE}" \
+      --build-arg "CACHE_BUILD_IMAGE=${CACHE_BUILD_IMAGE}" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_base" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_gvm_libs" \
       --cache-from "${CACHE_BUILD_IMAGE}:${TARGET}" \
@@ -87,7 +106,7 @@ cd "${PWD}" || exit
 
     TARGET="build_gvmd"
     # shellcheck disable=SC2046,SC2086,SC2013,SC2031
-    docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./Dockerfiles/${TARGET}.Dockerfile \
+    docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./Dockerfiles/${TARGET}.${DIST_FILE}Dockerfile \
       $(
         # shellcheck disable=SC2030
         for i in $(cat build-args.txt); do out+="--build-arg $i "; done
@@ -95,6 +114,8 @@ cd "${PWD}" || exit
         out=""
       ) \
       --build-arg BUILDKIT_INLINE_CACHE=1 \
+      --build-arg "CACHE_IMAGE=${CACHE_IMAGE}" \
+      --build-arg "CACHE_BUILD_IMAGE=${CACHE_BUILD_IMAGE}" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_base" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_gvm_libs" \
       --cache-from "${CACHE_BUILD_IMAGE}:${TARGET}" \
@@ -102,7 +123,7 @@ cd "${PWD}" || exit
 
     TARGET="build_openvas_smb"
     # shellcheck disable=SC2046,SC2086,SC2013,SC2031
-    docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./Dockerfiles/${TARGET}.Dockerfile \
+    docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./Dockerfiles/${TARGET}.${DIST_FILE}Dockerfile \
       $(
         # shellcheck disable=SC2030
         for i in $(cat build-args.txt); do out+="--build-arg $i "; done
@@ -110,6 +131,8 @@ cd "${PWD}" || exit
         out=""
       ) \
       --build-arg BUILDKIT_INLINE_CACHE=1 \
+      --build-arg "CACHE_IMAGE=${CACHE_IMAGE}" \
+      --build-arg "CACHE_BUILD_IMAGE=${CACHE_BUILD_IMAGE}" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_base" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_gvm_libs" \
       --cache-from "${CACHE_BUILD_IMAGE}:${TARGET}" \
@@ -117,7 +140,7 @@ cd "${PWD}" || exit
 
     TARGET="build_openvas_scanner"
     # shellcheck disable=SC2046,SC2086,SC2013,SC2031
-    docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./Dockerfiles/${TARGET}.Dockerfile \
+    docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./Dockerfiles/${TARGET}.${DIST_FILE}Dockerfile \
       $(
         # shellcheck disable=SC2030
         for i in $(cat build-args.txt); do out+="--build-arg $i "; done
@@ -125,32 +148,20 @@ cd "${PWD}" || exit
         out=""
       ) \
       --build-arg BUILDKIT_INLINE_CACHE=1 \
-      --cache-from "${CACHE_BUILD_IMAGE}:build_base" \
-      --cache-from "${CACHE_BUILD_IMAGE}:build_gvm_libs" \
-      --cache-from "${CACHE_BUILD_IMAGE}:${TARGET}" \
-      -t "${CACHE_BUILD_IMAGE}:${TARGET}" .
-
-    TARGET="build_ospd_openvas"
-    # shellcheck disable=SC2046,SC2086,SC2013,SC2031
-    docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./Dockerfiles/${TARGET}.Dockerfile \
-      $(
-        # shellcheck disable=SC2030
-        for i in $(cat build-args.txt); do out+="--build-arg $i "; done
-        echo $out
-        out=""
-      ) \
-      --build-arg BUILDKIT_INLINE_CACHE=1 \
+      --build-arg "CACHE_IMAGE=${CACHE_IMAGE}" \
+      --build-arg "CACHE_BUILD_IMAGE=${CACHE_BUILD_IMAGE}" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_base" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_gvm_libs" \
       --cache-from "${CACHE_BUILD_IMAGE}:${TARGET}" \
       -t "${CACHE_BUILD_IMAGE}:${TARGET}" .
 
   fi
-  if [[ "x${BUILD_RELEASE_BASE}" != "xNO" ]]; then
+
+  if [[ "x${BUILD_RELEASE_BASE}" == "xYES" ]]; then
 
     TARGET="latest"
     # shellcheck disable=SC2046,SC2086,SC2013,SC2031
-    docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./GVMDocker/Dockerfiles/release_${TARGET}.Dockerfile \
+    docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./GVMDocker/Dockerfiles/release_${TARGET}.${DIST_FILE}Dockerfile \
       $(
         # shellcheck disable=SC2030
         for i in $(cat build-args.txt); do out+="--build-arg $i "; done
@@ -158,6 +169,8 @@ cd "${PWD}" || exit
         out=""
       ) \
       --build-arg BUILDKIT_INLINE_CACHE=1 \
+      --build-arg "CACHE_IMAGE=${CACHE_IMAGE}" \
+      --build-arg "CACHE_BUILD_IMAGE=${CACHE_BUILD_IMAGE}" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_base" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_gvm_libs" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_gvmd" \
@@ -170,7 +183,7 @@ cd "${PWD}" || exit
 
     TARGET="latest-full"
     # shellcheck disable=SC2046,SC2086,SC2013,SC2031
-    docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./GVMDocker/Dockerfiles/release_${TARGET}.Dockerfile \
+    docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./GVMDocker/Dockerfiles/release_${TARGET}.${DIST_FILE}Dockerfile \
       $(
         # shellcheck disable=SC2030
         for i in $(cat build-args.txt); do out+="--build-arg $i "; done
@@ -178,6 +191,8 @@ cd "${PWD}" || exit
         out=""
       ) \
       --build-arg BUILDKIT_INLINE_CACHE=1 \
+      --build-arg "CACHE_IMAGE=${CACHE_IMAGE}" \
+      --build-arg "CACHE_BUILD_IMAGE=${CACHE_BUILD_IMAGE}" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_base" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_gvm_libs" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_gvmd" \
@@ -192,9 +207,14 @@ cd "${PWD}" || exit
 
   fi
 
+  if [ "x$DL_DATA" == "xYES" ]; then
+    mkdir -p ./GVMDocker/gvm-sync-data/
+    wget -O ./GVMDocker/gvm-sync-data/gvm-sync-data.tar.xz "https://vulndata.deineagentur.biz/data.tar.xz"
+  fi
+
   TARGET="latest-data"
   # shellcheck disable=SC2046,SC2086,SC2013,SC2031
-  docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./GVMDocker/Dockerfiles/release_${TARGET}.Dockerfile \
+  docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./GVMDocker/Dockerfiles/release_${TARGET}.${DIST_FILE}Dockerfile \
     $(
       # shellcheck disable=SC2030
       for i in $(cat build-args.txt); do out+="--build-arg $i "; done
@@ -202,6 +222,8 @@ cd "${PWD}" || exit
       out=""
     ) \
     --build-arg BUILDKIT_INLINE_CACHE=1 \
+      --build-arg "CACHE_IMAGE=${CACHE_IMAGE}" \
+      --build-arg "CACHE_BUILD_IMAGE=${CACHE_BUILD_IMAGE}" \
     --cache-from "${CACHE_BUILD_IMAGE}:build_base" \
     --cache-from "${CACHE_BUILD_IMAGE}:build_gvm_libs" \
     --cache-from "${CACHE_BUILD_IMAGE}:build_gvmd" \
@@ -216,7 +238,7 @@ cd "${PWD}" || exit
 
   TARGET="latest-data-full"
   # shellcheck disable=SC2046,SC2086,SC2013,SC2031
-  docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./GVMDocker/Dockerfiles/release_${TARGET}.Dockerfile \
+  docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./GVMDocker/Dockerfiles/release_${TARGET}.${DIST_FILE}Dockerfile \
     $(
       # shellcheck disable=SC2030
       for i in $(cat build-args.txt); do out+="--build-arg $i "; done
@@ -224,6 +246,8 @@ cd "${PWD}" || exit
       out=""
     ) \
     --build-arg BUILDKIT_INLINE_CACHE=1 \
+      --build-arg "CACHE_IMAGE=${CACHE_IMAGE}" \
+      --build-arg "CACHE_BUILD_IMAGE=${CACHE_BUILD_IMAGE}" \
     --cache-from "${CACHE_BUILD_IMAGE}:build_base" \
     --cache-from "${CACHE_BUILD_IMAGE}:build_gvm_libs" \
     --cache-from "${CACHE_BUILD_IMAGE}:build_gvmd" \
@@ -240,6 +264,6 @@ cd "${PWD}" || exit
 #done
 echo y | docker buildx prune --all
 
-TIMEEND=$(date '+%Y%m%d%H%M%S')
+TIMEEND="$(date '+%Y%m%d%H%M%S')"
 echo "START: ${TIMESTART}"
 echo "END: ${TIMEEND}"

@@ -1,3 +1,8 @@
+# syntax=docker/dockerfile:1.4
+ARG CACHE_IMAGE=deineagenturug/gvm
+ARG CACHE_BUILD_IMAGE=deineagenturug/gvm-build
+
+
 ARG POSTGRESQL_VERSION="13"
 ARG GSAD_VERSION="21.4.4"
 ARG GSA_VERSION="21.4.4"
@@ -9,8 +14,16 @@ ARG PYTHON_GVM_VERSION="21.11.0"
 ARG OSPD_OPENVAS_VERSION="21.4.4"
 ARG GVM_TOOLS_VERSION="21.10.0"
 
+FROM ${CACHE_BUILD_IMAGE}:build_gsa AS build_gsa
+FROM ${CACHE_BUILD_IMAGE}:build_gsad AS build_gsad
+FROM ${CACHE_BUILD_IMAGE}:build_gvm_libs AS build_gvm_libs
+FROM ${CACHE_BUILD_IMAGE}:build_gvmd AS build_gvmd
+FROM ${CACHE_BUILD_IMAGE}:build_openvas_smb AS build_openvas_smb
+FROM ${CACHE_BUILD_IMAGE}:build_openvas_scanner AS build_openvas_scanner
 
 FROM debian:11-slim AS latest
+ARG CACHE_IMAGE
+ARG CACHE_BUILD_IMAGE
 ARG POSTGRESQL_VERSION
 ARG GSAD_VERSION
 ARG GSA_VERSION
@@ -21,9 +34,6 @@ ARG OPENVAS_SMB_VERSION
 ARG PYTHON_GVM_VERSION
 ARG OSPD_OPENVAS_VERSION
 ARG GVM_TOOLS_VERSION
-
-ARG SETUP=0
-ARG OPT_PDF=0
 
 ARG SUPVISD=supervisorctl
 ARG GVMD_USER
@@ -74,15 +84,15 @@ ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
     DB_PASSWORD_FILE=${DB_PASSWORD:-none} \
     DEBIAN_FRONTEND=noninteractive \
     LANG=C.UTF-8 \
-    SETUP=${SETUP} \
-    OPT_PDF=${OPT_PDF}
+    SETUP=0 \
+    OPT_PDF=0
 
-COPY --from=deineagenturug/gvm-build:build_gsa / /
-COPY --from=deineagenturug/gvm-build:build_gsad / /
-COPY --from=deineagenturug/gvm-build:build_gvm_libs / /
-COPY --from=deineagenturug/gvm-build:build_gvmd / /
-COPY --from=deineagenturug/gvm-build:build_openvas_smb / /
-COPY --from=deineagenturug/gvm-build:build_openvas_scanner / /
+COPY --from=build_gsa / /
+COPY --from=build_gsad / /
+COPY --from=build_gvm_libs / /
+COPY --from=build_gvmd / /
+COPY --from=build_openvas_smb / /
+COPY --from=build_openvas_scanner / /
 
 ENTRYPOINT [ "/opt/setup/scripts/entrypoint.sh" ]
 CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
@@ -90,28 +100,29 @@ CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
 COPY config /opt/setup/config/
 COPY scripts /opt/setup/scripts/
 
-RUN echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf && \
-    echo 'export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"'>>/etc/environment && \
-    sed -i '7c\ \ PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"' /etc/profile && \
-    ldconfig && \
-    chmod -R +x /opt/setup/scripts/*.sh && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends \
+RUN echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf \
+    && echo 'export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"'>>/etc/environment \
+    && sed -i '7c\ \ PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"' /etc/profile \
+    && ldconfig \
+    && chmod -R +x /opt/setup/scripts/*.sh \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
         apt-utils \
         coreutils \
         ca-certificates \
         gnupg \
         sudo \
+        rsync \
         wget \
         lsb-release \
-        curl && \
-    echo "Acquire::http::Proxy \"${http_proxy}\";" | tee /etc/apt/apt.conf.d/30proxy && \
-    echo "APT::Install-Recommends \"0\" ; APT::Install-Suggests \"0\" ;" | tee /etc/apt/apt.conf.d/10no-recommend-installs && \
-    curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null && \
-    echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee  /etc/apt/sources.list.d/pgdg.list && \
-    echo "deb http://deb.debian.org/debian `lsb_release -cs`-backports main" | tee /etc/apt/sources.list.d/backports.list && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends \
+        curl \
+    && echo "Acquire::http::Proxy \"${http_proxy}\";" | tee /etc/apt/apt.conf.d/30proxy \
+    && echo "APT::Install-Recommends \"0\" ; APT::Install-Suggests \"0\" ;" | tee /etc/apt/apt.conf.d/10no-recommend-installs \
+    && curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null \
+    && echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee  /etc/apt/sources.list.d/pgdg.list \
+    && echo "deb http://deb.debian.org/debian `lsb_release -cs`-backports main" | tee /etc/apt/sources.list.d/backports.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
         dpkg \
         fakeroot \
         gnutls-bin \
@@ -166,47 +177,40 @@ RUN echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf && \
         xz-utils \
         "postgresql-${POSTGRESQL_VERSION}" \
         "postgresql-common" \
-        "postgresql-client-${POSTGRESQL_VERSION}" locales && \
-    sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
-    locale-gen && \
-    python3 -m pip install --upgrade "ospd_openvas==${OSPD_OPENVAS_VERSION}" && \
-    python3 -m pip install --upgrade "gvm-tools==${GVM_TOOLS_VERSION}" && \
-    python3 -m pip install --upgrade "python-gvm==${PYTHON_GVM_VERSION}" && \
-    useradd -r -M -d /var/lib/gvm -U -G sudo -s /bin/bash gvm && \
-    usermod -aG tty gvm  && \
-    usermod -aG sudo gvm && \
-    usermod -aG gvm redis && \
-    mkdir /run/redis && \
-    chown redis:gvm /run/redis && \
-    mkdir -p /run/gvmd && \
-    mkdir -p /var/lib/gvm && \
-    mkdir -p /var/log/gvm && \
-    chgrp -R gvm /etc/openvas/ && \
-    chown -R gvm:gvm /etc/gvm && \
-    chown -R gvm:gvm /run/gvmd && \
-    chown -R gvm:gvm /var/lib/gvm && \
-    chown -R gvm:gvm /var/log/gvm && \
-    mkdir -p /run/gsad && \
-    mkdir -p /var/log/gvm && \
-    chown -R gvm:gvm /run/gsad && \
-    chown -R gvm:gvm /var/log/gvm && \
-    apt-get purge --auto-remove -yq *-dev *-dev-all *-dev-"${POSTGRESQL_VERSION}" && \
-    apt-get clean all && \
-    apt-get -yq autoremove && \
-    rm -rf /var/lib/apt/lists/* && \
-    (rm /etc/apt/apt.conf.d/30proxy || true)
-RUN update-alternatives --install /usr/bin/postgres postgres /usr/lib/postgresql/${POSTGRESQL_VERSION}/bin/postgres 100 && \
-    update-alternatives --install /usr/bin/initdb initdb /usr/lib/postgresql/${POSTGRESQL_VERSION}/bin/initdb 100
-ENV LANG=en_US.UTF-8 \
-    LANGUAGE=en_US.UTF-8 \
-    LC_ALL=en_US.UTF-8
-
-RUN set -eu; \
-    rm -rfv /var/lib/gvm/CA || true \
-    && rm -rfv /var/lib/gvm/private || true \
-    && rm /etc/localtime || true\
+        "postgresql-client-${POSTGRESQL_VERSION}" locales \
+    && sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen \
+    && locale-gen \
+    && python3 -m pip install --upgrade "ospd_openvas==${OSPD_OPENVAS_VERSION}" \
+    && python3 -m pip install --upgrade "gvm-tools==${GVM_TOOLS_VERSION}" \
+    && python3 -m pip install --upgrade "python-gvm==${PYTHON_GVM_VERSION}" \
+    && useradd -r -M -d /var/lib/gvm -U -G sudo -s /bin/bash gvm \
+    && usermod -aG tty gvm  \
+    && usermod -aG sudo gvm \
+    && usermod -aG gvm redis \
+    && mkdir /run/redis \
+    && chown redis:gvm /run/redis \
+    && mkdir -p /run/gvmd \
+    && mkdir -p /var/lib/gvm \
+    && mkdir -p /var/log/gvm \
+    && chgrp -R gvm /etc/openvas/ \
+    && chown -R gvm:gvm /etc/gvm \
+    && chown -R gvm:gvm /run/gvmd \
+    && chown -R gvm:gvm /var/lib/gvm \
+    && chown -R gvm:gvm /var/log/gvm \
+    && mkdir -p /run/gsad \
+    && mkdir -p /var/log/gvm \
+    && chown -R gvm:gvm /run/gsad \
+    && chown -R gvm:gvm /var/log/gvm \
+    && apt-get purge --auto-remove -yq *-dev *-dev-all *-dev-"${POSTGRESQL_VERSION}" \
+    && apt-get clean all \
+    && apt-get -yq autoremove \
+    && rm -rf /var/lib/apt/lists/* \
+    && (rm /etc/apt/apt.conf.d/30proxy || true) \
+    && update-alternatives --install /usr/bin/postgres postgres /usr/lib/postgresql/${POSTGRESQL_VERSION}/bin/postgres 100 \
+    && update-alternatives --install /usr/bin/initdb initdb /usr/lib/postgresql/${POSTGRESQL_VERSION}/bin/initdb 100 \
+    && (rm -rfv /var/lib/gvm/CA || true) \
+    && (rm -rfv /var/lib/gvm/private || true) \
+    && (rm /etc/localtime || true) \
     && echo "Etc/UTC" >/etc/timezone \
     && rm -rfv /tmp/* /var/cache/apk/* /var/lib/apt/lists/* \
     && echo "!!! FINISH Setup !!!"
-
-VOLUME [ "/var/lib/gvm" ]

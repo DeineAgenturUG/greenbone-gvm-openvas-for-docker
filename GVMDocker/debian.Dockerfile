@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.4
+
 FROM debian:11-slim
 
 ENTRYPOINT [ "/opt/setup/scripts/entrypoint.sh" ]

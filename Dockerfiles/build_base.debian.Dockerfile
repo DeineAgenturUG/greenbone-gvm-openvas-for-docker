@@ -1,3 +1,7 @@
+# syntax=docker/dockerfile:1.4
+ARG CACHE_IMAGE=deineagenturug/gvm
+ARG CACHE_BUILD_IMAGE=deineagenturug/gvm-build
+
 ARG POSTGRESQL_VERSION="13"
 ARG GSAD_VERSION="21.4.4"
 ARG GSA_VERSION="21.4.4"
@@ -35,7 +39,8 @@ ARG INSTALL_DIR=/install
 ARG DESTDIR=/install
 
 FROM debian:11-slim as base
-
+ARG CACHE_IMAGE
+ARG CACHE_BUILD_IMAGE
 ARG INSTALL_PREFIX
 ARG SOURCE_DIR
 ARG BUILD_DIR

@@ -1,3 +1,7 @@
+# syntax=docker/dockerfile:1.4
+ARG CACHE_IMAGE=deineagenturug/gvm
+ARG CACHE_BUILD_IMAGE=deineagenturug/gvm-build
+
 ARG POSTGRESQL_VERSION="13"
 ARG GSAD_VERSION="21.4.4"
 ARG GSA_VERSION="21.4.4"
@@ -34,8 +38,11 @@ ARG BUILD_DIR=/build
 ARG INSTALL_DIR=/install
 ARG DESTDIR=/install
 
-FROM deineagenturug/gvm-build:build_base AS build
+FROM ${CACHE_BUILD_IMAGE}:build_gvm_libs AS build_gvm_libs
 
+FROM ${CACHE_BUILD_IMAGE}:build_base AS build
+ARG CACHE_IMAGE
+ARG CACHE_BUILD_IMAGE
 ARG INSTALL_PREFIX
 ARG SOURCE_DIR
 ARG BUILD_DIR
@@ -52,7 +59,7 @@ ARG POSTGRESQL_VERSION
 ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
     GVMD_VERSION=${GVMD_VERSION}
 
-COPY --from=deineagenturug/gvm-build:build_gvm_libs / /
+COPY --from=build_gvm_libs / /
 RUN echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf && ldconfig
 
 # Download and install gvmd
@@ -80,7 +87,8 @@ RUN cmake ${SOURCE_DIR}/gvmd-${GVMD_VERSION} \
 
 
 FROM scratch
-
+ARG CACHE_IMAGE
+ARG CACHE_BUILD_IMAGE
 ARG INSTALL_PREFIX
 ARG SOURCE_DIR
 ARG BUILD_DIR

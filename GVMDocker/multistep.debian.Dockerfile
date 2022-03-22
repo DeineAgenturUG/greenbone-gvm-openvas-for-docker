@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.4
+
 ARG POSTGRESQL_VERSION="13"
 ARG GSAD_VERSION="21.4.4"
 ARG GSA_VERSION="21.4.4"

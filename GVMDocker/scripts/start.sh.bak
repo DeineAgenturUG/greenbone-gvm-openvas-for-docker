@@ -40,8 +40,7 @@ mkdir -p /var/lib/gvm/data-objects/gvmd
 mkdir -p /var/lib/gvm/gvmd
 mkdir -p /var/lib/gvm/private
 mkdir -p /var/lib/gvm/scap-data
-chown gvm:gvm /var/lib/gvm
-find /var/lib/gvm \( ! -user gvm -o ! -group gvm \)  -exec chown gvm:gvm {} +
+chown gvm:gvm -R /var/lib/gvm
 
 # fix for greenbone-nvt-sync
 mkdir -p /run/ospd/
@@ -49,8 +48,7 @@ chown gvm:gvm /run/ospd
 chmod 2775 /var/run/ospd/
 su -c "touch /run/ospd/feed-update.lock" gvm
 mkdir -p /var/lib/openvas/plugins/
-chown gvm:gvm /var/lib/openvas/plugins/
-find /var/lib/openvas/plugins \( ! -user gvm -o ! -group gvm \)  -exec chown gvm:gvm {} +
+chown -R gvm:gvm /var/lib/openvas/plugins/
 
 ## This need on HyperVisor for GVM
 #echo 'never' >/sys/kernel/mm/transparent_hugepage/enabled
@@ -96,16 +94,13 @@ while [ "${X}" != "PONG" ]; do
 done
 echo "Redis ready."
 
-
-	echo "Creating Database folder and rights... "
+if [ ! -d "/opt/database/" ] || ([ -d "/opt/database/" ] && [ "$(find /opt/database/ -maxdepth 0 -empty)" ]); then
+	echo "Creating Database folder..."
 	mkdir -p /opt/database
 	mkdir -p /run/postgresql
-	chown postgres:postgres /opt/database
-	find /var/lib/openvas/plugins \( ! -user postgres -o ! -group postgres \)  -exec chown postgres:postgres {} +
+	chown postgres:postgres -R /opt/database
 	chown postgres:postgres -R /run/postgresql/
 
-if [ ! -d "/opt/database/" ] || ([ -d "/opt/database/" ] && [ "$(find /opt/database/ -maxdepth 0 -empty)" ]); then
-  echo "Creating Database initdb..."
 	su -c "initdb -D /opt/database" postgres
 	{
 		echo "listen_addresses = '*'"
@@ -118,11 +113,8 @@ if [ ! -d "/opt/database/" ] || ([ -d "/opt/database/" ] && [ "$(find /opt/datab
 		echo "host    all             all              ::/0                      md5"
 	} >>/opt/database/pg_hba.conf
 fi
-
 sleep 1
-
-chown postgres:postgres /opt/database
-find /var/lib/openvas/plugins \( ! -user postgres -o ! -group postgres \)  -exec chown postgres:postgres {} +
+chown postgres:postgres -R /opt/database
 mkdir -p /run/postgresql
 chown postgres:postgres -R /run/postgresql/
 sleep 2
@@ -153,20 +145,16 @@ if [ ! -f "/opt/database/.firstrun" ]; then
 	su -c "psql --dbname=gvmd --command='create extension \"uuid-ossp\";'" postgres
 	su -c "psql --dbname=gvmd --command='create extension \"pgcrypto\";'" postgres
 
-  if [ "$(grep -c "listen_addresses = '*'" /opt/database/postgresql.conf)" -eq "0" ]; then
-    {
-      echo "listen_addresses = '*'"
-      echo "port = 5432"
-      echo "jit = off"
-    } >>/opt/database/postgresql.conf
-  fi
+	{
+		echo "listen_addresses = '*'"
+		echo "port = 5432"
+		echo "jit = off"
+	} >>/opt/database/postgresql.conf
 
-  if [ "$(grep -c "host    all             all              0.0.0.0/0                 md5" /opt/database/postgresql.conf)" -eq "0" ]; then
-    {
-      echo "host    all             all              0.0.0.0/0                 md5"
-      echo "host    all             all              ::/0                      md5"
-    } >>/opt/database/pg_hba.conf
-	fi
+	{
+		echo "host    all             all              0.0.0.0/0                 md5"
+		echo "host    all             all              ::/0                      md5"
+	} >>/opt/database/pg_hba.conf
 
 	chown postgres:postgres -R /opt/database
 
@@ -204,8 +192,7 @@ fi
 echo "Creating gvmd folder..."
 su -c "mkdir -p /var/lib/gvm/gvmd/report_formats" gvm
 #cp -r /report_formats /var/lib/gvm/gvmd/
-chown gvm:gvm /var/lib/gvm
-find /var/lib/gvm \( ! -user gvm -o ! -group gvm \)  -exec chown gvm:gvm {} +
+chown gvm:gvm -R /var/lib/gvm
 find /var/lib/gvm/gvmd/report_formats -type f -name "generate" -exec chmod +x {} \;
 
 if [ ! -d /var/lib/gvm/CA ] || [ ! -d /var/lib/gvm/private ] || [ ! -d /var/lib/gvm/private/CA ] ||
@@ -219,8 +206,7 @@ if [ ! -d /var/lib/gvm/CA ] || [ ! -d /var/lib/gvm/private ] || [ ! -d /var/lib/
 	echo "Generating certs..."
 	gvm-manage-certs -a
 
-  chown gvm:gvm /var/lib/gvm
-  find /var/lib/gvm \( ! -user gvm -o ! -group gvm \)  -exec chown gvm:gvm {} +
+	chown gvm:gvm -R /var/lib/gvm/
 fi
 
 # Sync NVTs, CERT data, and SCAP data on container start
@@ -368,11 +354,6 @@ if [ "${SETUP}" == "1" ]; then
   ${SUPVISD} stop gsad
 	sleep 30
 	echo "<get_feeds/>" >/tmp/gvm_action.xml
-	su -c "gvm-cli --gmp-username ${USERNAME} --gmp-password ${PASSWORD} --protocol GMP tls /tmp/gvm_action.xml | grep -o -i 'currently_syncing' | wc -l " gvm
-	ls -lah /var/lib/openvas/
-	ls -lah /var/lib/gvm
-	ls -lah /var/log/gvm
-	cat /var/log/gvm/*
 	until [ "$(su -c "gvm-cli --gmp-username ${USERNAME} --gmp-password ${PASSWORD} --protocol GMP tls /tmp/gvm_action.xml | grep -o -i 'currently_syncing' | wc -l " gvm)" == "0" ]; do
 		sleep 120
 		date '+%Y-%m-%d %H:%M:%S'
