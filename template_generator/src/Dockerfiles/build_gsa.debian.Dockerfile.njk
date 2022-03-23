@@ -1,0 +1,38 @@
+{%- import "macros/variables.njk" as gbv -%}
+{% include "head_variables.njk" -%}
+
+{{ gbv.from('--platform=$BUILDPLATFORM node', '14-alpine', 'build') }}
+{{ gbv.args_empty(gvm_build.BUILD_ENV) -}}
+{{ gbv.args_empty(gvm_build.VERSION) -}}
+
+RUN --mount=type=cache,mode=0755,target=/root/.yarn \
+    --mount=type=cache,mode=0755,target=/root/.dl \
+    apk add --no-cache wget curl gnupg tar \
+    && mkdir -p ${SOURCE_DIR} \
+    && mkdir -p ${BUILD_DIR} \
+    && mkdir -p ${INSTALL_DIR} \
+    && curl -O https://www.greenbone.net/GBCommunitySigningKey.asc \
+    && gpg --import <GBCommunitySigningKey.asc \
+    && ( \
+        echo 5 \
+        && echo y \
+        && echo save \
+    ) | gpg --command-fd 0 --no-tty --no-greeting -q --edit-key "$(gpg --list-packets <GBCommunitySigningKey.asc | awk '$1=="keyid:"{print$2;exit}')" trust \
+    && ls -lahr /root/.dl/ \
+    && wget -N -q -O "/root/.dl/gsa-${GSA_VERSION}.tar.gz" "https://github.com/greenbone/gsa/archive/refs/tags/v${GSA_VERSION}.tar.gz" \
+    && wget -N -q -O "/root/.dl/gsa-${GSA_VERSION}.tar.gz.asc" "https://github.com/greenbone/gsa/releases/download/v${GSA_VERSION}/gsa-${GSA_VERSION}.tar.gz.asc" \
+    && gpg --verify /root/.dl/gsa-${GSA_VERSION}.tar.gz.asc /root/.dl/gsa-${GSA_VERSION}.tar.gz \
+    && tar -C ${SOURCE_DIR} -xvzf /root/.dl/gsa-${GSA_VERSION}.tar.gz \
+    && ls -lahr ${SOURCE_DIR} \
+    && mkdir -p ${SOURCE_DIR}/gsa-${GSA_VERSION} \
+    && cd ${SOURCE_DIR}/gsa-${GSA_VERSION} \
+    && npm i -g yarn \
+    && YARN_CACHE_FOLDER=/root/.yarn yarn \
+    && yarn build \
+    && mkdir -p ${INSTALL_DIR}${INSTALL_PREFIX}/share/gvm/gsad/web/ \
+    && cp -r build/* ${INSTALL_DIR}${INSTALL_PREFIX}/share/gvm/gsad/web/
+
+
+FROM scratch
+{{ gbv.arg('INSTALL_DIR') -}}
+COPY --from=build ${INSTALL_DIR} /

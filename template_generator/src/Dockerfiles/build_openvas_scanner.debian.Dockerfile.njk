@@ -1,0 +1,30 @@
+{%- import "macros/variables.njk" as gbv -%}
+{% include "head_variables.njk" %}
+
+{{ gbv.from(gvm_build.IMAGE.IMAGE_BUILD+build_target, 'build_base', 'build') }}
+{{ gbv.args_empty(gvm_build.BUILD_ENV) -}}
+{{ gbv.args_empty(gvm_build.VERSION) -}}
+
+COPY --from={{ gvm_build.IMAGE.IMAGE_BUILD }}{{ build_target }}:build_gvm_libs / /
+RUN --mount=type=cache,mode=0755,target=/root/.dl \
+    echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf && ldconfig \
+    && wget -N -q -O "/root/.dl/openvas-scanner-${OPENVAS_SCANNER_VERSION}.tar.gz" "https://github.com/greenbone/openvas-scanner/archive/refs/tags/v${OPENVAS_SCANNER_VERSION}.tar.gz" \
+    && wget -N -q -O "/root/.dl/openvas-scanner-${OPENVAS_SCANNER_VERSION}.tar.gz.asc" "https://github.com/greenbone/openvas-scanner/releases/download/v${OPENVAS_SCANNER_VERSION}/openvas-scanner-${OPENVAS_SCANNER_VERSION}.tar.gz.asc" \
+    && gpg --verify "/root/.dl/openvas-scanner-${OPENVAS_SCANNER_VERSION}.tar.gz.asc" "/root/.dl/openvas-scanner-${OPENVAS_SCANNER_VERSION}.tar.gz"\
+    && tar -C ${SOURCE_DIR} -xvzf "/root/.dl/openvas-scanner-${OPENVAS_SCANNER_VERSION}.tar.gz" \
+    && mkdir -p ${BUILD_DIR}/openvas-scanner && cd ${BUILD_DIR}/openvas-scanner \
+    && cmake ${SOURCE_DIR}/openvas-scanner-${OPENVAS_SCANNER_VERSION} \
+    -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DSYSCONFDIR=/etc \
+    -DLOCALSTATEDIR=/var \
+    -DOPENVAS_FEED_LOCK_PATH=/var/lib/openvas/feed-update.lock \
+    -DOPENVAS_RUN_DIR=/run/ospd \
+    && make -j$(nproc) \
+    && make DESTDIR=${INSTALL_DIR} install
+
+
+FROM scratch
+{{ gbv.arg('INSTALL_DIR') -}}
+
+COPY --from=build ${INSTALL_DIR}/ /

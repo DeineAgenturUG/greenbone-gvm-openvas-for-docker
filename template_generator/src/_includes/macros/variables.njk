@@ -1,0 +1,43 @@
+{% macro args(items) -%}
+{%- for name, value in items -%}
+{{ arg(name, value) }}
+{%- endfor -%}
+{%- endmacro %}
+
+{%- macro args_empty(items) -%}
+    {%- for name, value in items -%}
+        {{ arg(name, '') }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{% macro arg(name, value='') -%}
+ARG {{ name }}{% if value %}={{ value }}{% endif %}{{ "\n" }}
+{%- endmacro %}
+
+
+{% macro envs(items) -%}
+{% for name, value in items -%}
+    {%- if loop.first %}ENV {% else %}    {% endif %}{{ name }}={{ value }} {% if not loop.last %}\{% endif %}{{ "\n" }}
+{%- endfor %}
+{%- endmacro %}
+
+
+{% macro envs_empty(items) -%}
+    {%- for name, value in items -%}
+        {%- if loop.first %}ENV {% else %}    {% endif %}{{ name }} {% if not loop.last %}\{% endif %}{{ "\n" }}
+    {%- endfor -%}
+{%- endmacro %}
+
+{% macro env(name, value='') -%}
+ENV {{ name }}{% if value %}={{ value }}{% endif %}{{ "\n" }}
+{%- endmacro %}
+
+{% macro froms(items) -%}
+{% for value in items -%}
+    {{ from(name, value) }}
+{%- endfor %}
+{%- endmacro %}
+
+{% macro from(image, tag, as_value='') -%}
+    FROM {{ image }}:{{ tag }} {% if as_value -%}AS {{ as_value -}}{% else %}AS {{ tag -}}{% endif -%}
+{% endmacro %}

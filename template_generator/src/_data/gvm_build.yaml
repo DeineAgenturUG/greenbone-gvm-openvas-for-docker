@@ -1,0 +1,52 @@
+BUILD_ENV:
+  INSTALL_PREFIX: '/usr'
+  SOURCE_DIR: '/source'
+  BUILD_DIR: '/build'
+  INSTALL_DIR: '/install'
+  DESTDIR: '/install'
+IMAGE:
+  IMAGE_DEBIAN: 'debian'
+  IMAGE_DEBIAN_TAG: '11-slim'
+  IMAGE_GVM: 'deineagenturug/gvm'
+  IMAGE_OPENVAS: 'deineagenturug/openvas-scanner'
+  IMAGE_BUILD: 'deineagenturug/gvm-build'
+VERSION:
+  GSAD_VERSION: "21.4.4"
+  GSA_VERSION: "21.4.4"
+  GVMD_VERSION: "21.4.5"
+  GVM_LIBS_VERSION: "21.4.4"
+  GVM_TOOLS_VERSION: "21.10.0"
+  OPENVAS_SCANNER_VERSION: "21.4.4"
+  OPENVAS_SMB_VERSION: "21.4.0"
+  OSPD_OPENVAS_VERSION: "21.4.4"
+  POSTGRESQL_VERSION: "13"
+  PYTHON_GVM_VERSION: "21.11.0"
+DEFAULT:
+  AUTO_SYNC: YES
+  AUTO_SYNC_ON_START: YES
+  CERTIFICATE: none
+  CERTIFICATE_KEY: none
+  DB_PASSWORD: none
+  DEBUG: NO
+  HTTPS: true
+  PASSWORD: adminpassword
+  PASSWORD_FILE: none
+  RELAYHOST: smtp
+  SMTPPORT: 25
+  SSHD: false
+  SUPVISD: supervisorctl
+  TIMEOUT: 15
+  TZ: Etc/UTC
+  USERNAME: admin
+PATH:
+  REDIS_SOCK: "/run/redis/redis.sock"
+  REDIS_PID: "/run/redis/redis-server.pid"
+  OPENVAS_SOCK: "/run/ospd/ospd-openvas.sock"
+  OPENVAS_PID: "/run/redis/redis-server.pid"
+  OPENVAS_UPDATE_LOCK: "/var/lib/openvas/feed-update.lock"
+  OSPD_SOCK: "/run/ospd/ospd.sock"
+  OSPD_PID: "/run/ospd/ospd.pid"
+  GVMD_SOCK: "/run/redis/redis.sock"
+  GVMD_PID: "/run/redis/redis-server.pid"
+  GSAD_SOCK: "/run/redis/redis.sock"
+  GSAD_PID: "/run/redis/redis-server.pid"

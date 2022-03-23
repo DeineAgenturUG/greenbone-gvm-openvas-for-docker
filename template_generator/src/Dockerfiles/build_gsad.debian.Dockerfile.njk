@@ -1,0 +1,32 @@
+{%- import "macros/variables.njk" as gbv -%}
+{% include "head_variables.njk" %}
+
+{{ gbv.from(gvm_build.IMAGE.IMAGE_BUILD+build_target, 'build_base', 'build') }}
+{{ gbv.args_empty(gvm_build.BUILD_ENV) -}}
+{{ gbv.args_empty(gvm_build.VERSION) -}}
+
+COPY --from={{ gvm_build.IMAGE.IMAGE_BUILD }}{{ build_target }}:build_gvm_libs / /
+RUN --mount=type=cache,mode=0755,target=/root/.dl \
+    echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf && ldconfig \
+    && wget -N -q -O "/root/.dl/gsad-${GSAD_VERSION}.tar.gz" "https://github.com/greenbone/gsad/archive/refs/tags/v${GSAD_VERSION}.tar.gz" \
+    && wget -N -q -O "/root/.dl/gsad-${GSAD_VERSION}.tar.gz.asc" "https://github.com/greenbone/gsad/releases/download/v${GSAD_VERSION}/gsad-${GSAD_VERSION}.tar.gz.asc" \
+    &&gpg --verify /root/.dl/gsad-${GSAD_VERSION}.tar.gz.asc /root/.dl/gsad-${GSAD_VERSION}.tar.gz \
+    && tar -C ${SOURCE_DIR} -xvzf /root/.dl/gsad-${GSAD_VERSION}.tar.gz \
+    && mkdir -p ${BUILD_DIR}/gsad && cd $_ \
+    && cmake ${SOURCE_DIR}/gsad-${GSAD_VERSION} \
+    -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DSYSCONFDIR=/etc \
+    -DLOCALSTATEDIR=/var \
+    -DLOGROTATE_DIR=/etc/logrotate.d \
+    -DGVMD_RUN_DIR=/run/gvmd \
+    -DGSAD_RUN_DIR=/run/gsad \
+    -DGSAD_PID_DIR=/run/gsad \
+    && make -j$(nproc) \
+    && make DESTDIR=${INSTALL_DIR} install
+
+
+FROM scratch
+{{ gbv.arg('INSTALL_DIR') -}}
+COPY --from={{ gvm_build.IMAGE.IMAGE_BUILD }}{{ build_target }}:build_gsa / /
+COPY --from=build ${INSTALL_DIR}/ /

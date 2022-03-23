@@ -8,5 +8,15 @@
   "license": "MIT",
   "devDependencies": {
     "@11ty/eleventy": "^1.0.0"
+  },
+  "scripts": {
+    "build": "rm -rf _site/* ; BUILD_TARGET=development npx @11ty/eleventy",
+    "build:prod": "rm -rf _site/* ; BUILD_TARGET=production npx @11ty/eleventy",
+    "serve": "rm -rf _site/* ; npx @11ty/eleventy --serve"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "js-yaml": "^4.1.0",
+    "toml": "^3.0.0"
   }
 }

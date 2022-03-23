@@ -1,8 +1,7 @@
-# syntax=docker/dockerfile:1.4
-ARG CACHE_IMAGE=deineagenturug/gvm
-ARG CACHE_BUILD_IMAGE=deineagenturug/gvm-build
+{%- import "macros/variables.njk" as gbv -%}
+{% include "head_variables.njk" %}
 
-FROM ${CACHE_IMAGE}:latest AS latest-data
+{{ gbv.from(gvm_build.IMAGE.GVM+build_target, 'latest', 'latest-data') }}
 
 ARG CACHE_IMAGE
 ARG CACHE_BUILD_IMAGE

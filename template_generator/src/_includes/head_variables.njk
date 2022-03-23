@@ -1,0 +1,11 @@
+# syntax=docker/dockerfile:1.4
+{% import "macros/variables.njk" as gbv -%}
+
+# Image info
+{{ gbv.args(gvm_build.IMAGE) -}}
+
+# Version Information
+{{ gbv.args(gvm_build.VERSION) -}}
+
+# Build Path
+{{ gbv.args(gvm_build.BUILD_ENV) }}

@@ -1,27 +1,12 @@
-# syntax=docker/dockerfile:1.4
-ARG CACHE_IMAGE=deineagenturug/gvm
-ARG CACHE_BUILD_IMAGE=deineagenturug/gvm-build
+{%- import "macros/variables.njk" as gbv -%}
+{% include "head_variables.njk" %}
 
+{% set image_tags = ['build_gsa','build_gsad','build_gvm_libs','build_gvmd','build_openvas_smb','build_openvas_scanner'] %}
+{% for tag in image_tags %}
+{{ gbv.from(gvm_build.IMAGE.BUILD+build_target, tag) }}
+{%- endfor %}
 
-ARG POSTGRESQL_VERSION="13"
-ARG GSAD_VERSION="21.4.4"
-ARG GSA_VERSION="21.4.4"
-ARG GVM_LIBS_VERSION="21.4.4"
-ARG GVMD_VERSION="21.4.5"
-ARG OPENVAS_SCANNER_VERSION="21.4.4"
-ARG OPENVAS_SMB_VERSION="21.4.0"
-ARG PYTHON_GVM_VERSION="21.11.0"
-ARG OSPD_OPENVAS_VERSION="21.4.4"
-ARG GVM_TOOLS_VERSION="21.10.0"
-
-FROM ${CACHE_BUILD_IMAGE}:build_gsa AS build_gsa
-FROM ${CACHE_BUILD_IMAGE}:build_gsad AS build_gsad
-FROM ${CACHE_BUILD_IMAGE}:build_gvm_libs AS build_gvm_libs
-FROM ${CACHE_BUILD_IMAGE}:build_gvmd AS build_gvmd
-FROM ${CACHE_BUILD_IMAGE}:build_openvas_smb AS build_openvas_smb
-FROM ${CACHE_BUILD_IMAGE}:build_openvas_scanner AS build_openvas_scanner
-
-FROM debian:11-slim AS latest
+{{ gbv.from(gvm_build.IMAGE_DEBIAN,gvm_build.IMAGE_DEBIAN_TAG, 'latest') }}
 ARG CACHE_IMAGE
 ARG CACHE_BUILD_IMAGE
 ARG POSTGRESQL_VERSION

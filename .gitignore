@@ -78,4 +78,5 @@ $RECYCLE.BIN/
 /secrets/
 /GVMDocker/gvm-sync-data/
 node_modules/
+/template_generator/_generated/
 /build.log
