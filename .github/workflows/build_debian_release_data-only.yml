@@ -78,7 +78,7 @@ jobs:
       - name: Build and push Docker image data-only
         uses: docker/build-push-action@v2
         with:
-          context: ./GVMDocker/
+          context: .
           platforms: linux/amd64
           push: true
           file: ./GVMDocker/Dockerfiles/release_data-only.debian.Dockerfile

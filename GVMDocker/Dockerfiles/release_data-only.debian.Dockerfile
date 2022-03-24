@@ -8,18 +8,18 @@ ARG CACHE_BUILD_IMAGE
 ENV LANG=en_US.UTF-8 \
     LANGUAGE=en_US.UTF-8 \
     LC_ALL=en_US.UTF-8 \
+    TZ=Etc/UTC \
     SETUP=1 \
     OPT_PDF=0
 
-RUN --mount=type=bind,source=./GVMDocker/,target=/opt/context/,rw \
-    ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime \
+RUN ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime \
     && echo "$TZ" >/etc/timezone \
     && /opt/setup/scripts/entrypoint.sh /usr/bin/supervisord -c /etc/supervisord.conf \
-    tar -czf /data.tar.gz /opt/database /var/lib/openvas/plugins /var/lib/gvm
+    && tar -czf /data.tar.gz /opt/database /var/lib/openvas/plugins /var/lib/gvm
 
 ENV SETUP=0
 
 
 
 FROM scratch
-COPY --from=data-only --chown=gvm:gvm /data.tar.gz /data.tar.gz
+COPY --from=data-only /data.tar.gz /data.tar.gz
