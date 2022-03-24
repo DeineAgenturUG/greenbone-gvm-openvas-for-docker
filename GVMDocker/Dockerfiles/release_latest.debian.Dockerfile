@@ -206,6 +206,8 @@ RUN echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf \
     && apt-get -yq autoremove \
     && rm -rf /var/lib/apt/lists/* \
     && (rm /etc/apt/apt.conf.d/30proxy || true) \
+    && echo "gvm ALL = NOPASSWD: /usr/sbin/openvas" > /etc/sudoers.d/gvm \
+    && chmod 0440 /etc/sudoers.d/gvm \
     && update-alternatives --install /usr/bin/postgres postgres /usr/lib/postgresql/${POSTGRESQL_VERSION}/bin/postgres 100 \
     && update-alternatives --install /usr/bin/initdb initdb /usr/lib/postgresql/${POSTGRESQL_VERSION}/bin/initdb 100 \
     && (rm -rfv /var/lib/gvm/CA || true) \
