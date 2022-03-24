@@ -48,8 +48,9 @@ mkdir -p /run/ospd/
 chown gvm:gvm /run/ospd
 chmod 2775 /var/run/ospd/
 mkdir -p /var/lib/openvas/plugins/
-su -c "touch /var/lib/openvas/feed-update.lock" gvm
 chown gvm:gvm /var/lib/openvas/
+su -c "touch /var/lib/openvas/feed-update.lock" gvm
+
 find /var/lib/openvas/ \( ! -user gvm -o ! -group gvm \)  -exec chown gvm:gvm {} +
 
 ## This need on HyperVisor for GVM
