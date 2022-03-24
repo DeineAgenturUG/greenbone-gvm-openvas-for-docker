@@ -91,6 +91,9 @@ mkdir -p /opt/setup/scripts
 cp -a /opt/context/scripts/. /opt/setup/scripts/
 wget -O /opt/setup/nvt-feed.tar.xz https://vulndata.deineagentur.biz/nvt-feed.tar.xz
 
+echo "gvm ALL = NOPASSWD: /usr/sbin/openvas" > /etc/sudoers.d/gvm
+chmod 0440 /etc/sudoers.d/gvm
+
 cp /opt/context/config/supervisord.conf /etc/supervisord.conf
 cp /opt/context/config/redis-openvas.conf /etc/redis.conf
 apt-get remove -y --purge python3-pip

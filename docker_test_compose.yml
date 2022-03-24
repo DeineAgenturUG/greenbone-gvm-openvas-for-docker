@@ -1,0 +1,23 @@
+version: '3.1'
+services:
+  gvm:
+    image: deineagenturug/gvm:latest
+    ports:
+      - "127.0.0.2:2222:22"
+      - "127.0.0.2:5432:5432"
+      - "127.0.0.2:9080:9392"
+    environment:
+      - USERNAME="admin"
+      - PASSWORD="passwordhere"
+      - DB_PASSWORD="passwordhere"
+      - AUTO_SYNC=true
+      - HTTPS=false
+      - TZ="Etc/UTC"
+      - SSHD=false
+      - DB_PASSWORD="none"
+    volumes:
+      - "/home/jfroehle/Documents/github/DeineAgenturUG/greenbone-gvm-openvas-for-docker/storage/ssh:/etc/ssh"
+      - "/home/jfroehle/Documents/github/DeineAgenturUG/greenbone-gvm-openvas-for-docker/storage/database:/opt/database"
+      - "/home/jfroehle/Documents/github/DeineAgenturUG/greenbone-gvm-openvas-for-docker/storage/plugins:/var/lib/openvas/plugins"
+      - "/home/jfroehle/Documents/github/DeineAgenturUG/greenbone-gvm-openvas-for-docker/storage/gvm:/var/lib/gvm"
+    restart: unless-stopped
