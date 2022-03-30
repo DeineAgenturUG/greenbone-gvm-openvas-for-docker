@@ -22,6 +22,11 @@ export DB_PASSWORD_FILE=${DB_PASSWORD_FILE:-none}
 export OPT_PDF=${OPT_PDF:-0}
 export SYSTEM_DIST=${SYSTEM_DIST:-unsupported}
 
+set +e
+# supervisord config: rsyslogd need to be run to get /var/log/mail.* logs
+/usr/sbin/postfix -c /etc/postfix start
+set -e
+
 if [ "${OPT_PDF}" == "1" ] && [ "${SYSTEM_DIST}" == "alpine" ]; then
 	apk add --no-cache --allow-untrusted texlive texmf-dist-latexextra texmf-dist-fontsextra
 elif [ "${OPT_PDF}" == "1" ] && [ "${SYSTEM_DIST}" == "debian" ]; then
