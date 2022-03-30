@@ -112,6 +112,8 @@ RUN echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf \
         ca-certificates \
         gnupg \
         sudo \
+        rsyslog \
+        logrotate \
         rsync \
         wget \
         lsb-release \
