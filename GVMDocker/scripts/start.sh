@@ -112,7 +112,7 @@ echo "Redis ready."
 	mkdir -p /opt/database
 	mkdir -p /run/postgresql
 	chown postgres:postgres /opt/database
-	find /var/lib/openvas/plugins \( ! -user postgres -o ! -group postgres \)  -exec chown postgres:postgres {} +
+	find /opt/database \( ! -user postgres -o ! -group postgres \)  -exec chown postgres:postgres {} +
 	chown postgres:postgres -R /run/postgresql/
 
 if [ ! -d "/opt/database/" ] || ([ -d "/opt/database/" ] && [ "$(find /opt/database/ -maxdepth 0 -empty)" ]); then
@@ -133,7 +133,7 @@ fi
 sleep 1
 
 chown postgres:postgres /opt/database
-find /var/lib/openvas/plugins \( ! -user postgres -o ! -group postgres \)  -exec chown postgres:postgres {} +
+find /opt/database \( ! -user postgres -o ! -group postgres \)  -exec chown postgres:postgres {} +
 mkdir -p /run/postgresql
 chown postgres:postgres -R /run/postgresql/
 sleep 2
