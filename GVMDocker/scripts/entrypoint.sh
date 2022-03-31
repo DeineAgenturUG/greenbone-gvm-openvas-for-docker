@@ -1,5 +1,21 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
+export HTTP_PROXY="${HTTP_PROXY:-${http_proxy:-}}"
+export HTTPS_PROXY="${HTTPS_PROXY:-${https_proxy:-}}"
+export RSYNC_PROXY="${RSYNC_PROXY:-${rsync_proxy:-}}"
+export NO_PROXY="${NO_PROXY:-${no_proxy:-}}"
+if [[ -n "${HTTP_PROXY}" ]]; then
+  touch /etc/apt/apt.conf.d/99proxy
+  {
+    echo "Acquire::http::Proxy \"${HTTP_PROXY}\";"
+  } > /etc/apt/apt.conf.d/99proxy
+fi
+if [[ -n "${HTTPS_PROXY}" ]]; then
+  touch /etc/apt/apt.conf.d/99proxy
+  {
+    echo "Acquire::http::Proxy \"${HTTP_PROXY}\";"
+  } >> /etc/apt/apt.conf.d/99proxy
+fi
 
 touch /opt/setup/.env
 set -o allexport

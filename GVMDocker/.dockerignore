@@ -1,4 +1,5 @@
 *
+!build/
 !config/
 !gvm-sync-data/
 !report_formats/
