@@ -14,6 +14,14 @@ ARG PYTHON_GVM_VERSION="21.11.0"
 ARG OSPD_OPENVAS_VERSION="21.4.4"
 ARG GVM_TOOLS_VERSION="21.10.0"
 
+
+FROM ${CACHE_BUILD_IMAGE}:build_gsa AS build_gsa
+FROM ${CACHE_BUILD_IMAGE}:build_gsad AS build_gsad
+FROM ${CACHE_BUILD_IMAGE}:build_gvm_libs AS build_gvm_libs
+FROM ${CACHE_BUILD_IMAGE}:build_gvmd AS build_gvmd
+#FROM deineagenturug/gvm-build:build_openvas_smb / /
+FROM ${CACHE_BUILD_IMAGE}:build_openvas_scanner AS build_openvas_scanner
+
 FROM debian:11-slim AS latest
 ARG CACHE_IMAGE
 ARG CACHE_BUILD_IMAGE
@@ -80,12 +88,12 @@ ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
     SETUP=0 \
     OPT_PDF=0
 
-COPY --from=deineagenturug/gvm-build:build_gsa / /
-COPY --from=deineagenturug/gvm-build:build_gsad / /
-COPY --from=deineagenturug/gvm-build:build_gvm_libs / /
-COPY --from=deineagenturug/gvm-build:build_gvmd / /
-COPY --from=deineagenturug/gvm-build:build_openvas_smb / /
-COPY --from=deineagenturug/gvm-build:build_openvas_scanner / /
+COPY --from=build_gsa / /
+COPY --from=build_gsad / /
+COPY --from=build_gvm_libs / /
+COPY --from=build_gvmd / /
+# COPY --from=build_openvas_smb / /
+COPY --from=build_openvas_scanner / /
 
 ENTRYPOINT [ "/opt/setup/scripts/entrypoint.sh" ]
 CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]

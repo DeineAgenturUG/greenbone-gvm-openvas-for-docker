@@ -1,7 +1,7 @@
 version: '3.1'
 services:
   gvm:
-    image: deineagenturug/gvm-develop:latest
+    image: deineagentur/gvm-develop:latest-full
     ports:
       - "127.0.0.2:2222:22"
       - "127.0.0.2:5432:5432"

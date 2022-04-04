@@ -49,20 +49,32 @@ libuuid1
 libxml2
 net-tools
 nmap
+snmp
+netdiag
+pnscan
+iputils-ping
+dsniff
+ldap-utils
+net-tools
 openssh-client
 python3-pip
 redis/bullseye-backports
 rsync
 smbclient
 supervisor
-snmp
 wapiti
 wget
 xz-utils
 EOF
 } | xargs apt-get install -yq --no-install-recommends
 
+{
+  echo "/usr/local/lib";
+  echo "/usr/lib";
+} >/etc/ld.so.conf.d/openvas.conf
 ldconfig
+
+find / -name '*libopenvas_wmiclient*'
 
 python3 -m pip install --upgrade "ospd_openvas==${OSPD_OPENVAS_VERSION}"
 python3 -m pip install --upgrade "gvm-tools==${GVM_TOOLS_VERSION}"

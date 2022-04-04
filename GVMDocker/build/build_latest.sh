@@ -21,10 +21,13 @@ fi
 echo "APT::Install-Recommends \"0\" ; APT::Install-Suggests \"0\" ;" > /etc/apt/apt.conf.d/10no-recommend-installs
 
 
-echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf
+{
+  echo "/usr/local/lib";
+  echo "/usr/lib";
+} >/etc/ld.so.conf.d/openvas.conf
+ldconfig
 echo 'export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"'>>/etc/environment
 sed -i '7c\ \ PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"' /etc/profile
-ldconfig
 chmod -R +x /opt/setup/scripts/*.sh
 
 apt-get update
@@ -38,6 +41,7 @@ apt-get install -y --no-install-recommends \
         logrotate \
         rsync \
         wget \
+        nano \
         lsb-release \
         curl
 {
@@ -92,6 +96,13 @@ apt-get install -y --no-install-recommends \
         rpm \
         smbclient \
         snmp \
+        nmap \
+        netdiag \
+        pnscan \
+        iputils-ping \
+        dsniff \
+        net-tools \
+        ldap-utils \
         socat \
         sshpass \
         sudo \
@@ -100,7 +111,8 @@ apt-get install -y --no-install-recommends \
         xmlstarlet \
         xsltproc \
         zip  \
-        cron openssh-server nano \
+        cron \
+        openssh-server \
         xz-utils \
         "postgresql-${POSTGRESQL_VERSION}" \
         "postgresql-common" \
@@ -137,6 +149,7 @@ echo "gvm ALL = NOPASSWD: /usr/sbin/openvas" > /etc/sudoers.d/gvm
 chmod 0440 /etc/sudoers.d/gvm
 update-alternatives --install /usr/bin/postgres postgres /usr/lib/postgresql/${POSTGRESQL_VERSION}/bin/postgres 100
 update-alternatives --install /usr/bin/initdb initdb /usr/lib/postgresql/${POSTGRESQL_VERSION}/bin/initdb 100
+ldconfig
 (rm -rfv /var/lib/gvm/CA || true)
 (rm -rfv /var/lib/gvm/private || true)
 (rm /etc/localtime || true)

@@ -3,6 +3,8 @@ set -Eeuo pipefail
 
 TIMESTART="$(date '+%Y%m%d%H%M%S')"
 
+BUILDER="${BUILDER:-default}"
+
 DL_DATA="${DL_DATA:-NO}"
 
 DIST="${DIST:-debian}"
@@ -14,6 +16,8 @@ BUILD_BASE="${BUILD_BASE:-NO}"
 BUILD_RELEASE_BASE="${BUILD_RELEASE_BASE:-NO}"
 
 PWD="$(pwd)"
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 DOCKER_ORG="${DOCKER_ORG:-deineagenturug}"
 CACHE_IMAGE="${DOCKER_ORG}/gvm"
 CACHE_BUILD_IMAGE="${DOCKER_ORG}/gvm-build"
@@ -34,7 +38,7 @@ if [ ! -f "build-args.txt" ]; then
   exit 1
 fi
 
-cd "${PWD}" || exit
+cd "${SCRIPT_DIR}" || exit
 
 #for PLATFORM in "${PLATFORMS[@]}"; do
   if [[ "x${BUILD_BASE}" == "xYES" ]]; then
@@ -120,24 +124,27 @@ cd "${PWD}" || exit
       --cache-from "${CACHE_BUILD_IMAGE}:build_gvm_libs" \
       --cache-from "${CACHE_BUILD_IMAGE}:${TARGET}" \
       -t "${CACHE_BUILD_IMAGE}:${TARGET}" .
+#
+#    TARGET="build_openvas_smb"
+#    # shellcheck disable=SC2046,SC2086,SC2013,SC2031
+#    docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./Dockerfiles/${TARGET}.${DIST_FILE}Dockerfile \
+#      $(
+#        # shellcheck disable=SC2030
+#        for i in $(cat build-args.txt); do out+="--build-arg $i "; done
+#        echo $out
+#        out=""
+#      ) \
+#      --build-arg BUILDKIT_INLINE_CACHE=1 \
+#      --build-arg "CACHE_IMAGE=${CACHE_IMAGE}" \
+#      --build-arg "CACHE_BUILD_IMAGE=${CACHE_BUILD_IMAGE}" \
+#      --cache-from "${CACHE_BUILD_IMAGE}:build_base" \
+#      --cache-from "${CACHE_BUILD_IMAGE}:build_gvm_libs" \
+#      --cache-from "${CACHE_BUILD_IMAGE}:${TARGET}" \
+#      -t "${CACHE_BUILD_IMAGE}:${TARGET}" .
 
-    TARGET="build_openvas_smb"
-    # shellcheck disable=SC2046,SC2086,SC2013,SC2031
-    docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./Dockerfiles/${TARGET}.${DIST_FILE}Dockerfile \
-      $(
-        # shellcheck disable=SC2030
-        for i in $(cat build-args.txt); do out+="--build-arg $i "; done
-        echo $out
-        out=""
-      ) \
-      --build-arg BUILDKIT_INLINE_CACHE=1 \
-      --build-arg "CACHE_IMAGE=${CACHE_IMAGE}" \
-      --build-arg "CACHE_BUILD_IMAGE=${CACHE_BUILD_IMAGE}" \
-      --cache-from "${CACHE_BUILD_IMAGE}:build_base" \
-      --cache-from "${CACHE_BUILD_IMAGE}:build_gvm_libs" \
-      --cache-from "${CACHE_BUILD_IMAGE}:${TARGET}" \
-      -t "${CACHE_BUILD_IMAGE}:${TARGET}" .
-
+    printf "\n\n\n---------------"
+    echo "build_openvas_scanner"
+    printf "\n\n\n---------------"
     TARGET="build_openvas_scanner"
     # shellcheck disable=SC2046,SC2086,SC2013,SC2031
     docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./Dockerfiles/${TARGET}.${DIST_FILE}Dockerfile \
@@ -152,6 +159,7 @@ cd "${PWD}" || exit
       --build-arg "CACHE_BUILD_IMAGE=${CACHE_BUILD_IMAGE}" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_base" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_gvm_libs" \
+      --cache-from "${CACHE_BUILD_IMAGE}:build_openvas_smb" \
       --cache-from "${CACHE_BUILD_IMAGE}:${TARGET}" \
       -t "${CACHE_BUILD_IMAGE}:${TARGET}" .
 
@@ -179,6 +187,7 @@ cd "${PWD}" || exit
       --cache-from "${CACHE_BUILD_IMAGE}:build_openvas_smb" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_openvas_scanner" \
       --cache-from "${CACHE_IMAGE}:${TARGET}" \
+      --no-cache \
       -t "${CACHE_IMAGE}:${TARGET}" ./GVMDocker/
 
     TARGET="latest-full"

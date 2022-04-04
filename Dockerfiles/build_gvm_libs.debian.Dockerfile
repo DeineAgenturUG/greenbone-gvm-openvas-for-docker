@@ -39,7 +39,7 @@ ARG BUILD_DIR=/build
 ARG INSTALL_DIR=/install
 ARG DESTDIR=/install
 
-FROM deineagenturug/gvm-build:build_base AS build
+FROM ${CACHE_BUILD_IMAGE}:build_base AS build
 ARG CACHE_IMAGE
 ARG CACHE_BUILD_IMAGE
 ARG INSTALL_PREFIX

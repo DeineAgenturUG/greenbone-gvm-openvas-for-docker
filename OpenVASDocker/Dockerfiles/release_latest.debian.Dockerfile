@@ -14,7 +14,7 @@ ARG OSPD_OPENVAS_VERSION="21.4.4"
 ARG GVM_TOOLS_VERSION="21.10.0"
 
 FROM ${CACHE_BUILD_IMAGE}:build_gvm_libs AS build_gvm_libs
-FROM ${CACHE_BUILD_IMAGE}:build_openvas_smb AS build_openvas_smb
+#FROM ${CACHE_BUILD_IMAGE}:build_openvas_smb AS build_openvas_smb
 FROM ${CACHE_BUILD_IMAGE}:build_openvas_scanner AS build_openvas_scanner
 
 FROM debian:11-slim
@@ -45,7 +45,7 @@ ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
     LANG=C.UTF-8
 
 COPY --from=build_gvm_libs / /
-COPY --from=build_openvas_smb / /
+#COPY --from=build_openvas_smb / /
 COPY --from=build_openvas_scanner / /
 
 RUN rm -f /etc/apt/apt.conf.d/docker-clean
