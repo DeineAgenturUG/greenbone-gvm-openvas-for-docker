@@ -77,3 +77,4 @@ $RECYCLE.BIN/
 .secrets
 /secrets/
 /GVMDocker/gvm-sync-data/
+node_modules
