@@ -57,6 +57,20 @@ dsniff
 ldap-utils
 net-tools
 openssh-client
+python3
+python3-cffi
+python3-defusedxml
+python3-deprecated
+python3-impacket
+python3-lxml
+python3-packaging
+python3-paho-mqtt
+python3-paramiko
+python3-pip
+python3-psutil
+python3-redis
+python3-setuptools
+python3-wrapt
 python3-pip
 redis/bullseye-backports
 rsync
@@ -108,6 +122,6 @@ chmod 0440 /etc/sudoers.d/gvm
 
 cp /opt/context/config/supervisord.conf /etc/supervisord.conf
 cp /opt/context/config/redis-openvas.conf /etc/redis.conf
-apt-get remove -y --purge python3-pip
+apt-get remove -y --purge python3-pip libxml2-dev libxslt-dev gcc python3-dev
 apt-get autoremove -y
 rm -rf /var/lib/apt/lists/*

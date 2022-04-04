@@ -6,3 +6,4 @@
 !report_formats/
 !scripts/*.sh
 !build.sh
+!/build.sh

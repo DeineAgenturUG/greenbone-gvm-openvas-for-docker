@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.4
-ARG CACHE_IMAGE=deineagenturug/gvm
+ARG CACHE_IMAGE=deineagenturug/openvas-scanner
 ARG CACHE_BUILD_IMAGE=deineagenturug/gvm-build
 
 ARG POSTGRESQL_VERSION="13"
@@ -50,9 +50,9 @@ COPY --from=build_openvas_scanner / /
 
 RUN rm -f /etc/apt/apt.conf.d/docker-clean
 RUN --mount=type=bind,source=./,target=/opt/context/,rw \
-    --mount=type=cache,mode=0755,target=/var/cache/apt  \
-    --mount=type=cache,mode=0755,target=/root/.cache/pip \
-     /opt/context/build.sh
+    --mount=type=cache,mode=0755,sharing=locked,target=/var/cache/apt  \
+    --mount=type=cache,mode=0755,sharing=locked,target=/root/.cache/pip \
+    /opt/context/build.sh
 
 
 ENTRYPOINT ["/opt/setup/scripts/entrypoint.sh"]

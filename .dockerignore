@@ -7,3 +7,6 @@
 !scripts/
 scripts/.github/
 !sshd_config
+!*.sh
+!*.conf
+!/OpenVASDocker/build.sh

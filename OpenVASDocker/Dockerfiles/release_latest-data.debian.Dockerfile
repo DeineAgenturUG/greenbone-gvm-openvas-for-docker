@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.4
-ARG CACHE_IMAGE=deineagenturug/gvm
+ARG CACHE_IMAGE=deineagenturug/openvas-scanner
 ARG CACHE_BUILD_IMAGE=deineagenturug/gvm-build
 
 ARG POSTGRESQL_VERSION="13"
