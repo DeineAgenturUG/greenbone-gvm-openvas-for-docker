@@ -116,7 +116,7 @@ echo "Redis ready."
 
 if [ ! -d "/opt/database/" ] || ([ -d "/opt/database/" ] && [ "$(find /opt/database/ -maxdepth 0 -empty)" ]); then
   echo "Creating Database initdb..."
-	su -c "initdb -D /opt/database" postgres
+	su -c "initdb -D /opt/database -E 'UTF-8' --lc-collate='C.UTF-8' --lc-ctype='C.UTF-8'" postgres
 	{
 		echo "listen_addresses = '*'"
 		echo "port = 5432"

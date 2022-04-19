@@ -3,6 +3,8 @@ set -Eeuo pipefail
 
 TIMESTART="$(date '+%Y%m%d%H%M%S')"
 
+DEFAULT_PATH="./helper/db_upgrade/"
+
 DIST="${DIST:-debian}"
 DIST_FILE="${DIST}."
 
@@ -27,7 +29,7 @@ cd "${PWD}" || exit
 
   TARGET="latest"
   # shellcheck disable=SC2046,SC2086,SC2013,SC2031
-  docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f ./GVMDocker/Dockerfiles/release_db_upgrade.debian.Dockerfile \
+  docker ${BUILDX} build --platform "${PLATFORM}" ${ADD_OPTIONS} -f "${DEFAULT_PATH}Dockerfiles/release_db_upgrade.debian.Dockerfile" \
     $(
       # shellcheck disable=SC2030
       for i in $(cat build-args.txt); do out+="--build-arg $i "; done
@@ -36,7 +38,7 @@ cd "${PWD}" || exit
     ) \
     --build-arg BUILDKIT_INLINE_CACHE=1 \
     --cache-from "${CACHE_IMAGE}:${TARGET}" \
-    -t "${CACHE_IMAGE}:${TARGET}" ./GVMDocker/
+    -t "${CACHE_IMAGE}:${TARGET}" "${DEFAULT_PATH}"
 
 #done
 echo y | docker buildx prune --all

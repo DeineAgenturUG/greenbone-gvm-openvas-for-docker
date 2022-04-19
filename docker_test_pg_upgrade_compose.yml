@@ -1,0 +1,23 @@
+version: '3.1'
+services:
+  gvm:
+    image: securecompliance/gvm:debian-master-data
+    ports:
+      - "127.0.0.3:2222:22"
+      - "127.0.0.3:5432:5432"
+      - "127.0.0.3:9080:9392"
+    environment:
+      - USERNAME=admin
+      - PASSWORD=passwordhere
+      - DB_PASSWORD=passwordhere
+      - AUTO_SYNC=true
+      - HTTPS=false
+      - TZ="Etc/UTC"
+      - SSHD=true
+      - DB_PASSWORD=none
+    volumes:
+      - "./storage/ssh_scs:/etc/ssh"
+      - "./storage/database_scs:/opt/database"
+      - "./storage/plugins_scs:/var/lib/openvas/plugins"
+      - "./storage/gvm_scs:/var/lib/gvm"
+    restart: unless-stopped
