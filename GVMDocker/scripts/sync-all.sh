@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
-if [[ "${AUTO_SYNC}" != "YES" ]]; then
+if [[ ! "${AUTO_SYNC}" =~ ^(yes|y|YES|Y|true|TRUE)$ ]]; then
   exit 0
 fi
 

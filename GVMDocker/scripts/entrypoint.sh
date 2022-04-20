@@ -3,6 +3,7 @@ set -Eeuo pipefail
 export HTTP_PROXY="${HTTP_PROXY:-${http_proxy:-}}"
 export HTTPS_PROXY="${HTTPS_PROXY:-${https_proxy:-}}"
 export RSYNC_PROXY="${RSYNC_PROXY:-${rsync_proxy:-}}"
+export FTP_PROXY="${FTP_PROXY:-${ftp_proxy:-}}"
 export NO_PROXY="${NO_PROXY:-${no_proxy:-}}"
 if [[ -n "${HTTP_PROXY}" ]]; then
   touch /etc/apt/apt.conf.d/99proxy
@@ -13,7 +14,13 @@ fi
 if [[ -n "${HTTPS_PROXY}" ]]; then
   touch /etc/apt/apt.conf.d/99proxy
   {
-    echo "Acquire::http::Proxy \"${HTTP_PROXY}\";"
+    echo "Acquire::https::Proxy \"${HTTP_PROXY}\";"
+  } >> /etc/apt/apt.conf.d/99proxy
+fi
+if [[ -n "${FTP_PROXY}" ]]; then
+  touch /etc/apt/apt.conf.d/99proxy
+  {
+    echo "Acquire::ftp::Proxy \"${FTP_PROXY}\";"
   } >> /etc/apt/apt.conf.d/99proxy
 fi
 
@@ -34,12 +41,12 @@ export RELAYHOST=${RELAYHOST:-smtp}
 export SMTPPORT=${SMTPPORT:-25}
 export AUTO_SYNC=${AUTO_SYNC:-YES}
 export AUTO_SYNC_ON_START=${AUTO_SYNC_ON_START:-YES}
-export HTTPS=${HTTPS:-true}
+export HTTPS=${HTTPS:-YES}
 export CERTIFICATE=${CERTIFICATE:-none}
 export CERTIFICATE_KEY=${CERTIFICATE_KEY:-none}
 export TZ=${TZ:-Etc/UTC}
 export DEBUG=${DEBUG:-N}
-export SSHD=${SSHD:-false}
+export SSHD=${SSHD:-YES}
 export DB_PASSWORD=${DB_PASSWORD:-none}
 export DB_PASSWORD_FILE=${DB_PASSWORD_FILE:-none}
 

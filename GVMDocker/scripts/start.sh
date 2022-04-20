@@ -15,17 +15,17 @@ export DEBUG=${DEBUG:-N}
 export NO_AUTO_UPDATE=${NO_AUTO_UPDATE:-NO}
 export RELAYHOST=${RELAYHOST:-smtp}
 export SMTPPORT=${SMTPPORT:-25}
-export AUTO_SYNC=${AUTO_SYNC:-true}
-export HTTPS=${HTTPS:-true}
+export AUTO_SYNC=${AUTO_SYNC:-YES}
+export HTTPS=${HTTPS:-YES}
 export CERTIFICATE=${CERTIFICATE:-none}
 export CERTIFICATE_KEY=${CERTIFICATE_KEY:-none}
 export TZ=${TZ:-Etc/UTC}
-export SSHD=${SSHD:-false}
+export SSHD=${SSHD:-NO}
 export SETUP=${SETUP:-0}
 export DB_PASSWORD=${DB_PASSWORD:-none}
 export DB_PASSWORD_FILE=${DB_PASSWORD_FILE:-none}
 export OPT_PDF=${OPT_PDF:-0}
-export SYSTEM_DIST=${SYSTEM_DIST:-unsupported}
+export SYSTEM_DIST=${SYSTEM_DIST:-debian}
 
 set +e
 # supervisord config: rsyslogd need to be run to get /var/log/mail.* logs
@@ -89,7 +89,7 @@ sudo chown -R redis:gvm /run/redis/
 sudo chown -R redis:redis /etc/redis/
 
 ${SUPVISD} start redis
-if [ "${DEBUG}" == "Y" ]; then
+if [[ "${DEBUG}" =~ ^(yes|y|YES|Y|true|TRUE)$ ]]; then
 	${SUPVISD} status redis
 fi
 
@@ -139,7 +139,7 @@ chown postgres:postgres -R /run/postgresql/
 sleep 2
 echo "Starting PostgreSQL..."
 ${SUPVISD} start postgresql
-if [ "${DEBUG}" == "Y" ]; then
+if [[ "${DEBUG}" =~ ^(yes|y|YES|Y|true|TRUE)$ ]]; then
 	${SUPVISD} status postgresql
 fi
 
@@ -182,7 +182,7 @@ if [ ! -f "/opt/database/.firstrun" ]; then
 	chown postgres:postgres -R /opt/database
 
 	${SUPVISD} restart postgresql
-	if [ "${DEBUG}" == "Y" ]; then
+	if [[ "${DEBUG}" =~ ^(yes|y|YES|Y|true|TRUE)$ ]]; then
 		${SUPVISD} status postgresql
 	fi
 
@@ -236,8 +236,8 @@ fi
 
 # Sync NVTs, CERT data, and SCAP data on container start
 # See this as a super fallback to have at least some data, even if it is then out of date.
-if [[ "${AUTO_SYNC_ON_START}" == "YES" ]]; then
-  if [[ "${AUTO_SYNC}" == "YES" ]]; then
+if [[ "${AUTO_SYNC_ON_START}" =~ ^(yes|y|YES|Y|true|TRUE)$ ]]; then
+  if [[ "${AUTO_SYNC}" =~ ^(yes|y|YES|Y|true|TRUE)$ ]]; then
     /opt/setup/scripts/sync-initial.sh
   fi
 fi
@@ -265,7 +265,7 @@ fi
 
 echo "Starting Open Scanner Protocol daemon for OpenVAS..."
 ${SUPVISD} start ospd-openvas
-if [ "${DEBUG}" == "Y" ]; then
+if [[ "${DEBUG}" =~ ^(yes|y|YES|Y|true|TRUE)$ ]]; then
 	${SUPVISD} status ospd-openvas
 fi
 
@@ -279,7 +279,7 @@ done
 
 echo "Starting Greenbone Vulnerability Manager..."
 ${SUPVISD} start gvmd
-if [ "${DEBUG}" == "Y" ]; then
+if [[ "${DEBUG}" =~ ^(yes|y|YES|Y|true|TRUE)$ ]]; then
 	${SUPVISD} status gvmd
 fi
 
@@ -308,24 +308,24 @@ if [ ! -f "/var/lib/gvm/.created_gvm_user" ]; then
 fi
 
 echo "Starting Greenbone Security Assistant..."
-if [ "${HTTPS}" == "true" ] && [ -e "${CERTIFICATE}" ] && [ -e "${CERTIFICATE_KEY}" ]; then
+if [[ "${HTTPS}" =~ ^(yes|y|YES|Y|true|TRUE)$ ]] && [ -e "${CERTIFICATE}" ] && [ -e "${CERTIFICATE_KEY}" ]; then
 	${SUPVISD} start gsad-https-owncert
-	if [ "${DEBUG}" == "Y" ]; then
+	if [[ "${DEBUG}" =~ ^(yes|y|YES|Y|true|TRUE)$ ]]; then
 		${SUPVISD} status gsad-https-owncert
 	fi
-elif [ "${HTTPS}" == "true" ]; then
+elif [[ "${HTTPS}" =~ ^(yes|y|YES|Y|true|TRUE)$ ]]; then
 	${SUPVISD} start gsad-https
-	if [ "${DEBUG}" == "Y" ]; then
+	if [[ "${DEBUG}" =~ ^(yes|y|YES|Y|true|TRUE)$ ]]; then
 		${SUPVISD} status gsad-https
 	fi
 else
 	${SUPVISD} start gsad
-	if [ "${DEBUG}" == "Y" ]; then
+	if [[ "${DEBUG}" =~ ^(yes|y|YES|Y|true|TRUE)$ ]]; then
 		${SUPVISD} status gsad
 	fi
 fi
 
-if [ "$SSHD" == "true" ]; then
+if [[ "${SSHD}" =~ ^(yes|y|YES|Y|true|TRUE)$ ]]; then
 	echo "Starting OpenSSH Server..."
 	if [ ! -d /var/lib/gvm/.ssh ]; then
 		echo "Creating scanner SSH keys folder..."
@@ -344,13 +344,13 @@ if [ "$SSHD" == "true" ]; then
 		chown root:root /etc/ssh/sshd_config
 	fi
 	${SUPVISD} start sshd
-	if [ "${DEBUG}" == "Y" ]; then
+	if [[ "${DEBUG}" =~ ^(yes|y|YES|Y|true|TRUE)$ ]]; then
 		${SUPVISD} status sshd
 	fi
 fi
 
 ${SUPVISD} start GVMUpdate
-if [ "${DEBUG}" == "Y" ]; then
+if [[ "${DEBUG}" =~ ^(yes|y|YES|Y|true|TRUE)$ ]]; then
 	${SUPVISD} status GVMUpdate
 fi
 GVMVER=$(su -c "gvmd --version" gvm)
