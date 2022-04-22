@@ -33,7 +33,7 @@ fi
 declare -a PLATFORMS
 PLATFORMS=("linux/amd64" "linux/arm64")
 PLATFORM="${PLATFORM:-linux/amd64}"
-BUILDX="${BUILDX:-}"
+BUILDX="${BUILDX:-buildx}"
 #ADD_OPTIONS=${ADD_OPTIONS:-"--cache-from type=local,mode=max,src=/tmp/docker --load"}
 #ADD_OPTIONS=${ADD_OPTIONS:-"--push"}
 ADD_OPTIONS=${ADD_OPTIONS:-"--pull --push --progress=plain"}
