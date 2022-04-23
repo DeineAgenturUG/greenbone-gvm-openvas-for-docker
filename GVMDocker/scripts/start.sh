@@ -5,7 +5,6 @@ export HTTPS_PROXY="${HTTPS_PROXY:-${https_proxy:-}}"
 export RSYNC_PROXY="${RSYNC_PROXY:-${rsync_proxy:-}}"
 export NO_PROXY="${NO_PROXY:-${no_proxy:-}}"
 
-
 export SUPVISD=${SUPVISD:-supervisorctl}
 export USERNAME=${USERNAME:-${GVMD_USER:-admin}}
 export PASSWORD=${PASSWORD:-${GVMD_PASSWORD:-adminpassword}}
@@ -146,6 +145,7 @@ fi
 until (pg_isready --username=postgres >/dev/null 2>&1 && psql --username=postgres --list >/dev/null 2>&1); do
 	sleep 1
 done
+
 if [[ ! -d "/etc/ssh" ]]; then
 	mkdir -p /etc/ssh
 fi
@@ -189,6 +189,7 @@ if [ ! -f "/opt/database/.firstrun" ]; then
 	touch /opt/database/.firstrun
 fi
 
+# TODO: should removed in the future
 if [ ! -f "/opt/database/.upgrade_to_21.4.0" ]; then
 	su -c "psql --dbname=gvmd --command='CREATE TABLE IF NOT EXISTS vt_severities (id SERIAL PRIMARY KEY,vt_oid text NOT NULL,type text NOT NULL, origin text,date integer,score double precision,value text);'" postgres
 	su -c "psql --dbname=gvmd --command='ALTER TABLE vt_severities ALTER COLUMN score SET DATA TYPE double precision;'" postgres
@@ -211,6 +212,10 @@ if [ "$DB_PASSWORD_FILE" != "none" ] && [ -e "$DB_PASSWORD_FILE" ]; then
 elif [ "$DB_PASSWORD" != "none" ]; then
 	su -c "psql --dbname=gvmd --command=\"alter user gvm password '$DB_PASSWORD';\"" postgres
 fi
+
+# FIX the old OSPD socket to /run/ospd/ospd-openvas.sock
+# if it is need to
+./fix_openvas_socket_in_database.sh || true
 
 echo "Creating gvmd folder..."
 su -c "mkdir -p /var/lib/gvm/gvmd/report_formats" gvm
