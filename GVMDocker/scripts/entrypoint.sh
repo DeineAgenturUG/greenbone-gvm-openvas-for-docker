@@ -50,6 +50,27 @@ export SSHD=${SSHD:-YES}
 export DB_PASSWORD=${DB_PASSWORD:-none}
 export DB_PASSWORD_FILE=${DB_PASSWORD_FILE:-none}
 
+# GSAD Settings:
+GSAD_HSTS_ENABLE="${GSAD_HSTS_ENABLE:-YES}"
+GSAD_HSTS_MAX_AGE="${GSAD_HSTS_MAX_AGE:-31536000}"
+GSAD_FRAME_OPTS="${GSAD_FRAME_OPTS:-SAMEORIGIN}"
+GSAD_CSP="${GSAD_CSP:-"default-src 'self' 'unsafe-inline'; img-src 'self' blob:; frame-ancestors 'self'"}"
+GSAD_PER_IP_CONN_LIMIT="${GSAD_PER_IP_CONN_LIMIT:-10}"
+GSAD_CORS="${GSAD_CORS:}"
+GSAD_OPTIONS=()
+
+if [[ "${GSAD_HSTS_ENABLE}" =~ ^(yes|y|YES|Y|true|TRUE)$ ]]; then
+  GSAD_OPTIONS+=("--http-sts")
+  GSAD_OPTIONS+=("--http-sts-max-age=\"${GSAD_HSTS_MAX_AGE}\"")
+fi
+GSAD_OPTIONS+=("--http-frame-opts=\"${GSAD_FRAME_OPTS}\"")
+GSAD_OPTIONS+=("--http-csp=\"${GSAD_CSP}\"")
+GSAD_OPTIONS+=("--per-ip-connection-limit=${GSAD_PER_IP_CONN_LIMIT}")
+if [[ "x${GSAD_CORS}" != "x" ]]; then
+  GSAD_OPTIONS+=("--http-cors=\"${GSAD_CORS}\"")
+fi
+export GSAD_OPTS="${GSAD_OPTIONS[*]}"
+
 if [ "$1" == "/usr/bin/supervisord" ]; then
 
     cp /opt/setup/config/supervisord.conf /etc/supervisord.conf
