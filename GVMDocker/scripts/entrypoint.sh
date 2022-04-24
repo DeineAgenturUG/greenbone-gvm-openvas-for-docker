@@ -56,7 +56,7 @@ GSAD_HSTS_MAX_AGE="${GSAD_HSTS_MAX_AGE:-31536000}"
 GSAD_FRAME_OPTS="${GSAD_FRAME_OPTS:-SAMEORIGIN}"
 GSAD_CSP="${GSAD_CSP:-"default-src 'self' 'unsafe-inline'; img-src 'self' blob:; frame-ancestors 'self'"}"
 GSAD_PER_IP_CONN_LIMIT="${GSAD_PER_IP_CONN_LIMIT:-10}"
-GSAD_CORS="${GSAD_CORS:}"
+GSAD_CORS="${GSAD_CORS:-}"
 GSAD_OPTIONS=()
 
 if [[ "${GSAD_HSTS_ENABLE}" =~ ^(yes|y|YES|Y|true|TRUE)$ ]]; then
