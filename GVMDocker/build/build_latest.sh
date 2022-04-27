@@ -70,6 +70,7 @@ apt-get install -y --no-install-recommends \
         libmicrohttpd12 \
         libnet1 \
         libpaho-mqtt1.3 \
+        libcap2-bin \
         libpcap0.8 \
         libpq5 \
         libradcli4 \
