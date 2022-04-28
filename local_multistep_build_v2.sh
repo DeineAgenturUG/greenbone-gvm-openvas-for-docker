@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 TIMESTART="$(date '+%Y%m%d%H%M%S')"
 
-BUILDER="${BUILDER:-default}"
+BUILDER="${BUILDER:-GVM_CNI_BUILDER}"
 
 DL_DATA="${DL_DATA:-NO}"
 
@@ -36,7 +36,7 @@ PLATFORM="${PLATFORM:-linux/amd64}"
 BUILDX="${BUILDX:-buildx}"
 #ADD_OPTIONS=${ADD_OPTIONS:-"--cache-from type=local,mode=max,src=/tmp/docker --load"}
 #ADD_OPTIONS=${ADD_OPTIONS:-"--push"}
-ADD_OPTIONS=${ADD_OPTIONS:-"--pull --push --progress=plain"}
+ADD_OPTIONS=${ADD_OPTIONS:-"--allow security.insecure --pull --push --progress=plain"}
 
 if [ ! -f "build-args.txt" ]; then
   echo "build-args.txt not found"

@@ -72,6 +72,14 @@ fi
 export GSAD_OPTS="${GSAD_OPTIONS[*]}"
 
 if [ "$1" == "/usr/bin/supervisord" ]; then
+#    if [ "${SETUP}" == "0" ]; then
+#      groupadd pcap
+#      usermod -a -G pcap gvm
+#      sudo setcap cap_net_raw,cap_net_admin+eip /usr/sbin/openvas
+#      sudo setcap cap_net_raw,cap_net_admin+eip /usr/local/bin/ospd-openvas
+#      sudo setcap cap_net_raw,cap_net_admin+eip /usr/bin/wmic
+#      sudo setcap cap_net_raw,cap_net_admin+eip /usr/bin/winexe
+#    fi
 
     cp /opt/setup/config/supervisord.conf /etc/supervisord.conf
     cp /opt/setup/config/logrotate-gvm.conf /etc/logrotate.d/gvm

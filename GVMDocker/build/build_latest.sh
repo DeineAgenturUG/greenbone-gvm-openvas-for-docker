@@ -152,8 +152,12 @@ update-alternatives --install /usr/bin/postgres postgres /usr/lib/postgresql/${P
 update-alternatives --install /usr/bin/initdb initdb /usr/lib/postgresql/${POSTGRESQL_VERSION}/bin/initdb 100
 ldconfig
 
-# used from https://community.greenbone.net/t/ospd-openvas-dont-have-permission-to-capture-on-that-device/4564/39
+groupadd pcap
+usermod -a -G pcap gvm
 sudo setcap cap_net_raw,cap_net_admin+eip /usr/sbin/openvas
+sudo setcap cap_net_raw,cap_net_admin+eip /usr/local/bin/ospd-openvas
+sudo setcap cap_net_raw,cap_net_admin+eip /usr/bin/wmic
+sudo setcap cap_net_raw,cap_net_admin+eip /usr/bin/winexe
 
 (rm -rfv /var/lib/gvm/CA || true)
 (rm -rfv /var/lib/gvm/private || true)

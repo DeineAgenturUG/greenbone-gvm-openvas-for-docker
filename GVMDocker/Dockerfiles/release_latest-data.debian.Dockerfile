@@ -13,8 +13,7 @@ ENV LANG=en_US.UTF-8 \
     SETUP=1 \
     OPT_PDF=0
 
-RUN --mount=type=bind,source=./,target=/opt/context/,rw \
-    ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime \
+RUN ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime \
     && echo "$TZ" >/etc/timezone\
     && /opt/setup/scripts/entrypoint.sh /usr/bin/supervisord -c /etc/supervisord.conf \
     && (rm -rfv /var/lib/gvm/CA || true) \
@@ -23,4 +22,5 @@ RUN --mount=type=bind,source=./,target=/opt/context/,rw \
     && echo "Etc/UTC" >/etc/timezone \
     && rm -rfv /tmp/* /var/cache/apk/* /var/lib/apt/lists/* \
     && echo "!!! FINISH Setup !!!"
+# used from https://community.greenbone.net/t/ospd-openvas-dont-have-permission-to-capture-on-that-device/4564/39
 ENV SETUP=0

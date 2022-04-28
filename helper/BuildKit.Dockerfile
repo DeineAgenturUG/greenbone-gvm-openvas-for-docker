@@ -5,7 +5,7 @@
 # > docker run --privileged --rm tonistiigi/binfmt --install all
 # > docker buildx create --use
 # > docker build -f BuildKit.Dockerfile -t deineagenturug/buildkit:latest .
-# > docker buildx create --name "GVM_CNI_BUILDER" --driver-opt image=deineagenturug/buildkit:latest --buildkitd-flags '--oci-worker-net=cni --oci-worker-gc-keepstorage 200000' --use
+# > docker buildx create --name "GVM_CNI_BUILDER" --driver-opt image=deineagenturug/buildkit:latest --buildkitd-flags '--allow-insecure-entitlement security.insecure --oci-worker-net=cni --oci-worker-gc-keepstorage 200000' --use
 # > docker buildx create --name "GVM_CNI_BUILDER" --append --node <name-for-the-node> <ssh://user@host>
 # > docker buildx create --name "GVM_CNI_BUILDER2" --leave --node <name-for-the-node>
 #
