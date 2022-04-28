@@ -71,6 +71,7 @@ $RECYCLE.BIN/
 # Docker Build Local
 /apk-build/
 /storage/
+/storage_build/
 /build_data/
 # For github.com/nektos/act local workflow testing
 .env

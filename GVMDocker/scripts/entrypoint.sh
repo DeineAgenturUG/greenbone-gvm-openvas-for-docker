@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-set -Eeuo pipefail
+set -Eeo pipefail
+/usr/sbin/openvas -s >/dev/null 2>&1 || (echo "OPENVAS -s " && exit 1)
 export HTTP_PROXY="${HTTP_PROXY:-${http_proxy:-}}"
 export HTTPS_PROXY="${HTTPS_PROXY:-${https_proxy:-}}"
 export RSYNC_PROXY="${RSYNC_PROXY:-${rsync_proxy:-}}"
@@ -9,19 +10,19 @@ if [[ -n "${HTTP_PROXY}" ]]; then
   touch /etc/apt/apt.conf.d/99proxy
   {
     echo "Acquire::http::Proxy \"${HTTP_PROXY}\";"
-  } > /etc/apt/apt.conf.d/99proxy
+  } >/etc/apt/apt.conf.d/99proxy
 fi
 if [[ -n "${HTTPS_PROXY}" ]]; then
   touch /etc/apt/apt.conf.d/99proxy
   {
     echo "Acquire::https::Proxy \"${HTTP_PROXY}\";"
-  } >> /etc/apt/apt.conf.d/99proxy
+  } >>/etc/apt/apt.conf.d/99proxy
 fi
 if [[ -n "${FTP_PROXY}" ]]; then
   touch /etc/apt/apt.conf.d/99proxy
   {
     echo "Acquire::ftp::Proxy \"${FTP_PROXY}\";"
-  } >> /etc/apt/apt.conf.d/99proxy
+  } >>/etc/apt/apt.conf.d/99proxy
 fi
 
 touch /opt/setup/.env
@@ -72,33 +73,33 @@ fi
 export GSAD_OPTS="${GSAD_OPTIONS[*]}"
 
 if [ "$1" == "/usr/bin/supervisord" ]; then
-#    if [ "${SETUP}" == "0" ]; then
-#      groupadd pcap
-#      usermod -a -G pcap gvm
-#      sudo setcap cap_net_raw,cap_net_admin+eip /usr/sbin/openvas
-#      sudo setcap cap_net_raw,cap_net_admin+eip /usr/local/bin/ospd-openvas
-#      sudo setcap cap_net_raw,cap_net_admin+eip /usr/bin/wmic
-#      sudo setcap cap_net_raw,cap_net_admin+eip /usr/bin/winexe
-#    fi
+  #    if [ "${SETUP}" == "0" ]; then
+  #      groupadd pcap
+  #      usermod -a -G pcap gvm
+  #      sudo setcap cap_net_raw,cap_net_admin+eip /usr/sbin/openvas
+  #      sudo setcap cap_net_raw,cap_net_admin+eip /usr/local/bin/ospd-openvas
+  #      sudo setcap cap_net_raw,cap_net_admin+eip /usr/bin/wmic
+  #      sudo setcap cap_net_raw,cap_net_admin+eip /usr/bin/winexe
+  #    fi
 
-    cp /opt/setup/config/supervisord.conf /etc/supervisord.conf
-    cp /opt/setup/config/logrotate-gvm.conf /etc/logrotate.d/gvm
-    mkdir -p /etc/redis/
-    cp /opt/setup/config/redis-openvas.conf /etc/redis/redis-openvas.conf
-    cp /opt/setup/config/sshd_config /etc/ssh/sshd_config
+  cp /opt/setup/config/supervisord.conf /etc/supervisord.conf
+  cp /opt/setup/config/logrotate-gvm.conf /etc/logrotate.d/gvm
+  mkdir -p /etc/redis/
+  cp /opt/setup/config/redis-openvas.conf /etc/redis/redis-openvas.conf
+  cp /opt/setup/config/sshd_config /etc/ssh/sshd_config
 
-    echo "Starting Postfix for report delivery by email"
-    #sed -i "s/^relayhost.*$/relayhost = ${RELAYHOST}:${SMTPPORT}/" /etc/postfix/main.cf
-    postconf -e "relayhost = ${RELAYHOST}:${SMTPPORT}"
-    #  exec /start.sh
-    echo "GVM Started but with > supervisor <"
-    if [ ! -f "/firstrun" ]; then
-        echo "Running first start configuration..."
+  echo "Starting Postfix for report delivery by email"
+  #sed -i "s/^relayhost.*$/relayhost = ${RELAYHOST}:${SMTPPORT}/" /etc/postfix/main.cf
+  postconf -e "relayhost = ${RELAYHOST}:${SMTPPORT}"
+  #  exec /start.sh
+  echo "GVM Started but with > supervisor <"
+  if [ ! -f "/firstrun" ]; then
+    echo "Running first start configuration..."
 
-        ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" >/etc/timezone
+    ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" >/etc/timezone
 
-        touch /firstrun
-    fi
+    touch /firstrun
+  fi
 fi
 
 exec "$@"

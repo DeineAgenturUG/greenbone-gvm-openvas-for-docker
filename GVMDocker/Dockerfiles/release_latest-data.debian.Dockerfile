@@ -2,7 +2,7 @@
 ARG CACHE_IMAGE=deineagenturug/gvm
 ARG CACHE_BUILD_IMAGE=deineagenturug/gvm-build
 
-FROM ${CACHE_IMAGE}:latest AS latest-data
+FROM deineagenturug/gvm-develop:latest AS latest-data
 
 ARG CACHE_IMAGE
 ARG CACHE_BUILD_IMAGE
@@ -22,5 +22,4 @@ RUN ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime \
     && echo "Etc/UTC" >/etc/timezone \
     && rm -rfv /tmp/* /var/cache/apk/* /var/lib/apt/lists/* \
     && echo "!!! FINISH Setup !!!"
-# used from https://community.greenbone.net/t/ospd-openvas-dont-have-permission-to-capture-on-that-device/4564/39
 ENV SETUP=0
