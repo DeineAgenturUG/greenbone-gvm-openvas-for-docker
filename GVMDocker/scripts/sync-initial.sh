@@ -21,17 +21,12 @@ if [ ! -f "/var/lib/gvm/.firstsync" ] && [ -f "/opt/context/gvm-sync-data/gvm-sy
   cp -a /tmp/data/cert-data/* /var/lib/gvm/cert-data/
 
   if [ "x${SETUP}" == "x1" ]; then
-    if [ -d "/opt/file_context/openvas_plugins/" ] && [ ! "$(find /opt/file_context/openvas_plugins/ -maxdepth 0 -empty)" ]; then
-      rsync -a --delete --include=* --include=.* /opt/file_context/openvas_plugins/ /var/lib/openvas/plugins/
+
+    if [ -d "/opt/file_context/openvas/" ] && [ ! "$(find /opt/file_context/openvas/ -maxdepth 0 -empty)" ]; then
+      rsync -a --delete --include=* --include=.* /opt/file_context/openvas/ /var/lib/openvas/
     fi
-    if [ -d "/opt/file_context/data-objects_gvmd/" ] && [ ! "$(find /opt/file_context/data-objects_gvmd/ -maxdepth 0 -empty)" ]; then
-      rsync -a --delete --include=* --include=.* /opt/file_context/data-objects_gvmd/ /var/lib/gvm/data-objects/gvmd/
-    fi
-    if [ -d "/opt/file_context/scap-data/" ] && [ ! "$(find /opt/file_context/scap-data/ -maxdepth 0 -empty)" ]; then
-      rsync -a --delete --include=* --include=.* /opt/file_context/scap-data/ /var/lib/gvm/scap-data/
-    fi
-    if [ -d "/opt/file_context/cert-data/" ] && [ ! "$(find /opt/file_context/cert-data/ -maxdepth 0 -empty)" ]; then
-      rsync -a --delete --include=* --include=.* /opt/file_context/cert-data/ /var/lib/gvm/cert-data/
+    if [ -d "/opt/file_context/gvm/" ] && [ ! "$(find /opt/file_context/gvm/ -maxdepth 0 -empty)" ]; then
+      rsync -a --delete --include=* --include=.* /opt/file_context/gvm/ /var/lib/gvm/
     fi
   fi
 
@@ -51,13 +46,5 @@ fi
 # Sync NVTs, CERT data, and SCAP data on container start
 /opt/setup/scripts/sync-all.sh
 touch /var/lib/gvm/.firstsync
-
-echo "x${SETUP}"
-if [ "x${SETUP}" == "x1" ]; then
-  rsync -a --delete --include=* --include=.* /var/lib/openvas/plugins/ /opt/file_context/openvas_plugins/
-  rsync -a --delete --include=* --include=.* /var/lib/gvm/data-objects/gvmd/ /opt/file_context/data-objects_gvmd/
-  rsync -a --delete --include=* --include=.* /var/lib/gvm/scap-data/ /opt/file_context/scap-data/
-  rsync -a --delete --include=* --include=.* /var/lib/gvm/cert-data/ /opt/file_context/cert-data/
-fi
 
 true

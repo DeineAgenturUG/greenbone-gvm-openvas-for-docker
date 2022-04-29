@@ -395,8 +395,13 @@ if [ "${SETUP}" == "1" ]; then
   sleep 60
 
   if [ "x${SETUP}" == "x1" ]; then
+    echo "SETUP x${SETUP}"
+    ${SUPVISD} stop ospd-openvas
+    ${SUPVISD} stop gvmd
     ${SUPVISD} stop postgresql
     rsync -a --delete --include=* --include=.* /opt/database/ /opt/file_context/database/
+    rsync -a --delete --include=* --include=.* /var/lib/openvas/ /opt/file_context/openvas/
+    rsync -a --delete --include=* --include=.* /var/lib/gvm/ /opt/file_context/gvm/
     sleep 10
   fi
 
