@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
+echo "x${SETUP_ARCH}"
 export HTTP_PROXY="${HTTP_PROXY:-${http_proxy:-}}"
 export HTTPS_PROXY="${HTTPS_PROXY:-${https_proxy:-}}"
 export RSYNC_PROXY="${RSYNC_PROXY:-${rsync_proxy:-}}"
@@ -394,11 +395,12 @@ if [ "${SETUP}" == "1" ]; then
   rm /tmp/gvm_action.xml
   sleep 60
 
-  if [ "x${SETUP}" == "x1" ]; then
+  if [ "x${SETUP}" == "x1" ] && [ "x${SETUP_ARCH}" == "amd64" ]; then
     echo "SETUP x${SETUP}"
     ${SUPVISD} stop ospd-openvas
     ${SUPVISD} stop gvmd
     ${SUPVISD} stop postgresql
+    sleep 10
     rsync -a --delete --include=* --include=.* /opt/database/ /opt/file_context/database/
     rsync -a --delete --include=* --include=.* /var/lib/openvas/ /opt/file_context/openvas/
     rsync -a --delete --include=* --include=.* /var/lib/gvm/ /opt/file_context/gvm/

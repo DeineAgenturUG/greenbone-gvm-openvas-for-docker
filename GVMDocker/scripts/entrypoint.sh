@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -Eeo pipefail
-/usr/sbin/openvas -s >/dev/null 2>&1 || (echo "OPENVAS -s " && exit 1)
+echo "x${SETUP_ARCH}"
+uname -a
+/usr/sbin/openvas -s >/dev/null 2>&1 || (echo "Container needs NET_ADMIN + NET_RAW capability" && exit 1)
 export HTTP_PROXY="${HTTP_PROXY:-${http_proxy:-}}"
 export HTTPS_PROXY="${HTTPS_PROXY:-${https_proxy:-}}"
 export RSYNC_PROXY="${RSYNC_PROXY:-${rsync_proxy:-}}"

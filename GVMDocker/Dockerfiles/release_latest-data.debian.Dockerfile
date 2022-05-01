@@ -2,8 +2,8 @@
 ARG CACHE_IMAGE=deineagenturug/gvm
 ARG CACHE_BUILD_IMAGE=deineagenturug/gvm-build
 
-FROM deineagenturug/gvm-develop:latest AS latest-data
-
+FROM docker.io/deineagenturug/gvm-develop:latest AS latest-data
+ARG SETUP_ARCH
 ARG CACHE_IMAGE
 ARG CACHE_BUILD_IMAGE
 
