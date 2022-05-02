@@ -76,6 +76,10 @@ RUN set -ex; \
 	export PYTHONDONTWRITEBYTECODE=1; \
 	\
 	dpkgArch="$(dpkg --print-architecture)"; \
+	\
+	archTempDir="${TBUILD_DIR}/${dpkgArch}" ; \
+    mkdir -p ${archTempDir}/archives/partial; \
+	\
 	aptRepo="[ signed-by=/usr/local/share/keyrings/postgres.gpg.asc ] http://apt.postgresql.org/pub/repos/apt/ bullseye-pgdg main $PG_MAJOR"; \
 	case "$dpkgArch" in \
 		amd64 | arm64 | ppc64el) \
@@ -130,13 +134,13 @@ RUN set -ex; \
 			ls -lAFh; \
 			_update_repo; \
 			grep '^Package: ' Packages; \
+			find . -name '*.deb' -exec cp -t "${archTempDir}/archives" {} + ; \
 			cd /; \
 			;; \
 	esac; \
 	\
 # next 4 lines added to get files, to create our own deb repo
-	archTempDir="${TBUILD_DIR}/$(uname -m)" ; \
-    mkdir -p ${archTempDir}/archives/partial; \
+
 	apt-get -d -o dir::cache=${archTempDir} -o Debug::NoLocking=1 install -y --no-install-recommends postgresql-common pgdg-keyring ;\
     apt-get -d -o dir::cache=${archTempDir} -o Debug::NoLocking=1 install -y --no-install-recommends postgresql-$PG_MAJOR=$PG_VERSION ;\
 	apt-get install -y --no-install-recommends postgresql-common; \

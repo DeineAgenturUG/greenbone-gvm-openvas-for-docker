@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
+
+START_DATE=$(date "+%Y-%m-%d %H:%M:%S")
+echo $START_DATE
+
 buildah containers --format "{{.ContainerID}}" | xargs --no-run-if-empty buildah rm
 echo y | podman system prune -a -f --volumes
 
@@ -27,3 +31,19 @@ buildah build -f "${BUILD_PATH}Dockerfiles/bah_postgres.debian.Dockerfile" \
   --network private \
   -v "${STORAGE_PATH}/_apt:/aptrepo:rw" \
   --tag "${REGISTRY}/${USER}/${IMAGE_NAME}:${IMAGE_TAG}" ${BUILD_PATH}
+
+#buildah build -f "${BUILD_PATH}Dockerfiles/bah_postgres.debian.Dockerfile" \
+#  --manifest ${MANIFEST_NAME} \
+#  --jobs 3 \
+#  --platform=linux/arm/v5,linux/386 \
+#  --cap-add NET_ADMIN --cap-add NET_RAW \
+#  --uts private --pull \
+#  --userns container --isolation oci \
+#  --network private \
+#  -v "${STORAGE_PATH}/_apt:/aptrepo:rw" \
+#  --tag "${REGISTRY}/${USER}/${IMAGE_NAME}:${IMAGE_TAG}" ${BUILD_PATH}
+#
+
+echo "START: $START_DATE"
+END_DATE=$(date "+%Y-%m-%d %H:%M:%S")
+echo "=> END: $END_DATE"
