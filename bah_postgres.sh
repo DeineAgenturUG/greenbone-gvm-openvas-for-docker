@@ -23,14 +23,14 @@ buildah manifest create "${MANIFEST_NAME}" >/dev/null 2>&1 || true
 
 buildah build -f "${BUILD_PATH}Dockerfiles/bah_postgres.debian.Dockerfile" \
   --manifest ${MANIFEST_NAME} \
-  --jobs 3 \
-  --all-platforms \
+  --jobs 2 \
+  --platform=linux/amd64,linux/arm64,linux/ppc64le,linux/mips64le,linux/s390x \
   --cap-add NET_ADMIN --cap-add NET_RAW \
   --uts private --pull \
   --userns container --isolation oci \
   --network private \
   -v "${STORAGE_PATH}/_apt:/aptrepo:rw" \
-  --tag "${REGISTRY}/${USER}/${IMAGE_NAME}:${IMAGE_TAG}" ${BUILD_PATH}
+  ${BUILD_PATH}
 
 #buildah build -f "${BUILD_PATH}Dockerfiles/bah_postgres.debian.Dockerfile" \
 #  --manifest ${MANIFEST_NAME} \

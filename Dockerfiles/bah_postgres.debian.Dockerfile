@@ -4,6 +4,7 @@ FROM debian:11-slim as base
 
 ENV PG_MAJOR=13 \
     PG_VERSION=13.6-1.pgdg110+1 \
+    PG_COMMON_VERSION=238.pgdg110+1 \
     DEBIAN_FRONTEND=noninteractive \
     TBUILD_DIR=/aptrepo \
     LANG=C.UTF-8
@@ -82,7 +83,7 @@ RUN set -ex; \
 	\
 	aptRepo="[ signed-by=/usr/local/share/keyrings/postgres.gpg.asc ] http://apt.postgresql.org/pub/repos/apt/ bullseye-pgdg main $PG_MAJOR"; \
 	case "$dpkgArch" in \
-		amd64 | arm64 | ppc64el) \
+		amd64arm64ppc64el) \
 # arches officialy built by upstream
 			echo "deb $aptRepo" > /etc/apt/sources.list.d/pgdg.list; \
 			apt-get update; \
@@ -116,8 +117,8 @@ RUN set -ex; \
 			export DEB_BUILD_OPTIONS="nocheck parallel=$nproc"; \
 # we have to build postgresql-common first because postgresql-$PG_MAJOR shares "debian/rules" logic with it: https://salsa.debian.org/postgresql/postgresql/-/commit/99f44476e258cae6bf9e919219fa2c5414fa2876
 # (and it "Depends: pgdg-keyring")
-			apt-get build-dep -y postgresql-common pgdg-keyring; \
-			apt-get source --compile postgresql-common pgdg-keyring; \
+			apt-get build-dep -y "postgresql-common=$PG_COMMON_VERSION" pgdg-keyring; \
+			apt-get source --compile "postgresql-common=$PG_COMMON_VERSION" pgdg-keyring; \
 			_update_repo; \
 # we need DEBIAN_FRONTEND on postgresql-13 for slapd ("Please enter the password for the admin entry in your LDAP directory."); see https://bugs.debian.org/929417
 			DEBIAN_FRONTEND=noninteractive \
@@ -134,16 +135,15 @@ RUN set -ex; \
 			ls -lAFh; \
 			_update_repo; \
 			grep '^Package: ' Packages; \
-			find . -name '*.deb' -exec cp -t "${archTempDir}/archives" {} + ; \
+			find . -name '*.deb' -exec cp -t "${archTempDir}" {} + ; \
 			cd /; \
 			;; \
 	esac; \
 	\
-# next 4 lines added to get files, to create our own deb repo
-
-	apt-get -d -o dir::cache=${archTempDir} -o Debug::NoLocking=1 install -y --no-install-recommends postgresql-common pgdg-keyring ;\
-    apt-get -d -o dir::cache=${archTempDir} -o Debug::NoLocking=1 install -y --no-install-recommends postgresql-$PG_MAJOR=$PG_VERSION ;\
-	apt-get install -y --no-install-recommends postgresql-common; \
+# next 2 lines added to get files, to create our own deb repo
+	apt-get -d -o dir::cache=${archTempDir} -o Debug::NoLocking=1 install -y --no-install-recommends "postgresql-common=$PG_COMMON_VERSION"; \
+    apt-get -d -o dir::cache=${archTempDir} -o Debug::NoLocking=1 install -y --no-install-recommends "postgresql-$PG_MAJOR=$PG_VERSION"; \
+	apt-get install -y --no-install-recommends "postgresql-common=$PG_COMMON_VERSION"; \
 	sed -ri 's/#(create_main_cluster) .*$/\1 = false/' /etc/postgresql-common/createcluster.conf; \
 	apt-get install -y --no-install-recommends \
 		"postgresql-$PG_MAJOR=$PG_VERSION" \
