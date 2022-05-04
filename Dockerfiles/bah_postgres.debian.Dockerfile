@@ -141,11 +141,11 @@ RUN set -ex; \
 	\
 # next 2 lines added to get files, to create our own deb repo
 	apt-get -d -o dir::cache=${archTempDir} -o Debug::NoLocking=1 install -y --no-install-recommends "postgresql-common"; \
-    apt-get -d -o dir::cache=${archTempDir} -o Debug::NoLocking=1 install -y --no-install-recommends "postgresql-$PG_MAJOR=$PG_VERSION"; \
+    apt-get -d -o dir::cache=${archTempDir} -o Debug::NoLocking=1 install -y --no-install-recommends "postgresql-$PG_MAJOR=$PG_VERSION" "postgresql-server-dev-$PG_MAJOR=$PG_VERSION"; \
 	apt-get install -y --no-install-recommends "postgresql-common"; \
 	sed -ri 's/#(create_main_cluster) .*$/\1 = false/' /etc/postgresql-common/createcluster.conf; \
 	apt-get install -y --no-install-recommends \
-		"postgresql-$PG_MAJOR=$PG_VERSION" \
+		"postgresql-$PG_MAJOR=$PG_VERSION" "postgresql-server-dev-$PG_MAJOR=$PG_VERSION" \
 	; \
 	\
 	rm -rf /var/lib/apt/lists/*; \

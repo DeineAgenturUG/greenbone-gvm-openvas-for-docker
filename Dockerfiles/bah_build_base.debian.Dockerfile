@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.4
-ARG CACHE_IMAGE=deineagenturug/gvm
-ARG CACHE_BUILD_IMAGE=deineagenturug/gvm-build
+ARG CACHE_IMAGE=deineagentur2/gvm
+ARG CACHE_BUILD_IMAGE=deineagentur2/gvm-build
 
 ARG POSTGRESQL_VERSION="13"
 ARG GSAD_VERSION="21.4.4"
@@ -76,6 +76,48 @@ ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
     DEBIAN_FRONTEND=noninteractive \
     LANG=C.UTF-8
 
+
+RUN set -e; \
+	if ! command -v gpg > /dev/null; then \
+		apt-get update; \
+		apt-get install -y --no-install-recommends \
+			gnupg \
+			dirmngr \
+		; \
+		rm -rf /var/lib/apt/lists/*; \
+	fi
+
+# make the "en_US.UTF-8" locale so postgres will be utf-8 enabled by default
+RUN set -eu; \
+	if [ -f /etc/dpkg/dpkg.cfg.d/docker ]; then \
+# if this file exists, we're likely in "debian:xxx-slim", and locales are thus being excluded so we need to remove that exclusion (since we need locales)
+		grep -q '/usr/share/locale' /etc/dpkg/dpkg.cfg.d/docker; \
+		sed -ri '/\/usr\/share\/locale/d' /etc/dpkg/dpkg.cfg.d/docker; \
+		! grep -q '/usr/share/locale' /etc/dpkg/dpkg.cfg.d/docker; \
+	fi; \
+	apt-get update; apt-get install -y --no-install-recommends locales; rm -rf /var/lib/apt/lists/*; \
+	localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+ENV LANG en_US.utf8
+
+RUN set -eu; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+		libnss-wrapper \
+		xz-utils \
+		zstd \
+	; \
+	rm -rf /var/lib/apt/lists/*
+
+
+RUN set -e; \
+    cat /aptrepo/apt.github.deineagentur.com.gpg.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/apt.github.deineagentur.com.gpg >/dev/null
+
+RUN set -e; \
+    echo "deb [ signed-by=/etc/apt/trusted.gpg.d/apt.github.deineagentur.com.gpg ] file:///aptrepo/ bullseye main" > /etc/apt/sources.list.d/temp.list; \
+    apt-get -o Acquire::GzipIndexes=false update;
+
+ENV PATH $PATH:/usr/lib/postgresql/$POSTGRESQL_VERSION/bin
+
 RUN echo ${PATH}
 
 RUN apt-get update \
@@ -111,16 +153,11 @@ RUN apt-get update \
            && echo y \
            && echo save \
        ) | gpg --command-fd 0 --no-tty --no-greeting -q --edit-key "$(gpg --list-packets <GBCommunitySigningKey.asc | awk '$1=="keyid:"{print$2;exit}')" trust \
-    && curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null \
-    && echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee  /etc/apt/sources.list.d/pgdg.list \
     && apt-get update \
     && apt-get -yq upgrade \
-    && apt-get -yq install \
-      postgresql-${POSTGRESQL_VERSION} \
-      postgresql-server-dev-${POSTGRESQL_VERSION} \
-      postgresql-client-${POSTGRESQL_VERSION} \
-      postgresql-common \
-      postgresql-client-common
+    && apt-get install -y --no-install-recommends "postgresql-common"; \
+	sed -ri 's/#(create_main_cluster) .*$/\1 = false/' /etc/postgresql-common/createcluster.conf; \
+    apt-get -yq --no-install-recommends install "postgresql-${POSTGRESQL_VERSION}" "postgresql-server-dev-${POSTGRESQL_VERSION}"
 
 
 # Install required dependencies for gvm-libs
