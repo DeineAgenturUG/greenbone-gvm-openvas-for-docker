@@ -22,9 +22,9 @@ export DB_PASSWORD_FILE=${DB_PASSWORD_FILE:-none}
 export OPT_PDF=${OPT_PDF:-0}
 export SYSTEM_DIST=${SYSTEM_DIST:-unsupported}
 
-if [ "${OPT_PDF}" == "1" ] && [ "${SYSTEM_DIST}" == "alpine" ]; then
+if [ "x${OPT_PDF}" == "x1" ] && [ "${SYSTEM_DIST}" == "alpine" ]; then
 	apk add --no-cache --allow-untrusted texlive texmf-dist-latexextra texmf-dist-fontsextra
-elif [ "${OPT_PDF}" == "1" ] && [ "${SYSTEM_DIST}" == "debian" ]; then
+elif [ "x${OPT_PDF}" == "x1" ] && [ "${SYSTEM_DIST}" == "debian" ]; then
 	# Install optional dependencies for gvmd
 	sudo apt-get update
 	sudo apt-get install -y --no-install-recommends \

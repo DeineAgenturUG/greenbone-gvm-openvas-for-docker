@@ -1,20 +1,16 @@
 #!/usr/bin/env bash
-# This script will only build or download the DEB packages for POSTGRESQL
-# this are stored by default at /github/greenbone-storage/_apt/
-# Dockerfile is used heavily from https://github.com/docker-library/postgres
-# Dockerfile located: Dockerfiles/bah_postgres.debian.Dockerfile
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 WORK_DIR=$(pwd)
 set -Eeuo pipefail
-
+buildah containers --format "{{.ContainerID}}" | xargs --no-run-if-empty buildah rm
 START_DATE=$(date "+%Y-%m-%d %H:%M:%S")
 
 # Set the required variables
-BUILD_PATH="./"
+BUILD_PATH="./GVMDocker"
 REGISTRY="docker.io"
 ORGANISATION="${ORGANISATION:-deineagentur}"
-IMAGE_NAME="gvm-build"
-IMAGE_TAG="postgres"
+IMAGE_NAME="gvm"
+IMAGE_TAG="${IMAGE_TAG:-latest}"
 STORAGE_PATH="${STORAGE_PATH:-/github/greenbone-storage}"
 
 echo "START (${IMAGE_TAG}): $START_DATE"
@@ -45,14 +41,14 @@ fi
 # Create a multi-architecture manifest
 buildah manifest create "${MANIFEST_NAME}" >/dev/null 2>&1 || true
 
-buildah build -f "${BUILD_PATH}/Dockerfiles/bah_${IMAGE_TAG}.debian.Dockerfile" \
+buildah build -f "${BUILD_PATH}/Dockerfiles/bah_release_${IMAGE_TAG}.debian.Dockerfile" \
   --manifest ${MANIFEST_NAME} \
   --jobs 3 --layers \
-  --platform=linux/amd64,linux/arm64,linux/arm/v7,linux/ppc64le,linux/mips64le,linux/s390x \
+  --platform=linux/amd64,linux/arm64,linux/ppc64le,linux/mips64le,linux/s390x \
   --cap-add NET_ADMIN --cap-add NET_RAW \
   --uts private --pull \
   --userns container --isolation oci \
-  --network private \
+  --network private --no-cache \
   --logfile "${WORK_DIR}/buildlog_${IMAGE_NAME}-${IMAGE_TAG}.log" \
   --squash \
   $(
@@ -67,9 +63,16 @@ buildah build -f "${BUILD_PATH}/Dockerfiles/bah_${IMAGE_TAG}.debian.Dockerfile" 
     echo $out
     out=""
   ) \
-  -v "${STORAGE_PATH}/aptcache/:/var/cache/myapt/archives/:rw" \
-  -v "${STORAGE_PATH}/_apt/:/aptrepo/:rw" \
+  -v "${STORAGE_PATH}/repo/:/aptrepo/:rw" \
+  -v "${STORAGE_PATH}/aptcache/:/var/cache/myapt/:rw" \
+  -v "${BUILD_PATH}/:/opt/context/:ro" \
+  -v "${STORAGE_PATH}/build_gsa/:/install_gsa:ro" \
   "${BUILD_PATH}/"
+
+buildah tag "localhost/${MANIFEST_NAME}" "${REGISTRY}/${ORGANISATION}/${IMAGE_NAME}:${IMAGE_TAG}"
+buildah manifest rm "localhost/${MANIFEST_NAME}"
+buildah manifest push --all "${REGISTRY}/${ORGANISATION}/${IMAGE_NAME}:${IMAGE_TAG}" "docker://${REGISTRY}/${ORGANISATION}/${IMAGE_NAME}:${IMAGE_TAG}"
+buildah manifest push --all "${REGISTRY}/${ORGANISATION}/${IMAGE_NAME}:${IMAGE_TAG}" "docker://${REGISTRY}/${ORGANISATION}/${IMAGE_NAME}:${IMAGE_TAG}-$(date "+%Y%m%d_%H%M")"
 
 echo "START (${IMAGE_TAG}): $START_DATE"
 END_DATE=$(date "+%Y-%m-%d %H:%M:%S")

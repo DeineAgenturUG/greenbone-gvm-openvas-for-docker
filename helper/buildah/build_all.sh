@@ -54,6 +54,8 @@ for pid in ${pids[*]}; do
     wait $pid
 done
 
+"${SCRIPT_DIR}/01_build_gvm.sh"
+
 echo "DONE!"
 echo "<<<< START ALL: $START_DATE_ALL"
 echo ">>>> END ALL: $(date "+%Y-%m-%d %H:%M:%S")"

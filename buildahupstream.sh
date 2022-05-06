@@ -6,6 +6,7 @@ buildah config --env GOPATH=/root/buildah $ctr
 buildah run $ctr /bin/sh -c 'dnf -y install --enablerepo=updates-testing \
      make \
      golang \
+     findutils \
      bats \
      btrfs-progs-devel \
      device-mapper-devel \

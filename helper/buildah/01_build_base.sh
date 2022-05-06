@@ -51,6 +51,7 @@ buildah build -f "${BUILD_PATH}/Dockerfiles/bah_${IMAGE_TAG}.debian.Dockerfile" 
   --network private \
   --logfile "${WORK_DIR}/buildlog_${IMAGE_NAME}-${IMAGE_TAG}.log" \
   --squash \
+  --unsetenv OPT_PDF \
   $(
     # shellcheck disable=SC2030
     for i in $(cat ${WORK_DIR}/build-args-versions.txt); do out+="--build-arg $i "; done
@@ -64,6 +65,7 @@ buildah build -f "${BUILD_PATH}/Dockerfiles/bah_${IMAGE_TAG}.debian.Dockerfile" 
     out=""
   ) \
   -v "${STORAGE_PATH}/repo/:/aptrepo/:rw" \
+  -v "${STORAGE_PATH}/aptcache/:/var/cache/myapt/archives/:rw" \
   -v "${BUILD_PATH}/:/opt/context/:ro" \
   -v "${STORAGE_PATH}/build_gsa/:/install_gsa:ro" \
   "${BUILD_PATH}/"

@@ -32,9 +32,9 @@ set +e
 /usr/sbin/postfix -c /etc/postfix start
 set -e
 
-if [ "${OPT_PDF}" == "1" ] && [ "${SYSTEM_DIST}" == "alpine" ]; then
+if [ "x${OPT_PDF}" == "x1" ] && [ "${SYSTEM_DIST}" == "alpine" ]; then
 	apk add --no-cache --allow-untrusted texlive texmf-dist-latexextra texmf-dist-fontsextra
-elif [ "${OPT_PDF}" == "1" ] && [ "${SYSTEM_DIST}" == "debian" ]; then
+elif [ "x${OPT_PDF}" == "x1" ] && [ "${SYSTEM_DIST}" == "debian" ]; then
 	# Install optional dependencies for gvmd
 	sudo apt-get update
 	sudo apt-get install -y --no-install-recommends \
