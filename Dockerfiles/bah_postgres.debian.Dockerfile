@@ -10,12 +10,6 @@ ENV PG_MAJOR=13 \
 
 #### SETUP POSTGRESQL13
 
-RUN set -eu; \
-	apt-get update; \
-	apt-get install -y --no-install-recommends \
-		apt-transport-https; \
-	ls -alsR /opt/context-full/; \
-	cp /opt/context-full/helper/config/apt-sources.list /etc/apt/sources.list
 
 # on other container we need:
 # echo "deb [ trusted=yes ] file://${TBUILD_DIR} ./" > /etc/apt/sources.list.d/temp.list;
@@ -29,6 +23,25 @@ RUN set -e; \
 		; \
 		rm -rf /var/lib/apt/lists/*; \
 	fi
+
+RUN set -e; \
+# pub   4096R/ACCC4CF8 2011-10-13 [expires: 2019-07-02]
+#       Key fingerprint = B97B 0AFC AA1A 47F0 44F2  44A0 7FCC 7D46 ACCC 4CF8
+# uid                  PostgreSQL Debian Repository
+	key='B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8'; \
+	export GNUPGHOME="$(mktemp -d)"; \
+	mkdir -p /usr/local/share/keyrings/; \
+	gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key"; \
+	gpg --batch --export --armor "$key" > /usr/local/share/keyrings/postgres.gpg.asc; \
+	command -v gpgconf > /dev/null && gpgconf --kill all; \
+	rm -rf "$GNUPGHOME"
+
+RUN set -eu; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+		apt-transport-https; \
+	ls -alsR /opt/context-full/; \
+	cp /opt/context-full/helper/config/apt-sources.list /etc/apt/sources.list
 
 # explicitly set user/group IDs
 RUN set -eu; \
