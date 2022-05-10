@@ -7,6 +7,17 @@ START_DATE_ALL=$(date "+%Y-%m-%d %H:%M:%S")
 
 buildah containers --format "{{.ContainerID}}" | xargs --no-run-if-empty buildah rm
 echo y | podman system prune -a -f --volumes
+echo y | docker system prune -a -f --volumes
+
+if [ ! -d "/github/greenbone-storage/" ]; then 
+
+    mkdir -p "/github/greenbone-storage/aptcache/"
+    mkdir -p "/github/greenbone-storage/_apt/"
+    mkdir -p "/github/greenbone-storage/build_gsa/"
+    mkdir -p "/github/greenbone-storage/repo/"
+    chmod -R 777 "/github/greenbone-storage/"
+
+fi
 
 sleep 10
 

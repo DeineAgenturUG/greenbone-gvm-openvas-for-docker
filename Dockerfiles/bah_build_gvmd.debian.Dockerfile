@@ -60,6 +60,13 @@ ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
     GVMD_VERSION=${GVMD_VERSION}
 
 COPY --from=build_gvm_libs / /
+
+RUN set -eu; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+		apt-transport-https; \
+	cp /opt/context-full/helper/config/apt-source.list /etc/apt/sources.list
+
 RUN echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf && ldconfig
 
 # Download and install gvmd

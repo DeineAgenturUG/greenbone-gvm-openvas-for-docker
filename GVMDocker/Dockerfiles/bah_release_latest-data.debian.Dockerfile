@@ -12,7 +12,12 @@ ENV LANG=en_US.UTF-8 \
     LC_ALL=en_US.UTF-8 \
     SETUP=1 \
     OPT_PDF=0
-
+RUN set -eu; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+		apt-transport-https; \
+	cp /opt/context-full/helper/config/apt-source.list /etc/apt/sources.list
+    
 RUN ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime \
     && echo "$TZ" >/etc/timezone\
     && /opt/setup/scripts/entrypoint.sh /usr/bin/supervisord -c /etc/supervisord.conf \

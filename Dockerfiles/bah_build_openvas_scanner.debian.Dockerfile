@@ -59,6 +59,12 @@ ENV OPENVAS_SCANNER_VERSION=${OPENVAS_SCANNER_VERSION}
 ENV OPENVAS_SMB_VERSION=${OPENVAS_SMB_VERSION}
 COPY --from=build_gvm_libs / /
 
+RUN set -eu; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+		apt-transport-https; \
+	cp /opt/context-full/helper/config/apt-source.list /etc/apt/sources.list
+
 RUN curl -sSL https://github.com/greenbone/openvas-smb/archive/refs/tags/v${OPENVAS_SMB_VERSION}.tar.gz -o ${SOURCE_DIR}/openvas-smb-${OPENVAS_SMB_VERSION}.tar.gz \
     && curl -sSL https://github.com/greenbone/openvas-smb/releases/download/v${OPENVAS_SMB_VERSION}/openvas-smb-${OPENVAS_SMB_VERSION}.tar.gz.asc -o ${SOURCE_DIR}/openvas-smb-${OPENVAS_SMB_VERSION}.tar.gz.asc \
     && gpg --verify ${SOURCE_DIR}/openvas-smb-${OPENVAS_SMB_VERSION}.tar.gz.asc ${SOURCE_DIR}/openvas-smb-${OPENVAS_SMB_VERSION}.tar.gz

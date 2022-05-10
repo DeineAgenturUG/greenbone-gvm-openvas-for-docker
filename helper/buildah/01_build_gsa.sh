@@ -65,6 +65,7 @@ buildah build -f "${BUILD_PATH}/Dockerfiles/bah_${IMAGE_TAG}.debian.Dockerfile" 
   ) \
   -v "${STORAGE_PATH}/aptcache/:/var/cache/myapt/archives/:rw" \
   -v "${BUILD_PATH}/:/opt/context/:ro" \
+  -v "${WORK_DIR}/:/opt/context-full/:ro" \
   -v "${STORAGE_PATH}/build_gsa/:/install:rw" \
   "${BUILD_PATH}/"
 

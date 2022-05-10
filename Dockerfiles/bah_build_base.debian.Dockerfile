@@ -76,6 +76,11 @@ ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
     DEBIAN_FRONTEND=noninteractive \
     LANG=C.UTF-8
 
+RUN set -eu; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+		apt-transport-https; \
+	cp /opt/context-full/helper/config/apt-source.list /etc/apt/sources.list
 
 RUN set -e; \
 	if ! command -v gpg > /dev/null; then \

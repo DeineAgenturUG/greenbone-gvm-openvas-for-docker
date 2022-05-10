@@ -48,7 +48,7 @@ buildah manifest create "${MANIFEST_NAME}" >/dev/null 2>&1 || true
 buildah build -f "${BUILD_PATH}/Dockerfiles/bah_${IMAGE_TAG}.debian.Dockerfile" \
   --manifest ${MANIFEST_NAME} \
   --jobs 3 --layers \
-  --platform=linux/amd64,linux/arm64,linux/arm/v7,linux/ppc64le,linux/mips64le,linux/s390x \
+  --platform=linux/amd64,linux/arm64,linux/ppc64le,linux/mips64le,linux/s390x \
   --cap-add NET_ADMIN --cap-add NET_RAW \
   --uts private --pull \
   --userns container --isolation oci \
@@ -69,6 +69,7 @@ buildah build -f "${BUILD_PATH}/Dockerfiles/bah_${IMAGE_TAG}.debian.Dockerfile" 
   ) \
   -v "${STORAGE_PATH}/aptcache/:/var/cache/myapt/archives/:rw" \
   -v "${STORAGE_PATH}/_apt/:/aptrepo/:rw" \
+  -v "${WORK_DIR}/:/opt/context-full/:ro" \
   "${BUILD_PATH}/"
 
 echo "START (${IMAGE_TAG}): $START_DATE"

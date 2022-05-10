@@ -56,6 +56,12 @@ ENV INSTALL_PREFIX=${INSTALL_PREFIX} \
 ARG GVM_LIBS_VERSION
 ENV GVM_LIBS_VERSION=${GVM_LIBS_VERSION}
 
+RUN set -eu; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+		apt-transport-https; \
+	cp /opt/context-full/helper/config/apt-source.list /etc/apt/sources.list
+
 # Download and install gvm-libs
 RUN curl -sSL "https://github.com/greenbone/gvm-libs/archive/refs/tags/v${GVM_LIBS_VERSION}.tar.gz" -o "${SOURCE_DIR}/gvm-libs-${GVM_LIBS_VERSION}.tar.gz" \
     && curl -sSL "https://github.com/greenbone/gvm-libs/releases/download/v${GVM_LIBS_VERSION}/gvm-libs-${GVM_LIBS_VERSION}.tar.gz.asc" -o "${SOURCE_DIR}/gvm-libs-${GVM_LIBS_VERSION}.tar.gz.asc" \

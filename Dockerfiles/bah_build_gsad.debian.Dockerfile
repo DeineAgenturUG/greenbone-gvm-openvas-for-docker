@@ -58,6 +58,13 @@ ENV INSTALL_PREFIX=${INSTALL_PREFIX} \
 ARG GSAD_VERSION
 ENV GSAD_VERSION=${GSAD_VERSION}
 COPY --from=build_gvm_libs / /
+
+RUN set -eu; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+		apt-transport-https; \
+	cp /opt/context-full/helper/config/apt-source.list /etc/apt/sources.list
+
 RUN echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf && ldconfig
 RUN curl -sSL https://github.com/greenbone/gsad/archive/refs/tags/v${GSAD_VERSION}.tar.gz -o ${SOURCE_DIR}/gsad-${GSAD_VERSION}.tar.gz \
     && curl -sSL https://github.com/greenbone/gsad/releases/download/v${GSAD_VERSION}/gsad-${GSAD_VERSION}.tar.gz.asc -o ${SOURCE_DIR}/gsad-${GSAD_VERSION}.tar.gz.asc \

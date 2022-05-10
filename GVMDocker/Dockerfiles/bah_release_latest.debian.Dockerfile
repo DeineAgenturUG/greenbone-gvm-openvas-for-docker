@@ -97,4 +97,10 @@ CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
 COPY config /opt/setup/config/
 COPY scripts /opt/setup/scripts/
 
+RUN set -eu; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+		apt-transport-https; \
+	cp /opt/context-full/helper/config/apt-source.list /etc/apt/sources.list
+
 RUN /opt/context/build/build_latest.sh
