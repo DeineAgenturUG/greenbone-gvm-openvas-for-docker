@@ -60,10 +60,13 @@ ENV OPENVAS_SMB_VERSION=${OPENVAS_SMB_VERSION}
 COPY --from=build_gvm_libs / /
 
 RUN set -eu; \
+    echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries; \
+	mkdir -p /usr/local/share/keyrings/; \
+	cp /opt/context-full/GVMDocker/build/postgres_ACCC4CF8.asc /usr/local/share/keyrings/postgres.gpg.asc; \
+	cp /opt/context-full/helper/config/apt-sources.list /etc/apt/sources.list; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
-		apt-transport-https; \
-	cp /opt/context-full/helper/config/apt-sources.list /etc/apt/sources.list
+		apt-transport-https
 
 RUN curl -sSL https://github.com/greenbone/openvas-smb/archive/refs/tags/v${OPENVAS_SMB_VERSION}.tar.gz -o ${SOURCE_DIR}/openvas-smb-${OPENVAS_SMB_VERSION}.tar.gz \
     && curl -sSL https://github.com/greenbone/openvas-smb/releases/download/v${OPENVAS_SMB_VERSION}/openvas-smb-${OPENVAS_SMB_VERSION}.tar.gz.asc -o ${SOURCE_DIR}/openvas-smb-${OPENVAS_SMB_VERSION}.tar.gz.asc \

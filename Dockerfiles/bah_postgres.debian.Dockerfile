@@ -15,8 +15,11 @@ ENV PG_MAJOR=13 \
 # echo "deb [ trusted=yes ] file://${TBUILD_DIR} ./" > /etc/apt/sources.list.d/temp.list;
 
 RUN set -e; \
+	echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries; \
+	mkdir -p /usr/local/share/keyrings/; \
+	cp /opt/context-full/GVMDocker/build/postgres_ACCC4CF8.asc /usr/local/share/keyrings/postgres.gpg.asc; \
+	cp /opt/context-full/helper/config/apt-sources.list /etc/apt/sources.list; \
 	if ! command -v gpg > /dev/null; then \
-		cp /opt/context-full/helper/config/apt-sources.list /etc/apt/sources.list; \
 		apt-get update; \
 		apt-get install -y --no-install-recommends \
 			gnupg \

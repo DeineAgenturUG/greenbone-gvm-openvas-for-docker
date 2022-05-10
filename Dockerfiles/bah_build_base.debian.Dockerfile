@@ -77,10 +77,13 @@ ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
     LANG=C.UTF-8
 
 RUN set -eu; \
-    cp /opt/context-full/helper/config/apt-sources.list /etc/apt/sources.list; \
+    echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries; \
+	mkdir -p /usr/local/share/keyrings/; \
+	cp /opt/context-full/GVMDocker/build/postgres_ACCC4CF8.asc /usr/local/share/keyrings/postgres.gpg.asc; \
+	cp /opt/context-full/helper/config/apt-sources.list /etc/apt/sources.list; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
-		apt-transport-https;
+		apt-transport-https
 
 RUN set -e; \
 	if ! command -v gpg > /dev/null; then \

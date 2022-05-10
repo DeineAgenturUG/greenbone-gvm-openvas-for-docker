@@ -57,10 +57,13 @@ ARG GVM_LIBS_VERSION
 ENV GVM_LIBS_VERSION=${GVM_LIBS_VERSION}
 
 RUN set -eu; \
+    echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries; \
+	mkdir -p /usr/local/share/keyrings/; \
+	cp /opt/context-full/GVMDocker/build/postgres_ACCC4CF8.asc /usr/local/share/keyrings/postgres.gpg.asc; \
+	cp /opt/context-full/helper/config/apt-sources.list /etc/apt/sources.list; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
-		apt-transport-https; \
-	cp /opt/context-full/helper/config/apt-sources.list /etc/apt/sources.list
+		apt-transport-https
 
 # Download and install gvm-libs
 RUN curl -sSL "https://github.com/greenbone/gvm-libs/archive/refs/tags/v${GVM_LIBS_VERSION}.tar.gz" -o "${SOURCE_DIR}/gvm-libs-${GVM_LIBS_VERSION}.tar.gz" \

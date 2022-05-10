@@ -6,8 +6,8 @@ set -Eeuo pipefail
 START_DATE_ALL=$(date "+%Y-%m-%d %H:%M:%S")
 
 buildah containers --format "{{.ContainerID}}" | xargs --no-run-if-empty buildah rm
-echo y | podman system prune -a -f --volumes
-echo y | docker system prune -a -f --volumes
+#echo y | podman system prune -a -f --volumes
+#echo y | docker system prune -a -f --volumes
 
 if [ ! -d "/github/greenbone-storage/" ]; then 
 
@@ -20,7 +20,7 @@ if [ ! -d "/github/greenbone-storage/" ]; then
 fi
 
 #docker run --privileged --rm tonistiigi/binfmt --install all
-docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+#docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
 sleep 10
 
