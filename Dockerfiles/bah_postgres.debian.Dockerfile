@@ -14,6 +14,7 @@ RUN set -eu; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
 		apt-transport-https; \
+	ls -alsR /opt/context-full/; \
 	cp /opt/context-full/helper/config/apt-sources.list /etc/apt/sources.list
 
 # on other container we need:
