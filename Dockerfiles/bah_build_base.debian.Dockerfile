@@ -80,7 +80,7 @@ RUN set -eu; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
 		apt-transport-https; \
-	cp /opt/context-full/helper/config/apt-source.list /etc/apt/sources.list
+	cp /opt/context-full/helper/config/apt-sources.list /etc/apt/sources.list
 
 RUN set -e; \
 	if ! command -v gpg > /dev/null; then \
@@ -142,10 +142,8 @@ RUN apt-get update \
         python3-pip \
         sudo \
         wget \
-    && echo 'deb http://deb.debian.org/debian bullseye-backports main' | tee /etc/apt/sources.list.d/backports.list \
     && apt-get update \
     && apt-get -yq upgrade \
-    && echo "Acquire::http::Proxy \"${http_proxy}\";" | tee /etc/apt/apt.conf.d/30proxy \
     && echo "APT::Install-Recommends \"0\" ; APT::Install-Suggests \"0\" ;" | tee /etc/apt/apt.conf.d/10no-recommend-installs \
     && mkdir -p "${SOURCE_DIR}" \
     && mkdir -p "${BUILD_DIR}" \

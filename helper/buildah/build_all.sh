@@ -19,6 +19,8 @@ if [ ! -d "/github/greenbone-storage/" ]; then
 
 fi
 
+docker run --privileged --rm tonistiigi/binfmt --install all
+
 sleep 10
 
 pids=()  # bash array

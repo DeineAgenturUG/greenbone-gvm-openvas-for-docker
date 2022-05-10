@@ -16,8 +16,8 @@ RUN set -eu; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
 		apt-transport-https; \
-	cp /opt/context-full/helper/config/apt-source.list /etc/apt/sources.list
-    
+	cp /opt/context-full/helper/config/apt-sources.list /etc/apt/sources.list
+
 RUN sudo apt-get update \
     && sudo apt-get install -y --no-install-recommends \
         texlive-fonts-recommended \

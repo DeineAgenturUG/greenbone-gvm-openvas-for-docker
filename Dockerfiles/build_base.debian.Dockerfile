@@ -95,10 +95,8 @@ RUN apt-get update \
         python3-pip \
         sudo \
         wget \
-    && echo 'deb http://deb.debian.org/debian bullseye-backports main' | tee /etc/apt/sources.list.d/backports.list \
     && apt-get update \
     && apt-get -yq upgrade \
-    && echo "Acquire::http::Proxy \"${http_proxy}\";" | tee /etc/apt/apt.conf.d/30proxy \
     && echo "APT::Install-Recommends \"0\" ; APT::Install-Suggests \"0\" ;" | tee /etc/apt/apt.conf.d/10no-recommend-installs \
     && mkdir -p "${SOURCE_DIR}" \
     && mkdir -p "${BUILD_DIR}" \
@@ -112,7 +110,6 @@ RUN apt-get update \
            && echo save \
        ) | gpg --command-fd 0 --no-tty --no-greeting -q --edit-key "$(gpg --list-packets <GBCommunitySigningKey.asc | awk '$1=="keyid:"{print$2;exit}')" trust \
     && curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null \
-    && echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee  /etc/apt/sources.list.d/pgdg.list \
     && apt-get update \
     && apt-get -yq upgrade \
     && apt-get -yq install \

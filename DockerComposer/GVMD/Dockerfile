@@ -6,8 +6,7 @@ ADD https://www.postgresql.org/media/keys/ACCC4CF8.asc /postgresql.asc
 
 RUN apt-get update && apt-get install --no-install-recommends --assume-yes gnupg
 
-RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt bullseye-pgdg main" > /etc/apt/sources.list.d/pgdg.list' && \
-    apt-key add /postgresql.asc && \
+RUN apt-key add /postgresql.asc && \
     apt-get update && \
     apt-get install --no-install-recommends --assume-yes ca-certificates curl build-essential cmake libglib2.0-dev libgnutls28-dev libpq-dev postgresql-server-dev-12 pkg-config libical-dev libgpgme-dev xsltproc xml-twig-tools libradcli4 libssh-gcrypt-4 libhiredis0.14 && \
     mkdir /build && \

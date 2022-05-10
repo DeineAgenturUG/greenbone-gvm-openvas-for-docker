@@ -3,8 +3,6 @@
 
 touch /opt/setup/.env
 
-echo 'deb http://deb.debian.org/debian bullseye-backports main' | tee /etc/apt/sources.list.d/backports.list
-echo "Acquire::http::Proxy \"${http_proxy}\";" | tee /etc/apt/apt.conf.d/30proxy
 echo "APT::Install-Recommends \"0\" ; APT::Install-Suggests \"0\" ;" | tee /etc/apt/apt.conf.d/10no-recommend-installs
 
 apt-get update
@@ -24,7 +22,6 @@ if [ "${POSTGRESQL_VERSION:-all}" != "all" ]; then
   ## START: INSTALL POSTGRES 13
   sudo apt -yq install gnupg2 lsb-release
   wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-  echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |sudo tee  /etc/apt/sources.list.d/pgdg.list
 
   sudo apt-get update
   sudo apt-get -yq upgrade

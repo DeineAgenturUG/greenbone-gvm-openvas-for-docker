@@ -9,7 +9,7 @@ RUN set -eu; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
 		apt-transport-https; \
-	cp /opt/context-full/helper/config/apt-source.list /etc/apt/sources.list
+	cp /opt/context-full/helper/config/apt-sources.list /etc/apt/sources.list
 
 RUN echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf \
     && echo 'export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"'>>/etc/environment \
@@ -27,11 +27,8 @@ RUN echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf \
         wget \
         lsb-release \
         curl \
-    && echo "Acquire::http::Proxy \"${http_proxy}\";" | tee /etc/apt/apt.conf.d/30proxy \
     && echo "APT::Install-Recommends \"0\" ; APT::Install-Suggests \"0\" ;" | tee /etc/apt/apt.conf.d/10no-recommend-installs \
     && curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null \
-    && echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee  /etc/apt/sources.list.d/pgdg.list \
-    && echo "deb http://deb.debian.org/debian `lsb_release -cs`-backports main" | tee /etc/apt/sources.list.d/backports.list \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         dpkg zip nano xz-utils locales \

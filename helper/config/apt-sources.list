@@ -6,5 +6,5 @@ deb http://130.61.213.169:3142/debian bullseye-updates main contrib non-free
 deb-src http://130.61.213.169:3142/debian bullseye-updates main contrib non-free
 deb http://130.61.213.169:3142/deb-security bullseye main contrib non-free
 deb-src http://130.61.213.169:3142/deb-security bullseye main contrib non-free
-deb http://130.61.213.169:3142/postgresql-mirror stable main 13
-deb-src http://130.61.213.169:3142/postgresql-mirror stable main 13
+deb http://130.61.213.169:3142/postgresql-mirror bullseye-pgdg main 13
+deb-src http://130.61.213.169:3142/postgresql-mirror bullseye-pgdg main 13
