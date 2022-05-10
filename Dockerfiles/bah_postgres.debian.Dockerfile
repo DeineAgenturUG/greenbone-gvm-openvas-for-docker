@@ -16,6 +16,7 @@ ENV PG_MAJOR=13 \
 
 RUN set -e; \
 	if ! command -v gpg > /dev/null; then \
+		cp /opt/context-full/helper/config/apt-sources.list /etc/apt/sources.list; \
 		apt-get update; \
 		apt-get install -y --no-install-recommends \
 			gnupg \
@@ -39,8 +40,7 @@ RUN set -e; \
 RUN set -eu; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
-		apt-transport-https; \
-	cp /opt/context-full/helper/config/apt-sources.list /etc/apt/sources.list
+		apt-transport-https
 
 # explicitly set user/group IDs
 RUN set -eu; \
@@ -99,17 +99,14 @@ RUN set -ex; \
 	archTempDir="${TBUILD_DIR}/${dpkgArch}" ; \
     mkdir -p ${archTempDir}/archives/partial; \
 	\
-	aptRepo="[ signed-by=/usr/local/share/keyrings/postgres.gpg.asc ] http://apt.postgresql.org/pub/repos/apt/ bullseye-pgdg main $PG_MAJOR"; \
 	case "$dpkgArch" in \
 		amd64 | arm64 | ppc64el) \
 # arches officialy built by upstream
-			echo "deb $aptRepo" > /etc/apt/sources.list.d/pgdg.list; \
 			apt-get update; \
 			;; \
 		*) \
 # we're on an architecture upstream doesn't officially build for
 # let's build binaries from their published source packages
-			echo "deb-src $aptRepo" > /etc/apt/sources.list.d/pgdg.list; \
 			\
 			savedAptMark="$(apt-mark showmanual)"; \
 			\

@@ -77,10 +77,10 @@ ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
     LANG=C.UTF-8
 
 RUN set -eu; \
+    cp /opt/context-full/helper/config/apt-sources.list /etc/apt/sources.list; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
-		apt-transport-https; \
-	cp /opt/context-full/helper/config/apt-sources.list /etc/apt/sources.list
+		apt-transport-https;
 
 RUN set -e; \
 	if ! command -v gpg > /dev/null; then \
