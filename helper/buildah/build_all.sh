@@ -19,8 +19,14 @@ if [ ! -d "/github/greenbone-storage/" ]; then
 
 fi
 
-#docker run --privileged --rm tonistiigi/binfmt --install all
+docker run --privileged --rm tonistiigi/binfmt --install all
 #docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
+
+# make use of proxy
+export http_proxy="http://192.168.178.31:3142"
+export https_proxy="http://192.168.178.31:3142"
+export ftp_proxy="http://192.168.178.31:3142"
 
 sleep 10
 

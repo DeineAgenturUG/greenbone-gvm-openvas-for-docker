@@ -9,7 +9,7 @@ RUN set -eu; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
 		apt-transport-https; \
-	cp /opt/context-full/helper/config/apt-sources.list /etc/apt/sources.list
+	cp /opt/context-full/helper/config/apt-sources.org.list /etc/apt/sources.list
 
 RUN echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf \
     && echo 'export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"'>>/etc/environment \

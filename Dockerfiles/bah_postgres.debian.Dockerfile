@@ -14,11 +14,14 @@ ENV PG_MAJOR=13 \
 # on other container we need:
 # echo "deb [ trusted=yes ] file://${TBUILD_DIR} ./" > /etc/apt/sources.list.d/temp.list;
 
+# need to delete '/etc/apt/apt.conf.d/99-local-proxy' at the end of the build in other Dockerfiles as bah_postgres.debian.Dockerfile
 RUN set -e; \
 	echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries; \
+	echo 'Acquire::http::Proxy::192.168.178.31 DIRECT;' >/etc/apt/apt.conf.d/99-local-proxy; \
 	mkdir -p /usr/local/share/keyrings/; \
 	cp /opt/context-full/GVMDocker/build/postgres_ACCC4CF8.asc /usr/local/share/keyrings/postgres.gpg.asc; \
-	cp /opt/context-full/helper/config/apt-sources.list /etc/apt/sources.list; \
+	cp /opt/context-full/GVMDocker/build/postgres_ACCC4CF8.gpg /etc/apt/trusted.gpg.d/postgres.gpg; \
+	cp /opt/context-full/helper/config/apt-sources.org.list /etc/apt/sources.list; \
 	if ! command -v gpg > /dev/null; then \
 		apt-get update; \
 		apt-get install -y --no-install-recommends \
@@ -103,10 +106,10 @@ RUN set -ex; \
     mkdir -p ${archTempDir}/archives/partial; \
 	\
 	case "$dpkgArch" in \
-		amd64 | arm64 | ppc64el) \
+#		amd64 | arm64 | ppc64el) \
 # arches officialy built by upstream
-			apt-get update; \
-			;; \
+#			apt-get update; \
+#			;; \
 		*) \
 # we're on an architecture upstream doesn't officially build for
 # let's build binaries from their published source packages

@@ -49,7 +49,7 @@ buildah build -f "${BUILD_PATH}/Dockerfiles/bah_${IMAGE_TAG}.debian.Dockerfile" 
   --uts private --pull \
   --userns container --isolation oci \
   --network private \
-  --http-proxy=false \
+  --http-proxy \
   --logfile "${WORK_DIR}/buildlog_${IMAGE_NAME}-${IMAGE_TAG}.log" \
   --squash \
   --unsetenv OPT_PDF \
