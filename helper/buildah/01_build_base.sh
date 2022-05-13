@@ -48,8 +48,7 @@ buildah build -f "${BUILD_PATH}/Dockerfiles/bah_${IMAGE_TAG}.debian.Dockerfile" 
   --cap-add NET_ADMIN --cap-add NET_RAW \
   --uts private --pull \
   --userns container --isolation oci \
-  --network private \
-  --http-proxy \
+  --network private --no-cache \
   --logfile "${WORK_DIR}/buildlog_${IMAGE_NAME}-${IMAGE_TAG}.log" \
   --squash \
   --unsetenv OPT_PDF \
@@ -70,6 +69,7 @@ buildah build -f "${BUILD_PATH}/Dockerfiles/bah_${IMAGE_TAG}.debian.Dockerfile" 
   -v "${BUILD_PATH}/:/opt/context/:ro" \
   -v "${WORK_DIR}/:/opt/context-full/:ro" \
   -v "${STORAGE_PATH}/build_gsa/:/install_gsa:ro" \
+  -v "${STORAGE_PATH}/source:/source" \
   "${BUILD_PATH}/"
 
 buildah tag "localhost/${MANIFEST_NAME}" "${REGISTRY}/${ORGANISATION}/${IMAGE_NAME}:${IMAGE_TAG}"

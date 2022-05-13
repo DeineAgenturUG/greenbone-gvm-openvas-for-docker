@@ -4,6 +4,8 @@ ARG CACHE_BUILD_IMAGE=deineagenturug/gvm-build
 
 
 ARG POSTGRESQL_VERSION="13"
+ARG POSTGRESQL_VERSION_EXACT="13.7-1.pgdg110+1"
+ARG POSTGRESQL_COMMON_VERSION_EXACT="241.pgdg110+1"
 ARG GSAD_VERSION="21.4.4"
 ARG GSA_VERSION="21.4.4"
 ARG GVM_LIBS_VERSION="21.4.4"
@@ -24,6 +26,8 @@ FROM debian:11-slim AS latest
 ARG CACHE_IMAGE
 ARG CACHE_BUILD_IMAGE
 ARG POSTGRESQL_VERSION
+ARG POSTGRESQL_VERSION_EXACT
+ARG POSTGRESQL_COMMON_VERSION_EXACT
 ARG GSAD_VERSION
 ARG GSA_VERSION
 ARG GVM_LIBS_VERSION
@@ -54,6 +58,8 @@ ARG SSHD=false
 ARG DB_PASSWORD=none
 
 ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
+    POSTGRESQL_VERSION_EXACT=${POSTGRESQL_VERSION_EXACT} \
+    POSTGRESQL_COMMON_VERSION_EXACT=${POSTGRESQL_COMMON_VERSION_EXACT} \
     GSAD_VERSION=${GSAD_VERSION} \
     GSA_VERSION=${GSA_VERSION} \
     GVM_LIBS_VERSION=${GVM_LIBS_VERSION} \
@@ -97,13 +103,8 @@ CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
 COPY config /opt/setup/config/
 COPY scripts /opt/setup/scripts/
 
-RUN set -eu; \
-    echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries; \
-	mkdir -p /usr/local/share/keyrings/; \
-	cp /opt/context-full/GVMDocker/build/postgres_ACCC4CF8.asc /usr/local/share/keyrings/postgres.gpg.asc; \
-	cp /opt/context-full/helper/config/apt-sources.org.list /etc/apt/sources.list; \
-	apt-get update; \
-	apt-get install -y --no-install-recommends \
-		apt-transport-https
+RUN apt-get update; \
+    apt-get install -y --no-install-recommends netcat;\
+    rm -rf /var/lib/apt/lists/*
 
 RUN /opt/context/build/build_latest.sh

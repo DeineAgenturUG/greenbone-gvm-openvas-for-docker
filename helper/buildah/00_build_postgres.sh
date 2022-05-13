@@ -52,8 +52,7 @@ buildah build -f "${BUILD_PATH}/Dockerfiles/bah_${IMAGE_TAG}.debian.Dockerfile" 
   --cap-add NET_ADMIN --cap-add NET_RAW \
   --uts private --pull \
   --userns container --isolation oci \
-  --network private \
-  --http-proxy \
+  --network private --no-cache \
   --logfile "${WORK_DIR}/buildlog_${IMAGE_NAME}-${IMAGE_TAG}.log" \
   --squash \
   $(
@@ -71,6 +70,7 @@ buildah build -f "${BUILD_PATH}/Dockerfiles/bah_${IMAGE_TAG}.debian.Dockerfile" 
   -v "${STORAGE_PATH}/aptcache/:/var/cache/myapt/archives/:rw" \
   -v "${STORAGE_PATH}/_apt/:/aptrepo/:rw" \
   -v "${WORK_DIR}/:/opt/context-full/:ro" \
+  -v "${STORAGE_PATH}/source:/source" \
   "${BUILD_PATH}/"
 
 echo "START (${IMAGE_TAG}): $START_DATE"

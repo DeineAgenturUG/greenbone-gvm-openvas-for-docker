@@ -49,7 +49,6 @@ buildah build -f "${BUILD_PATH}/Dockerfiles/bah_release_${IMAGE_TAG}.debian.Dock
   --uts private --pull \
   --userns container --isolation oci \
   --network private --no-cache \
-  --http-proxy \
   --logfile "${WORK_DIR}/buildlog_${IMAGE_NAME}-${IMAGE_TAG}.log" \
   --squash \
   $(
@@ -69,12 +68,13 @@ buildah build -f "${BUILD_PATH}/Dockerfiles/bah_release_${IMAGE_TAG}.debian.Dock
   -v "${BUILD_PATH}/:/opt/context/:ro" \
   -v "${WORK_DIR}/:/opt/context-full/:ro" \
   -v "${STORAGE_PATH}/build_gsa/:/install_gsa:ro" \
+  -v "${STORAGE_PATH}/source:/source" \
   "${BUILD_PATH}/"
 
 buildah tag "localhost/${MANIFEST_NAME}" "${REGISTRY}/${ORGANISATION}/${IMAGE_NAME}:${IMAGE_TAG}"
 buildah manifest rm "localhost/${MANIFEST_NAME}"
 buildah manifest push --all "${REGISTRY}/${ORGANISATION}/${IMAGE_NAME}:${IMAGE_TAG}" "docker://${REGISTRY}/${ORGANISATION}/${IMAGE_NAME}:${IMAGE_TAG}"
-buildah manifest push --all "${REGISTRY}/${ORGANISATION}/${IMAGE_NAME}:${IMAGE_TAG}" "docker://${REGISTRY}/${ORGANISATION}/${IMAGE_NAME}:${IMAGE_TAG}-$(date "+%Y%m%d_%H%M")"
+buildah manifest push --all "${REGISTRY}/${ORGANISATION}/${IMAGE_NAME}:${IMAGE_TAG}" "docker://${REGISTRY}/${ORGANISATION}/${IMAGE_NAME}:${IMAGE_TAG}-$(date "+%Y%m%d")"
 
 echo "START (${IMAGE_TAG}): $START_DATE"
 END_DATE=$(date "+%Y-%m-%d %H:%M:%S")

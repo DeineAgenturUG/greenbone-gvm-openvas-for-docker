@@ -13,15 +13,14 @@
 # APT calls this script for each host that should be connected to. Therefore
 # you may see the proxy messages multiple times (LP 814130). If you find this
 # annoying and wish to disable these messages, set show_proxy_messages to 0
-show_proxy_messages=1
+show_proxy_messages=0
 
 # on or more proxies can be specified. Note that each will introduce a routing
 # delay and therefore its recommended to put the proxy which is most likely to
 # be available on the top. If no proxy is available, a direct connection will
 # be used
 try_proxies=(
-<your-proxy-1>:3142
-<your-proxy-2>:3142
+192.168.178.31:3142
 )
 
 print_msg() {

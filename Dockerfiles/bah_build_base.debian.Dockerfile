@@ -77,24 +77,29 @@ ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
     LANG=C.UTF-8
 
 RUN set -eu; \
-    echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends netcat; \
+    cp /opt/context-full/helper/config/30detectproxy /etc/apt/apt.conf.d/30detectproxy; \
+    cp /opt/context-full/helper/config/detect-http-proxy /etc/apt/detect-http-proxy; \
+    chmod +x /etc/apt/detect-http-proxy; \
 	mkdir -p /usr/local/share/keyrings/; \
 	cp /opt/context-full/GVMDocker/build/postgres_ACCC4CF8.asc /usr/local/share/keyrings/postgres.gpg.asc; \
+	cp /opt/context-full/GVMDocker/build/postgres_ACCC4CF8.gpg /etc/apt/trusted.gpg.d/postgres.gpg; \
+	cp /opt/context-full/helper/config/apt-github.deineagentur.com.gpg.key /usr/local/share/keyrings/apt-github.deineagentur.com.gpg.asc; \
+	cp /opt/context-full/helper/config/apt-github.deineagentur.com.gpg /etc/apt/trusted.gpg.d/apt-github.deineagentur.com.gpg; \
 	cp /opt/context-full/helper/config/apt-sources.org.list /etc/apt/sources.list; \
-	apt-get update; \
-	apt-get install -y --no-install-recommends \
-		apt-transport-https
-
-RUN set -e; \
-	if ! command -v gpg > /dev/null; then \
+    if ! command -v gpg > /dev/null; then \
 		apt-get update; \
 		apt-get install -y --no-install-recommends \
 			gnupg \
 			dirmngr \
+            apt-transport-https \
 		; \
 		rm -rf /var/lib/apt/lists/*; \
-	fi
+	fi ; \
+    rm -rf /var/lib/apt/lists/*
 
+	
 # make the "en_US.UTF-8" locale so postgres will be utf-8 enabled by default
 RUN set -eu; \
 	if [ -f /etc/dpkg/dpkg.cfg.d/docker ]; then \

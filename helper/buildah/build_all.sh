@@ -3,13 +3,19 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 WORK_DIR=$(pwd)
 set -Eeuo pipefail
 
+BUILD_PGSQL="${BUILD_PGSQL:-Yes}"
+BUILD_BASE="${BUILD_BASE:-Yes}"
+BUILD_PACKAGE="${BUILD_PACKAGE:-Yes}"
+BUILD_PACKAGE_DATA_ONLY="${BUILD_PACKAGE_DATA_ONLY:-No}"
+WAIT_AFTER_POSTGRES="${WAIT_AFTER_POSTGRES:-No}"
+
 START_DATE_ALL=$(date "+%Y-%m-%d %H:%M:%S")
 
 buildah containers --format "{{.ContainerID}}" | xargs --no-run-if-empty buildah rm
-#echo y | podman system prune -a -f --volumes
-#echo y | docker system prune -a -f --volumes
+echo y | podman system prune -a -f --volumes
+echo y | docker system prune -a -f --volumes
 
-if [ ! -d "/github/greenbone-storage/" ]; then 
+if [ ! -d "/github/greenbone-storage/" ]; then
 
     mkdir -p "/github/greenbone-storage/aptcache/"
     mkdir -p "/github/greenbone-storage/_apt/"
@@ -22,15 +28,9 @@ fi
 docker run --privileged --rm tonistiigi/binfmt --install all
 #docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
-
-# make use of proxy
-export http_proxy="http://192.168.178.31:3142"
-export https_proxy="http://192.168.178.31:3142"
-export ftp_proxy="http://192.168.178.31:3142"
-
 sleep 10
 
-pids=()  # bash array
+pids=() # bash array
 
 # trap ctrl-c and call ctrl_c()
 trap ctrl_c INT
@@ -46,36 +46,65 @@ function ctrl_c() {
 
 echo ">>>> START ALL: $(date "+%Y-%m-%d %H:%M:%S")"
 
-"${SCRIPT_DIR}/00_build_postgres.sh"
-"${SCRIPT_DIR}/01_build_base.sh" &
-pids+=("$!")
-"${SCRIPT_DIR}/01_build_gsa.sh"
+if [ "x${BUILD_PGSQL}" == "xYes" ]; then
+    "${SCRIPT_DIR}/00_build_postgres.sh"
+    if [ "x${WAIT_AFTER_POSTGRES}" != "xNo" ]; then
+        if [ ${WAIT_AFTER_POSTGRES} > 0 ]; then
+        echo "WAIT ${WAIT_AFTER_POSTGRES} seconds!"
+        sleep ${WAIT_AFTER_POSTGRES}
+        echo "DONE: WAIT ${WAIT_AFTER_POSTGRES} seconds!"
+        else
+            read -n 1 -s -r -p "Press any key to continue"
+        fi
+    fi
+fi
 
-# wait for all pids
-for pid in ${pids[*]}; do
-    wait $pid
-done
+if [ "x${BUILD_BASE}" == "xYes" ]; then
+    "${SCRIPT_DIR}/01_build_base.sh" &
+    pids+=("$!")
+    "${SCRIPT_DIR}/01_build_gsa.sh"
 
-IMAGE_TAG=build_gvm_libs "${SCRIPT_DIR}/01_build_base.sh"
+    # wait for all pids
+    for pid in ${pids[*]}; do
+        wait $pid
+    done
 
-echo "WAIT 30 seconds!"
-sleep 30
-echo "DONE: WAIT 30 seconds!"
+    IMAGE_TAG=build_gvm_libs "${SCRIPT_DIR}/01_build_base.sh"
 
-IMAGE_TAG=build_gsad "${SCRIPT_DIR}/01_build_base.sh" &
-pids+=("$!")
-IMAGE_TAG=build_gvmd "${SCRIPT_DIR}/01_build_base.sh" &
-pids+=("$!")
-IMAGE_TAG=build_openvas_scanner "${SCRIPT_DIR}/01_build_base.sh" &
-pids+=("$!")
+    echo "WAIT 30 seconds!"
+    sleep 30
+    echo "DONE: WAIT 30 seconds!"
 
-# wait for all pids
-for pid in ${pids[*]}; do
-    wait $pid
-done
+    IMAGE_TAG=build_gsad "${SCRIPT_DIR}/01_build_base.sh" &
+    pids+=("$!")
+    IMAGE_TAG=build_gvmd "${SCRIPT_DIR}/01_build_base.sh" &
+    pids+=("$!")
+    IMAGE_TAG=build_openvas_scanner "${SCRIPT_DIR}/01_build_base.sh" &
+    pids+=("$!")
 
-"${SCRIPT_DIR}/01_build_gvm.sh"
+    # wait for all pids
+    for pid in ${pids[*]}; do
+        wait $pid
+    done
+fi
 
+if [ "x${BUILD_PACKAGE}" == "xYes" ]; then
+    "${SCRIPT_DIR}/02_build_gvm.sh"
+
+    IMAGE_TAG=latest-data "${SCRIPT_DIR}/02_build_gvm.sh" &
+    pids+=("$!")
+    IMAGE_TAG=latest-full "${SCRIPT_DIR}/02_build_gvm.sh"
+
+    # wait for all pids
+    for pid in ${pids[*]}; do
+        wait $pid
+    done
+
+    IMAGE_TAG=latest-data-full "${SCRIPT_DIR}/02_build_gvm.sh"
+elif [ "x${BUILD_PACKAGE_DATA_ONLY}" == "xYes" ]; then
+    IMAGE_TAG=latest-data "${SCRIPT_DIR}/02_build_gvm.sh"
+    IMAGE_TAG=latest-data-full "${SCRIPT_DIR}/02_build_gvm.sh"
+fi
 echo "DONE!"
 echo "<<<< START ALL: $START_DATE_ALL"
 echo ">>>> END ALL: $(date "+%Y-%m-%d %H:%M:%S")"

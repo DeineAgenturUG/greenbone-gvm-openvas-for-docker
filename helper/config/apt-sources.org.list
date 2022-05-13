@@ -1,3 +1,8 @@
+# Own postgresql builds
+deb [ signed-by=/usr/local/share/keyrings/apt-github.deineagentur.com.gpg.asc ] http://192.168.178.31:3142/pgselfbuild bullseye main
+deb-src [ signed-by=/usr/local/share/keyrings/apt-github.deineagentur.com.gpg.asc ] http://192.168.178.31:3142/pgselfbuild bullseye main
+
+# Debian
 deb http://deb.debian.org/debian bullseye main contrib non-free
 deb-src http://deb.debian.org/debian bullseye main contrib non-free
 deb http://deb.debian.org/debian bullseye-backports main contrib non-free
@@ -6,5 +11,7 @@ deb http://deb.debian.org/debian bullseye-updates main contrib non-free
 deb-src http://deb.debian.org/debian bullseye-updates main contrib non-free
 deb http://security.debian.org/debian-security bullseye-security main contrib non-free
 deb-src http://security.debian.org/debian-security bullseye-security main contrib non-free
+
+# postgresql dependencies for builds etc.
 deb [ signed-by=/usr/local/share/keyrings/postgres.gpg.asc ] http://apt.postgresql.org/pub/repos/apt bullseye-pgdg main 13
 deb-src [ signed-by=/usr/local/share/keyrings/postgres.gpg.asc ] http://apt.postgresql.org/pub/repos/apt bullseye-pgdg main 13

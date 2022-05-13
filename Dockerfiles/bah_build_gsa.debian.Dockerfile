@@ -55,20 +55,11 @@ ENV INSTALL_PREFIX=${INSTALL_PREFIX} \
 ARG GSA_VERSION
 ENV GSA_VERSION=${GSA_VERSION}
 
-RUN set -eu; \
-    echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries; \
-	mkdir -p /usr/local/share/keyrings/; \
-	cp /opt/context-full/GVMDocker/build/postgres_ACCC4CF8.asc /usr/local/share/keyrings/postgres.gpg.asc; \
-	cp /opt/context-full/helper/config/apt-sources.org.list /etc/apt/sources.list; \
-	apt-get update; \
-	apt-get install -y --no-install-recommends \
-		apt-transport-https
-
 RUN apk add --no-cache wget curl gnupg tar \
     && mkdir -p ${SOURCE_DIR} \
     && mkdir -p ${BUILD_DIR} \
     && mkdir -p ${INSTALL_DIR} \
-    && curl -O https://www.greenbone.net/GBCommunitySigningKey.asc \
+    && curl -O "https://www.greenbone.net/GBCommunitySigningKey.asc" \
     && gpg --import <GBCommunitySigningKey.asc \
     && ( \
         echo 5 \
@@ -76,17 +67,22 @@ RUN apk add --no-cache wget curl gnupg tar \
         && echo save \
     ) | gpg --command-fd 0 --no-tty --no-greeting -q --edit-key "$(gpg --list-packets <GBCommunitySigningKey.asc | awk '$1=="keyid:"{print$2;exit}')" trust
 
-RUN curl -sSL https://github.com/greenbone/gsa/archive/refs/tags/v${GSA_VERSION}.tar.gz -o ${SOURCE_DIR}/gsa-${GSA_VERSION}.tar.gz \
-    && curl -sSL https://github.com/greenbone/gsa/releases/download/v${GSA_VERSION}/gsa-${GSA_VERSION}.tar.gz.asc -o ${SOURCE_DIR}/gsa-${GSA_VERSION}.tar.gz.asc \
-    && ls -lahr ${SOURCE_DIR} \
-    && gpg --verify ${SOURCE_DIR}/gsa-${GSA_VERSION}.tar.gz.asc ${SOURCE_DIR}/gsa-${GSA_VERSION}.tar.gz
+RUN set -ex; \
+    if [ ! -f "${SOURCE_DIR}/gsa-${GSA_VERSION}.tar.gz" ]; then \
+        curl -sSL "https://github.com/greenbone/gsa/archive/refs/tags/v${GSA_VERSION}.tar.gz" -o "${SOURCE_DIR}/gsa-${GSA_VERSION}.tar.gz" ; \
+        curl -sSL "https://github.com/greenbone/gsa/releases/download/v${GSA_VERSION}/gsa-${GSA_VERSION}.tar.gz.asc" -o "${SOURCE_DIR}/gsa-${GSA_VERSION}.tar.gz.asc" ; \
+        ls -lahr ${SOURCE_DIR}; \
+        gpg --verify "${SOURCE_DIR}/gsa-${GSA_VERSION}.tar.gz.asc" "${SOURCE_DIR}/gsa-${GSA_VERSION}.tar.gz" ; \
+    fi
 
-RUN tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/gsa-${GSA_VERSION}.tar.gz \
-    && ls -lahr ${SOURCE_DIR} \
-    && mkdir -p ${SOURCE_DIR}/gsa-${GSA_VERSION} \
-    && cd ${SOURCE_DIR}/gsa-${GSA_VERSION} \
+RUN tar -C "${SOURCE_DIR}" -xvzf "${SOURCE_DIR}/gsa-${GSA_VERSION}.tar.gz" \
+    && ls -lahr "${SOURCE_DIR}" \
+    && mkdir -p "${SOURCE_DIR}/gsa-${GSA_VERSION}" \
+    && cd "${SOURCE_DIR}/gsa-${GSA_VERSION}" \
+    && echo "SKIP_PREFLIGHT_CHECK=true" >> .env \
     && npm i -g yarn \
+    && yarn set version berry \
     && yarn \
     && yarn build \
-    && mkdir -p ${INSTALL_DIR}${INSTALL_PREFIX}/share/gvm/gsad/web/ \
-    && cp -r build/* ${INSTALL_DIR}${INSTALL_PREFIX}/share/gvm/gsad/web/
+    && mkdir -p "${INSTALL_DIR}${INSTALL_PREFIX}/share/gvm/gsad/web/" \
+    && cp -r build/* "${INSTALL_DIR}${INSTALL_PREFIX}/share/gvm/gsad/web/"

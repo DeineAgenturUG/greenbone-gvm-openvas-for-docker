@@ -3,7 +3,7 @@ FROM debian:11-slim as base
 # TBUILD_DIR need mounted to the build via buildah
 
 ENV PG_MAJOR=13 \
-    PG_VERSION=13.6-1.pgdg110+1 \
+    PG_VERSION=13.7-1.pgdg110+1 \
     DEBIAN_FRONTEND=noninteractive \
     TBUILD_DIR=/aptrepo \
     LANG=C.UTF-8
@@ -15,18 +15,24 @@ ENV PG_MAJOR=13 \
 # echo "deb [ trusted=yes ] file://${TBUILD_DIR} ./" > /etc/apt/sources.list.d/temp.list;
 
 # need to delete '/etc/apt/apt.conf.d/99-local-proxy' at the end of the build in other Dockerfiles as bah_postgres.debian.Dockerfile
-RUN set -e; \
-	echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries; \
-	echo 'Acquire::http::Proxy::192.168.178.31 DIRECT;' >/etc/apt/apt.conf.d/99-local-proxy; \
+RUN set -eu; \
+    apt-get update; \
+    apt install -y --no-install-recommends netcat; \
+    cp /opt/context-full/helper/config/30detectproxy /etc/apt/apt.conf.d/30detectproxy; \
+    cp /opt/context-full/helper/config/detect-http-proxy /etc/apt/detect-http-proxy; \
+    chmod +x /etc/apt/detect-http-proxy; \
 	mkdir -p /usr/local/share/keyrings/; \
 	cp /opt/context-full/GVMDocker/build/postgres_ACCC4CF8.asc /usr/local/share/keyrings/postgres.gpg.asc; \
 	cp /opt/context-full/GVMDocker/build/postgres_ACCC4CF8.gpg /etc/apt/trusted.gpg.d/postgres.gpg; \
+	cp /opt/context-full/helper/config/apt-github.deineagentur.com.gpg.key /usr/local/share/keyrings/apt-github.deineagentur.com.gpg.asc; \
+	cp /opt/context-full/helper/config/apt-github.deineagentur.com.gpg /etc/apt/trusted.gpg.d/apt-github.deineagentur.com.gpg; \
 	cp /opt/context-full/helper/config/apt-sources.org.list /etc/apt/sources.list; \
 	if ! command -v gpg > /dev/null; then \
 		apt-get update; \
 		apt-get install -y --no-install-recommends \
 			gnupg \
 			dirmngr \
+			apt-transport-https \
 		; \
 		rm -rf /var/lib/apt/lists/*; \
 	fi

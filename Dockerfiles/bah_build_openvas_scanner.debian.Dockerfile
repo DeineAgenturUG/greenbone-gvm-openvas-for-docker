@@ -60,17 +60,27 @@ ENV OPENVAS_SMB_VERSION=${OPENVAS_SMB_VERSION}
 COPY --from=build_gvm_libs / /
 
 RUN set -eu; \
-    echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries; \
+    apt-get update; \
+    apt install -y --no-install-recommends netcat; \
+    cp /opt/context-full/helper/config/30detectproxy /etc/apt/apt.conf.d/30detectproxy; \
+    cp /opt/context-full/helper/config/detect-http-proxy /etc/apt/detect-http-proxy; \
+    chmod +x /etc/apt/detect-http-proxy; \
 	mkdir -p /usr/local/share/keyrings/; \
 	cp /opt/context-full/GVMDocker/build/postgres_ACCC4CF8.asc /usr/local/share/keyrings/postgres.gpg.asc; \
+	cp /opt/context-full/GVMDocker/build/postgres_ACCC4CF8.gpg /etc/apt/trusted.gpg.d/postgres.gpg; \
+	cp /opt/context-full/helper/config/apt-github.deineagentur.com.gpg.key /usr/local/share/keyrings/apt-github.deineagentur.com.gpg.asc; \
+	cp /opt/context-full/helper/config/apt-github.deineagentur.com.gpg /etc/apt/trusted.gpg.d/apt-github.deineagentur.com.gpg; \
 	cp /opt/context-full/helper/config/apt-sources.org.list /etc/apt/sources.list; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
-		apt-transport-https
+		apt-transport-https;\
+    rm -rf /var/lib/apt/lists/*
 
-RUN curl -sSL https://github.com/greenbone/openvas-smb/archive/refs/tags/v${OPENVAS_SMB_VERSION}.tar.gz -o ${SOURCE_DIR}/openvas-smb-${OPENVAS_SMB_VERSION}.tar.gz \
-    && curl -sSL https://github.com/greenbone/openvas-smb/releases/download/v${OPENVAS_SMB_VERSION}/openvas-smb-${OPENVAS_SMB_VERSION}.tar.gz.asc -o ${SOURCE_DIR}/openvas-smb-${OPENVAS_SMB_VERSION}.tar.gz.asc \
-    && gpg --verify ${SOURCE_DIR}/openvas-smb-${OPENVAS_SMB_VERSION}.tar.gz.asc ${SOURCE_DIR}/openvas-smb-${OPENVAS_SMB_VERSION}.tar.gz
+RUN if [ ! -f "${SOURCE_DIR}/openvas-smb-${OPENVAS_SMB_VERSION}.tar.gz" ]; then \
+        curl -sSL https://github.com/greenbone/openvas-smb/archive/refs/tags/v${OPENVAS_SMB_VERSION}.tar.gz -o ${SOURCE_DIR}/openvas-smb-${OPENVAS_SMB_VERSION}.tar.gz ; \
+        curl -sSL https://github.com/greenbone/openvas-smb/releases/download/v${OPENVAS_SMB_VERSION}/openvas-smb-${OPENVAS_SMB_VERSION}.tar.gz.asc -o ${SOURCE_DIR}/openvas-smb-${OPENVAS_SMB_VERSION}.tar.gz.asc ; \
+        gpg --verify ${SOURCE_DIR}/openvas-smb-${OPENVAS_SMB_VERSION}.tar.gz.asc ${SOURCE_DIR}/openvas-smb-${OPENVAS_SMB_VERSION}.tar.gz ; \
+    fi
 RUN tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/openvas-smb-${OPENVAS_SMB_VERSION}.tar.gz \
     && mkdir -p ${BUILD_DIR}/openvas-smb && cd ${BUILD_DIR}/openvas-smb \
     && cmake ${SOURCE_DIR}/openvas-smb-${OPENVAS_SMB_VERSION} \
@@ -85,14 +95,16 @@ RUN { \
       echo "/usr/lib"; \
       echo "${INSTALL_DIR}/usr/lib/"; \
     } >/etc/ld.so.conf.d/openvas.conf && ldconfig
-RUN curl -sSL https://github.com/greenbone/openvas-scanner/archive/refs/tags/v${OPENVAS_SCANNER_VERSION}.tar.gz -o ${SOURCE_DIR}/openvas-scanner-${OPENVAS_SCANNER_VERSION}.tar.gz \
-    && curl -sSL https://github.com/greenbone/openvas-scanner/releases/download/v${OPENVAS_SCANNER_VERSION}/openvas-scanner-${OPENVAS_SCANNER_VERSION}.tar.gz.asc -o ${SOURCE_DIR}/openvas-scanner-${OPENVAS_SCANNER_VERSION}.tar.gz.asc \
-    && gpg --verify ${SOURCE_DIR}/openvas-scanner-${OPENVAS_SCANNER_VERSION}.tar.gz.asc ${SOURCE_DIR}/openvas-scanner-${OPENVAS_SCANNER_VERSION}.tar.gz
+RUN if [ ! -f "${SOURCE_DIR}/openvas-scanner-${OPENVAS_SCANNER_VERSION}.tar.gz" ]; then \
+        curl -sSL "https://github.com/greenbone/openvas-scanner/archive/refs/tags/v${OPENVAS_SCANNER_VERSION}.tar.gz" -o "${SOURCE_DIR}/openvas-scanner-${OPENVAS_SCANNER_VERSION}.tar.gz" ; \
+        curl -sSL "https://github.com/greenbone/openvas-scanner/releases/download/v${OPENVAS_SCANNER_VERSION}/openvas-scanner-${OPENVAS_SCANNER_VERSION}.tar.gz.asc" -o "${SOURCE_DIR}/openvas-scanner-${OPENVAS_SCANNER_VERSION}.tar.gz.asc" ; \
+        gpg --verify "${SOURCE_DIR}/openvas-scanner-${OPENVAS_SCANNER_VERSION}.tar.gz.asc" "${SOURCE_DIR}/openvas-scanner-${OPENVAS_SCANNER_VERSION}.tar.gz" ; \
+    fi
 
-RUN tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/openvas-scanner-${OPENVAS_SCANNER_VERSION}.tar.gz \
-    && mkdir -p ${BUILD_DIR}/openvas-scanner && cd ${BUILD_DIR}/openvas-scanner \
+RUN tar -C "${SOURCE_DIR}" -xvzf "${SOURCE_DIR}/openvas-scanner-${OPENVAS_SCANNER_VERSION}.tar.gz" \
+    && mkdir -p "${BUILD_DIR}/openvas-scanner" && cd "${BUILD_DIR}/openvas-scanner" \
     && ldconfig \
-    && cmake --debug-output ${SOURCE_DIR}/openvas-scanner-${OPENVAS_SCANNER_VERSION} \
+    && cmake --debug-output "${SOURCE_DIR}/openvas-scanner-${OPENVAS_SCANNER_VERSION}" \
     -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
     -DCMAKE_BUILD_TYPE=Release \
     -DSYSCONFDIR=/etc \

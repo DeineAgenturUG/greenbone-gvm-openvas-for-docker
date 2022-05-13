@@ -62,25 +62,34 @@ ENV POSTGRESQL_VERSION=${POSTGRESQL_VERSION} \
 COPY --from=build_gvm_libs / /
 
 RUN set -eu; \
-    echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries; \
+    apt-get update; \
+    apt install -y --no-install-recommends netcat; \
+    cp /opt/context-full/helper/config/30detectproxy /etc/apt/apt.conf.d/30detectproxy; \
+    cp /opt/context-full/helper/config/detect-http-proxy /etc/apt/detect-http-proxy; \
+    chmod +x /etc/apt/detect-http-proxy; \
 	mkdir -p /usr/local/share/keyrings/; \
 	cp /opt/context-full/GVMDocker/build/postgres_ACCC4CF8.asc /usr/local/share/keyrings/postgres.gpg.asc; \
+	cp /opt/context-full/GVMDocker/build/postgres_ACCC4CF8.gpg /etc/apt/trusted.gpg.d/postgres.gpg; \
+	cp /opt/context-full/helper/config/apt-github.deineagentur.com.gpg.key /usr/local/share/keyrings/apt-github.deineagentur.com.gpg.asc; \
+	cp /opt/context-full/helper/config/apt-github.deineagentur.com.gpg /etc/apt/trusted.gpg.d/apt-github.deineagentur.com.gpg; \
 	cp /opt/context-full/helper/config/apt-sources.org.list /etc/apt/sources.list; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
-		apt-transport-https
+		apt-transport-https;\
+    rm -rf /var/lib/apt/lists/*
 
 RUN echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf && ldconfig
 
 # Download and install gvmd
-RUN curl -sSL https://github.com/greenbone/gvmd/archive/refs/tags/v${GVMD_VERSION}.tar.gz -o ${SOURCE_DIR}/gvmd-${GVMD_VERSION}.tar.gz \
-    && curl -sSL https://github.com/greenbone/gvmd/releases/download/v${GVMD_VERSION}/gvmd-${GVMD_VERSION}.tar.gz.asc -o ${SOURCE_DIR}/gvmd-${GVMD_VERSION}.tar.gz.asc \
-    && gpg --verify ${SOURCE_DIR}/gvmd-${GVMD_VERSION}.tar.gz.asc ${SOURCE_DIR}/gvmd-${GVMD_VERSION}.tar.gz
+RUN if [ ! -f "${SOURCE_DIR}/gvmd-${GVMD_VERSION}.tar.gz" ]; then \
+        curl -sSL "https://github.com/greenbone/gvmd/archive/refs/tags/v${GVMD_VERSION}.tar.gz" -o "${SOURCE_DIR}/gvmd-${GVMD_VERSION}.tar.gz" ; \
+        curl -sSL "https://github.com/greenbone/gvmd/releases/download/v${GVMD_VERSION}/gvmd-${GVMD_VERSION}.tar.gz.asc" -o "${SOURCE_DIR}/gvmd-${GVMD_VERSION}.tar.gz.asc" ; \
+        gpg --verify "${SOURCE_DIR}/gvmd-${GVMD_VERSION}.tar.gz.asc" "${SOURCE_DIR}/gvmd-${GVMD_VERSION}.tar.gz" ; \
+    fi
 
-RUN tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/gvmd-${GVMD_VERSION}.tar.gz\
-    && mkdir -p ${BUILD_DIR}/gvmd && cd ${BUILD_DIR}/gvmd
-
-RUN cmake ${SOURCE_DIR}/gvmd-${GVMD_VERSION} \
+RUN tar -C "${SOURCE_DIR}" -xvzf "${SOURCE_DIR}/gvmd-${GVMD_VERSION}.tar.gz" \
+    && mkdir -p "${BUILD_DIR}/gvmd" && cd "${BUILD_DIR}/gvmd" \
+    && cmake "${SOURCE_DIR}/gvmd-${GVMD_VERSION}" \
     -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
     -DCMAKE_BUILD_TYPE=Release \
     -DLOCALSTATEDIR=/var \
