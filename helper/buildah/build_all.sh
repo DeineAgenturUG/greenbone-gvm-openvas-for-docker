@@ -25,8 +25,8 @@ if [ ! -d "/github/greenbone-storage/" ]; then
 
 fi
 
-docker run --privileged --rm tonistiigi/binfmt --install all
-#docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+#docker run --privileged --rm tonistiigi/binfmt --install all
+docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
 sleep 10
 

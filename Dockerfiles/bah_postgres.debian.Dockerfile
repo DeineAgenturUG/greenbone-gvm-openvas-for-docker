@@ -3,7 +3,7 @@ FROM debian:11-slim as base
 # TBUILD_DIR need mounted to the build via buildah
 
 ENV PG_MAJOR=13 \
-    PG_VERSION=13.7-1.pgdg110+1 \
+    PG_VERSION=13.6-1.pgdg110+1 \
     DEBIAN_FRONTEND=noninteractive \
     TBUILD_DIR=/aptrepo \
     LANG=C.UTF-8

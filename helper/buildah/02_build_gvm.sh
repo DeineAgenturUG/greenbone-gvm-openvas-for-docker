@@ -43,12 +43,14 @@ buildah manifest create "${MANIFEST_NAME}" >/dev/null 2>&1 || true
 
 buildah build -f "${BUILD_PATH}/Dockerfiles/bah_release_${IMAGE_TAG}.debian.Dockerfile" \
   --manifest ${MANIFEST_NAME} \
-  --jobs 3 --layers \
+  --jobs 2 --layers \
   --platform=linux/amd64,linux/arm64,linux/ppc64le,linux/mips64le,linux/s390x \
-  --cap-add NET_ADMIN --cap-add NET_RAW \
+  --cap-add NET_ADMIN --cap-add NET_RAW --cap-add CAP_AUDIT_WRITE \
   --uts private --pull \
   --userns container --isolation oci \
   --network private --no-cache \
+  --security-opt=apparmor=unconfined \
+  --security-opt=seccomp=unconfined \
   --logfile "${WORK_DIR}/buildlog_${IMAGE_NAME}-${IMAGE_TAG}.log" \
   --squash \
   $(

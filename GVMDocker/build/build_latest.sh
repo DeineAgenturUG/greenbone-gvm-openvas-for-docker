@@ -1,5 +1,22 @@
 #!/usr/bin/env bash
 set -Eeuxo pipefail
+function notify {
+  echo "Something went wrong!"
+  echo "$(caller): ${BASH_COMMAND}"
+  echo "Error on line ${LINENO}: ${BASH_COMMAND}"
+}
+
+trap notify ERR
+
+trap 'catch $? $LINENO' EXIT
+catch() {
+  echo "catching!"
+  if [ "$1" != "0" ]; then
+    # error handling goes here
+    echo "->>> $(uname -m) - $(dpkg --print-architecture)"
+    echo "Error $1 occurred on $2"
+  fi
+}
 
 dpkg-divert --local --rename --add /sbin/initctl
 ln -sf /bin/true /sbin/initctl
