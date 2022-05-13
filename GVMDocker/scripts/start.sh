@@ -187,6 +187,13 @@ if [ ! -f "/opt/database/.firstrun" ]; then
 	fi
 
 	touch /opt/database/.firstrun
+else
+  if [ "$(cat /opt/database/PG_VERSION)" != "13" ]; then
+    echo "Your Postgres Database is in an unsupported version." | tee /dev/fd/1 >/dev/fd/2
+    echo "Please run the upgrade as described in our WIKI." | tee /dev/fd/1 >/dev/fd/2
+    echo "https://github.com/DeineAgenturUG/greenbone-gvm-openvas-for-docker/wiki" | tee /dev/fd/1 >/dev/fd/2
+    [[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1
+  fi
 fi
 
 # TODO: should removed in the future
