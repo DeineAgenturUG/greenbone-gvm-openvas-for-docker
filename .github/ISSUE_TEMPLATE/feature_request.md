@@ -2,8 +2,8 @@
 name: Feature request
 about: Suggest an idea for this project
 title: "[Enhancement]"
-labels: ''
-assignees: austinsonger, Dexus
+labels: 'enhancement'
+assignees: Dexus
 
 ---
 
