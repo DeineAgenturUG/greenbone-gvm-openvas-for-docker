@@ -78,4 +78,4 @@ $RECYCLE.BIN/
 /secrets/
 /GVMDocker/gvm-sync-data/
 node_modules
-/build.log
+/build*.log
