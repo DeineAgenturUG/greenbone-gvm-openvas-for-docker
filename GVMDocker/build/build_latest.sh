@@ -78,7 +78,6 @@ apt-get install -y --no-install-recommends \
         libuuid1 \
         libxml2 \
         openssh-client \
-        postfix \
         python3 \
         python3-cffi \
         python3-defusedxml \

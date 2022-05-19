@@ -15,8 +15,10 @@ ENV LANG=en_US.UTF-8 \
 
 RUN --mount=type=bind,source=./,target=/opt/context/,rw \
     ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime \
-    && echo "$TZ" >/etc/timezone\
+    && echo "$TZ" >/etc/timezone \
+    && setcap -r /usr/sbin/openvas \
     && /opt/setup/scripts/entrypoint.sh /usr/bin/supervisord -c /etc/supervisord.conf \
+    && sudo setcap cap_net_raw,cap_net_admin+eip /usr/sbin/openvas \
     && (rm -rfv /var/lib/gvm/CA || true) \
     && (rm -rfv /var/lib/gvm/private || true) \
     && (rm /etc/localtime || true) \
