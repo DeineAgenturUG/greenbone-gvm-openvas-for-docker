@@ -1,0 +1,9 @@
+version: '3.1'
+services:
+  gvm_db_update:
+    image: deineagenturug/gvm:latest
+    command: "/opt/setup/scripts/db_upgrade.sh"
+    volumes:
+      - "./storage/database_old:/mnt/pg_old/data"
+      - "./storage/database_new:/mnt/pg_new/data"
+    restart: no

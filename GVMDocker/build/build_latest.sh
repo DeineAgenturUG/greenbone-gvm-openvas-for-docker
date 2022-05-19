@@ -151,6 +151,10 @@ chmod 0440 /etc/sudoers.d/gvm
 update-alternatives --install /usr/bin/postgres postgres /usr/lib/postgresql/${POSTGRESQL_VERSION}/bin/postgres 100
 update-alternatives --install /usr/bin/initdb initdb /usr/lib/postgresql/${POSTGRESQL_VERSION}/bin/initdb 100
 ldconfig
+
+# used from https://community.greenbone.net/t/ospd-openvas-dont-have-permission-to-capture-on-that-device/4564/39
+sudo setcap cap_net_raw,cap_net_admin+eip /usr/sbin/openvas
+
 (rm -rfv /var/lib/gvm/CA || true)
 (rm -rfv /var/lib/gvm/private || true)
 (rm /etc/localtime || true)

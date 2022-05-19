@@ -5,17 +5,16 @@ export HTTPS_PROXY="${HTTPS_PROXY:-${https_proxy:-}}"
 export RSYNC_PROXY="${RSYNC_PROXY:-${rsync_proxy:-}}"
 export NO_PROXY="${NO_PROXY:-${no_proxy:-}}"
 
-
 export SUPVISD=${SUPVISD:-supervisorctl}
 export USERNAME=${USERNAME:-${GVMD_USER:-admin}}
 export PASSWORD=${PASSWORD:-${GVMD_PASSWORD:-adminpassword}}
 export PASSWORD_FILE=${PASSWORD_FILE:-${GVMD_PASSWORD_FILE:-none}}
 export TIMEOUT=${TIMEOUT:-15}
 export DEBUG=${DEBUG:-N}
-export NO_AUTO_UPDATE=${NO_AUTO_UPDATE:-NO}
 export RELAYHOST=${RELAYHOST:-smtp}
 export SMTPPORT=${SMTPPORT:-25}
 export AUTO_SYNC=${AUTO_SYNC:-YES}
+export AUTO_SYNC_ON_START=${AUTO_SYNC_ON_START:-YES}
 export HTTPS=${HTTPS:-YES}
 export CERTIFICATE=${CERTIFICATE:-none}
 export CERTIFICATE_KEY=${CERTIFICATE_KEY:-none}
@@ -146,6 +145,7 @@ fi
 until (pg_isready --username=postgres >/dev/null 2>&1 && psql --username=postgres --list >/dev/null 2>&1); do
 	sleep 1
 done
+
 if [[ ! -d "/etc/ssh" ]]; then
 	mkdir -p /etc/ssh
 fi
@@ -187,8 +187,16 @@ if [ ! -f "/opt/database/.firstrun" ]; then
 	fi
 
 	touch /opt/database/.firstrun
+else
+  if [ "$(cat /opt/database/PG_VERSION)" != "13" ]; then
+    echo "Your Postgres Database is in an unsupported version." | tee /dev/fd/1 >/dev/fd/2
+    echo "Please run the upgrade as described in our WIKI." | tee /dev/fd/1 >/dev/fd/2
+    echo "https://github.com/DeineAgenturUG/greenbone-gvm-openvas-for-docker/wiki" | tee /dev/fd/1 >/dev/fd/2
+    [[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1
+  fi
 fi
 
+# TODO: should removed in the future
 if [ ! -f "/opt/database/.upgrade_to_21.4.0" ]; then
 	su -c "psql --dbname=gvmd --command='CREATE TABLE IF NOT EXISTS vt_severities (id SERIAL PRIMARY KEY,vt_oid text NOT NULL,type text NOT NULL, origin text,date integer,score double precision,value text);'" postgres
 	su -c "psql --dbname=gvmd --command='ALTER TABLE vt_severities ALTER COLUMN score SET DATA TYPE double precision;'" postgres
@@ -211,6 +219,10 @@ if [ "$DB_PASSWORD_FILE" != "none" ] && [ -e "$DB_PASSWORD_FILE" ]; then
 elif [ "$DB_PASSWORD" != "none" ]; then
 	su -c "psql --dbname=gvmd --command=\"alter user gvm password '$DB_PASSWORD';\"" postgres
 fi
+
+# FIX the old OSPD socket to /run/ospd/ospd-openvas.sock
+# if it is need to
+./fix_openvas_socket_in_database.sh || true
 
 echo "Creating gvmd folder..."
 su -c "mkdir -p /var/lib/gvm/gvmd/report_formats" gvm

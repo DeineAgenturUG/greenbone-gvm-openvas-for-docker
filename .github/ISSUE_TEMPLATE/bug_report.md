@@ -3,7 +3,7 @@ name: Bug report
 about: Create a report to help us improve
 title: "[Bug]"
 labels: bug
-assignees: Dexus, pixelsquared
+assignees: Dexus
 
 ---
 
@@ -12,13 +12,13 @@ assignees: Dexus, pixelsquared
 Before you open a bug issue, please read the documentation. If you do not find an
 answer to your problem there, please look in the issues that have already been closed.
 Only if you still have not found an answer to your problem should you open a new issue.
-https://securecompliance.gitbook.io/projects/openvas-greenbone-deployment-full-guide
+https://github.com/DeineAgenturUG/greenbone-gvm-openvas-for-docker/wiki
 ################################################################################
 -->
 
 <!--
 ################################################################################
-NOTE: If You mention a file like a configuration file (`main.cf` and etc) or 
+NOTE: If You mention a file like a configuration file (`main.cf` etc) or 
 another file in the issue description please include it into issue using a code block.
 ################################################################################
 -->
@@ -42,6 +42,7 @@ If applicable, add screenshots to help explain your problem.
 
 **Host Device:**
  - OS:
+ - Architecture:
  - Version:
 
 **Image in use:**
@@ -49,6 +50,21 @@ If applicable, add screenshots to help explain your problem.
 - Output from `docker image inspect <image>` :
 ```
 # docker image inspect <image> 
+```
+
+**Log Outputs:**
+
+- Output from `docker logs <image>` :
+```
+# docker logs <image> 
+```
+- Output from `docker exec -ti <image> cat /var/log/gvmd/*` :
+```
+# docker exec -ti <image> cat /var/log/gvmd/* 
+```
+- Output from `docker exec -ti <image> cat /var/log/openvas/*` :
+```
+# docker exec -ti <image> cat /var/log/openvas/* 
 ```
 
 **Additional context**

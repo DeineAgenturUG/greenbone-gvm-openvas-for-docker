@@ -1,7 +1,17 @@
-version: '3.1'
+version: '3.9'
 services:
   gvm:
     image: deineagentur/gvm-develop:latest-full
+    hostname: gvm
+    domainname: fritz.box
+    cap_add:
+      - NET_ADMIN
+    security_opt:
+      - seccomp=unconfined
+      - apparmor=unconfined
+    networks:
+      - default
+      - lan_net
     ports:
       - "127.0.0.2:2222:22"
       - "127.0.0.2:5432:5432"
@@ -13,7 +23,7 @@ services:
       - AUTO_SYNC=true
       - HTTPS=false
       - TZ="Etc/UTC"
-      - SSHD=false
+      - SSHD=true
       - DB_PASSWORD="none"
     volumes:
       - "/home/jfroehle/Documents/github/DeineAgenturUG/greenbone-gvm-openvas-for-docker/storage/ssh:/etc/ssh"
@@ -21,3 +31,27 @@ services:
       - "/home/jfroehle/Documents/github/DeineAgenturUG/greenbone-gvm-openvas-for-docker/storage/plugins:/var/lib/openvas/plugins"
       - "/home/jfroehle/Documents/github/DeineAgenturUG/greenbone-gvm-openvas-for-docker/storage/gvm:/var/lib/gvm"
     restart: unless-stopped
+  openvas-scanner:
+    image: deineagentur/openvas-scanner-develop:latest
+    hostname: external-openvas-scanner
+    domainname: fritz.box
+    cap_add:
+      - NET_ADMIN
+    security_opt:
+      - seccomp=unconfined
+      - apparmor=unconfined
+    networks:
+      - lan_net
+    environment:
+      - MASTER_ADDRESS="gvm.fritz.box"
+      - MASTER_PORT="22"
+    volumes:
+      - "/home/jfroehle/Documents/github/DeineAgenturUG/greenbone-gvm-openvas-for-docker/storage/plugins:/var/lib/openvas/plugins"
+      - "/home/jfroehle/Documents/github/DeineAgenturUG/greenbone-gvm-openvas-for-docker/storage/gvm_openvas:/var/lib/gvm"
+    restart: unless-stopped
+
+networks:
+  # example: docker network create -d ipvlan --subnet=192.168.178.0/24 --gateway=192.168.178.1 --ip-range=192.168.178.128/25 -o ipvlan_mode=l2 -o parent=eth20 lan_net
+  lan_net:
+    external: true
+

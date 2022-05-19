@@ -72,6 +72,7 @@ jobs:
           cat ./.checkupdates/latest_version | sed 's/=v/=/g' >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
           cat ./.checkupdates/build_time >> $GITHUB_ENV
+          echo "DATA_DATE=$(date +%F)" >> $GITHUB_ENV
           mkdir -p ./GVMDocker/gvm-sync-data/
           wget -O ./GVMDocker/gvm-sync-data/gvm-sync-data.tar.xz "https://vulndata.deineagentur.biz/data.tar.xz"
 
@@ -84,7 +85,7 @@ jobs:
           file: ./GVMDocker/Dockerfiles/release_data-only.debian.Dockerfile
           tags: |
             ${{ env.IMAGE_NAME_DOCKER }}:data-only
-            ${{ env.IMAGE_NAME_DOCKER }}:data-only-${{ env.BUILD_VERSION }}
+            ${{ env.IMAGE_NAME_DOCKER }}:data-only-${{ env.DATA_DATE }}
           labels: |
             ${{ env.GREENBONE_RELEASES }}
             POSTGRESQL_VERSION=${{ env.POSTGRESQL_VERSION }}

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-PID_FILE="/var/run/rsyslogd.pid"
+PID_FILE="/run/rsyslogd.pid"
 
 # PreClean up the pid file
 if [ -f "${PID_FILE}" ]; then
