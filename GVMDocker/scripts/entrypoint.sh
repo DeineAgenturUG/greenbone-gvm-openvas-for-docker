@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
+# https://stackoverflow.com/questions/59895/how-can-i-get-the-source-directory-of-a-bash-script-from-within-the-script-itsel
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )";
 
-source ./addons/00_proxy.sh
-source ./addons/01_env.sh
-source ./addons/02_nullmailer.sh
+source "${SCRIPT_DIR}/addons/00_proxy.sh"
+source "${SCRIPT_DIR}/addons/01_env.sh"
+source "${SCRIPT_DIR}/addons/02_nullmailer.sh"
 
 if [ "$1" == "/usr/bin/supervisord" ]; then
 

@@ -140,7 +140,23 @@ mkdir -p /run/gsad
 mkdir -p /var/log/gvm
 chown -R gvm:gvm /run/gsad
 chown -R gvm:gvm /var/log/gvm
-apt-get purge --auto-remove -yq *-dev *-dev-all *-dev-"${POSTGRESQL_VERSION}"
+
+# START: nullmailer
+debconf-set-selections <<EOF
+nullmailer shared/mailname string $(hostname)
+nullmailer nullmailer/defaultdomain string ${MAIL_DEFAULT_DOMAIN:-localhost}
+nullmailer nullmailer/relayhost string localhost discard
+nullmailer nullmailer/adminaddr string ${MAIL_ADMIN_ADDRESS:-root@localhost}
+EOF
+apt-get update
+apt-get install -y --no-install-recommends nullmailer mailutils
+ln -s /bin/true /usr/lib/nullmailer/discard
+rm -rf /var/lib/apt/lists/*
+apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
+
+# END: nullmailer
+
+apt-get purge --auto-remove -yq *-dev *-dev-all #*-dev-"${POSTGRESQL_VERSION}"
 apt-get clean all
 apt-get -yq autoremove
 rm -rf /var/lib/apt/lists/*
