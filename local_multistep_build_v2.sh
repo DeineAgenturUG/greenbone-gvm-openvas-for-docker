@@ -2,6 +2,7 @@
 set -Eeuo pipefail
 
 TIMESTART="$(date '+%Y%m%d%H%M%S')"
+GIT_SHA="$(git rev-parse --short=16 HEAD)"
 
 BUILDER="${BUILDER:-default}"
 
@@ -63,6 +64,7 @@ if [[ "x${BUILD_GVMD}" == "xYES" ]]; then
       --build-arg "CACHE_IMAGE=${CACHE_IMAGE}" \
       --build-arg "CACHE_BUILD_IMAGE=${CACHE_BUILD_IMAGE}" \
       --cache-from "${CACHE_BUILD_IMAGE}:${TARGET}" \
+      -t "${CACHE_BUILD_IMAGE}:${TARGET}-${GIT_SHA}" \
       -t "${CACHE_BUILD_IMAGE}:${TARGET}" .
 
     TARGET="build_gvm_libs"
@@ -79,6 +81,7 @@ if [[ "x${BUILD_GVMD}" == "xYES" ]]; then
       --build-arg "CACHE_BUILD_IMAGE=${CACHE_BUILD_IMAGE}" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_base" \
       --cache-from "${CACHE_BUILD_IMAGE}:${TARGET}" \
+      -t "${CACHE_BUILD_IMAGE}:${TARGET}-${GIT_SHA}" \
       -t "${CACHE_BUILD_IMAGE}:${TARGET}" .
 
     TARGET="build_gsa"
@@ -96,6 +99,7 @@ if [[ "x${BUILD_GVMD}" == "xYES" ]]; then
       --cache-from "${CACHE_BUILD_IMAGE}:build_base" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_gvm_libs" \
       --cache-from "${CACHE_BUILD_IMAGE}:${TARGET}" \
+      -t "${CACHE_BUILD_IMAGE}:${TARGET}-${GIT_SHA}" \
       -t "${CACHE_BUILD_IMAGE}:${TARGET}" .
 
     TARGET="build_gsad"
@@ -113,6 +117,7 @@ if [[ "x${BUILD_GVMD}" == "xYES" ]]; then
       --cache-from "${CACHE_BUILD_IMAGE}:build_base" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_gvm_libs" \
       --cache-from "${CACHE_BUILD_IMAGE}:${TARGET}" \
+      -t "${CACHE_BUILD_IMAGE}:${TARGET}-${GIT_SHA}" \
       -t "${CACHE_BUILD_IMAGE}:${TARGET}" .
 
     TARGET="build_gvmd"
@@ -130,6 +135,7 @@ if [[ "x${BUILD_GVMD}" == "xYES" ]]; then
       --cache-from "${CACHE_BUILD_IMAGE}:build_base" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_gvm_libs" \
       --cache-from "${CACHE_BUILD_IMAGE}:${TARGET}" \
+      -t "${CACHE_BUILD_IMAGE}:${TARGET}-${GIT_SHA}" \
       -t "${CACHE_BUILD_IMAGE}:${TARGET}" .
     #
     #    TARGET="build_openvas_smb"
@@ -168,6 +174,7 @@ if [[ "x${BUILD_GVMD}" == "xYES" ]]; then
       --cache-from "${CACHE_BUILD_IMAGE}:build_gvm_libs" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_openvas_smb" \
       --cache-from "${CACHE_BUILD_IMAGE}:${TARGET}" \
+      -t "${CACHE_BUILD_IMAGE}:${TARGET}-${GIT_SHA}" \
       -t "${CACHE_BUILD_IMAGE}:${TARGET}" .
 
   fi
@@ -195,6 +202,7 @@ if [[ "x${BUILD_GVMD}" == "xYES" ]]; then
       --cache-from "${CACHE_BUILD_IMAGE}:build_openvas_scanner" \
       --cache-from "${CACHE_IMAGE}:${TARGET}" \
       --no-cache \
+      -t "${CACHE_IMAGE}:${TARGET}-${GIT_SHA}" \
       -t "${CACHE_IMAGE}:${TARGET}" ./GVMDocker/
 
     TARGET="latest-full"
@@ -218,6 +226,7 @@ if [[ "x${BUILD_GVMD}" == "xYES" ]]; then
       --cache-from "${CACHE_BUILD_IMAGE}:build_openvas_scanner" \
       --cache-from "${CACHE_IMAGE}:latest" \
       --cache-from "${CACHE_IMAGE}:${TARGET}" \
+      -t "${CACHE_IMAGE}:${TARGET}-${GIT_SHA}" \
       -t "${CACHE_IMAGE}:${TARGET}" ./GVMDocker/
 
   fi
@@ -249,6 +258,7 @@ if [[ "x${BUILD_GVMD}" == "xYES" ]]; then
     --cache-from "${CACHE_IMAGE}:latest" \
     --cache-from "${CACHE_IMAGE}:latest-full" \
     --cache-from "${CACHE_IMAGE}:${TARGET}" \
+    -t "${CACHE_IMAGE}:${TARGET}-${GIT_SHA}" \
     -t "${CACHE_IMAGE}:${TARGET}" ./GVMDocker/
 
   TARGET="latest-data-full"
@@ -274,6 +284,7 @@ if [[ "x${BUILD_GVMD}" == "xYES" ]]; then
     --cache-from "${CACHE_IMAGE}:latest-full" \
     --cache-from "${CACHE_IMAGE}:latest-data" \
     --cache-from "${CACHE_IMAGE}:${TARGET}" \
+    -t "${CACHE_IMAGE}:${TARGET}-${GIT_SHA}" \
     -t "${CACHE_IMAGE}:${TARGET}" ./GVMDocker/
 
 fi
@@ -305,6 +316,7 @@ if [[ "x${BUILD_OPENVAS}" == "xYES" ]]; then
       --cache-from "${CACHE_BUILD_IMAGE}:build_openvas_scanner" \
       --cache-from "${CACHE_IMAGE_OPENVAS}:${TARGET}" \
       --no-cache \
+      -t "${CACHE_IMAGE_OPENVAS}:${TARGET}-${GIT_SHA}" \
       -t "${CACHE_IMAGE_OPENVAS}:${TARGET}" ./OpenVASDocker/
 
   fi
