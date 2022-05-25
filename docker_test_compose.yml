@@ -6,6 +6,7 @@ services:
     domainname: fritz.box
     cap_add:
       - NET_ADMIN
+      - NET_RAW
     security_opt:
       - seccomp=unconfined
       - apparmor=unconfined
