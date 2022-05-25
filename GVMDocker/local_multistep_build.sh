@@ -3,6 +3,7 @@ set -Eeuo pipefail
 
 TIMESTART=$(date '+%Y%m%d%H%M%S')
 
+GIT_SHA="$(git rev-parse --short=16 HEAD)"
 
 PREBUILD=${PREBUILD:-NO}
 POSTBUILD=${POSTBUILD:-NO}
@@ -34,6 +35,7 @@ cd "${PWD}" || exit
       ) \
       --target ${TARGET} --build-arg BUILDKIT_INLINE_CACHE=1 \
       --cache-from "${CACHE_BUILD_IMAGE}:${TARGET}" \
+      -t "${CACHE_BUILD_IMAGE}:${TARGET}-${GIT_SHA}" \
       -t "${CACHE_BUILD_IMAGE}:${TARGET}" .
 
     TARGET="build_gvm_libs"
@@ -48,6 +50,7 @@ cd "${PWD}" || exit
       --target ${TARGET} --build-arg BUILDKIT_INLINE_CACHE=1 \
       --cache-from "${CACHE_BUILD_IMAGE}:base" \
       --cache-from "${CACHE_BUILD_IMAGE}:${TARGET}" \
+      -t "${CACHE_BUILD_IMAGE}:${TARGET}-${GIT_SHA}" \
       -t "${CACHE_BUILD_IMAGE}:${TARGET}" .
 
     TARGET="build_gsa"
@@ -63,6 +66,7 @@ cd "${PWD}" || exit
       --cache-from "${CACHE_BUILD_IMAGE}:base" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_gvm_libs" \
       --cache-from "${CACHE_BUILD_IMAGE}:${TARGET}" \
+      -t "${CACHE_BUILD_IMAGE}:${TARGET}-${GIT_SHA}" \
       -t "${CACHE_BUILD_IMAGE}:${TARGET}" .
 
     TARGET="build_gsad"
@@ -78,6 +82,7 @@ cd "${PWD}" || exit
       --cache-from "${CACHE_BUILD_IMAGE}:base" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_gvm_libs" \
       --cache-from "${CACHE_BUILD_IMAGE}:${TARGET}" \
+      -t "${CACHE_BUILD_IMAGE}:${TARGET}-${GIT_SHA}" \
       -t "${CACHE_BUILD_IMAGE}:${TARGET}" .
 
     TARGET="build_gvmd"
@@ -93,6 +98,7 @@ cd "${PWD}" || exit
       --cache-from "${CACHE_BUILD_IMAGE}:base" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_gvm_libs" \
       --cache-from "${CACHE_BUILD_IMAGE}:${TARGET}" \
+      -t "${CACHE_BUILD_IMAGE}:${TARGET}-${GIT_SHA}" \
       -t "${CACHE_BUILD_IMAGE}:${TARGET}" .
 
     TARGET="build_openvas_smb"
@@ -108,6 +114,7 @@ cd "${PWD}" || exit
       --cache-from "${CACHE_BUILD_IMAGE}:base" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_gvm_libs" \
       --cache-from "${CACHE_BUILD_IMAGE}:${TARGET}" \
+      -t "${CACHE_BUILD_IMAGE}:${TARGET}-${GIT_SHA}" \
       -t "${CACHE_BUILD_IMAGE}:${TARGET}" .
 
     TARGET="build_openvas_scanner"
@@ -123,6 +130,7 @@ cd "${PWD}" || exit
       --cache-from "${CACHE_BUILD_IMAGE}:base" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_gvm_libs" \
       --cache-from "${CACHE_BUILD_IMAGE}:${TARGET}" \
+      -t "${CACHE_BUILD_IMAGE}:${TARGET}-${GIT_SHA}" \
       -t "${CACHE_BUILD_IMAGE}:${TARGET}" .
 
     TARGET="build_ospd_openvas"
@@ -138,6 +146,7 @@ cd "${PWD}" || exit
       --cache-from "${CACHE_BUILD_IMAGE}:base" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_gvm_libs" \
       --cache-from "${CACHE_BUILD_IMAGE}:${TARGET}" \
+      -t "${CACHE_BUILD_IMAGE}:${TARGET}-${GIT_SHA}" \
       -t "${CACHE_BUILD_IMAGE}:${TARGET}" .
 
   fi
@@ -162,6 +171,7 @@ cd "${PWD}" || exit
       --cache-from "${CACHE_BUILD_IMAGE}:build_openvas_scanner" \
       --cache-from "${CACHE_BUILD_IMAGE}:build_ospd_openvas" \
       --cache-from "${CACHE_IMAGE}:${TARGET}" \
+      -t "${CACHE_IMAGE}:${TARGET}-${GIT_SHA}" \
       -t "${CACHE_IMAGE}:${TARGET}" .
 
     TARGET="latest-full"
@@ -184,6 +194,7 @@ cd "${PWD}" || exit
       --cache-from "${CACHE_BUILD_IMAGE}:build_ospd_openvas" \
       --cache-from "${CACHE_IMAGE}:latest" \
       --cache-from "${CACHE_IMAGE}:${TARGET}" \
+      -t "${CACHE_IMAGE}:${TARGET}-${GIT_SHA}" \
       -t "${CACHE_IMAGE}:${TARGET}" .
 
 
@@ -210,6 +221,7 @@ cd "${PWD}" || exit
     --cache-from "${CACHE_IMAGE}:latest" \
     --cache-from "${CACHE_IMAGE}:latest-full" \
     --cache-from "${CACHE_IMAGE}:${TARGET}" \
+    -t "${CACHE_IMAGE}:${TARGET}-${GIT_SHA}" \
     -t "${CACHE_IMAGE}:${TARGET}" .
 
   TARGET="latest-data-full"
@@ -234,6 +246,7 @@ cd "${PWD}" || exit
     --cache-from "${CACHE_IMAGE}:latest-full" \
     --cache-from "${CACHE_IMAGE}:latest-data" \
     --cache-from "${CACHE_IMAGE}:${TARGET}" \
+    -t "${CACHE_IMAGE}:${TARGET}-${GIT_SHA}" \
     -t "${CACHE_IMAGE}:${TARGET}" .
 
 #done
