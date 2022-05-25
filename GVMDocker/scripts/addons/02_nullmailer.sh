@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -Eeo pipefail
+set -Eeuo pipefail
 
 if [ -n "${MAIL_RELAY_HOST}" ] && [ -n "${MAIL_RELAY_PORT}" ] && [ -n "${MAIL_ADMIN_ADDRESS}" ]; then
     echo "$(hostname)" >/etc/mailname
